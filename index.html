@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>午夜委託 - 沉浸式通訊解謎</title>
+  <meta name="description" content="午夜委託：沉浸式防詐騙互動故事遊戲。體驗真實詐騙情境，測試你的防詐意識。">
+  <meta property="og:title" content="午夜委託 - 沉浸式通訊解謎">
+  <meta property="og:description" content="你能識破詐騙集團的陷阱嗎？體驗真實的詐騙情境，學會保護自己。">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-y;
+    }
+
+    /* ---------------- 動畫庫 ---------------- */
+    @keyframes slow-pan {
+      0% {
+        transform: scale(1) translate(0, 0);
+      }
+
+      50% {
+        transform: scale(1.05) translate(-1%, -1%);
+      }
+
+      100% {
+        transform: scale(1) translate(0, 0);
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-3px);
+      }
+
+      75% {
+        transform: translateX(3px);
+      }
+    }
+
+    /* 訊息彈出效果 (帶有物理回彈感) */
+    @keyframes message-pop {
+      0% {
+        opacity: 0;
+        transform: translateY(15px) scale(0.95);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* 推播通知下拉效果 */
+    @keyframes notify-drop {
+      0% {
+        transform: translateY(-150%);
+        opacity: 0;
+      }
+
+      10% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      90% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-150%);
+        opacity: 0;
+      }
+    }
+
+    /* 打字點點動畫 */
+    @keyframes bounce {
+
+      0%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-4px);
+      }
+    }
+
+    .animate-slow-pan {
+      animation: slow-pan 25s ease-in-out infinite alternate;
+    }
+
+    .animate-shake {
+      animation: shake 0.2s ease-in-out 2;
+    }
+
+    .msg-pop {
+      animation: message-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .notify-anim {
+      animation: notify-drop 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .typing-dot {
+      width: 5px;
+      height: 5px;
+      background-color: #9ca3af;
+      border-radius: 50%;
+      display: inline-block;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    /* 隱藏原生捲軸，但保留捲動功能 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .scanlines {
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNCIgaGVpZ2h0PSI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=');
+    }
+
+    /* 手機聽筒瀏海設計 */
+    .iphone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 25px;
+      background-color: #000;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 100;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-[100dvh]">
+
+  <div id="phone-frame"
+    class="relative w-full h-[100dvh] md:max-w-[400px] md:h-[85dvh] md:rounded-[3rem] md:border-[10px] border-gray-900 overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.8)] bg-[#0a0a0c] flex flex-col">
+
+    <div class="hidden md:block iphone-notch"></div>
+
+    <div class="absolute inset-0 z-0 pointer-events-none">
+      <div id="scene-bg"
+        class="absolute inset-[-5%] w-[110%] h-[110%] bg-cover bg-center transition-all duration-[2000ms] ease-out animate-slow-pan opacity-20">
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-[#0a0a0c]/80 to-black/95"></div>
+      <div class="absolute inset-0 scanlines opacity-40"></div>
+    </div>
+
+    <div id="push-notification"
+      class="absolute top-10 left-1/2 transform -translate-x-1/2 w-[90%] bg-gray-800/95 backdrop-blur-xl border border-gray-700 rounded-2xl p-3 shadow-2xl z-[100] flex items-center gap-3 hidden">
+      <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white shrink-0">
+        <i data-lucide="message-square-warning" style="width: 20px; height: 20px;"></i>
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <div class="flex justify-between items-center mb-0.5">
+          <span id="push-title" class="text-white font-bold text-[13px]">K哥</span>
+          <span class="text-gray-400 text-[10px]">現在</span>
+        </div>
+        <p id="push-desc" class="text-gray-300 text-[12px] truncate">有新訊息</p>
+      </div>
+    </div>
+
+    <div id="menu-view"
+      class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-black/60 backdrop-blur-md p-6 text-center transition-opacity duration-700">
+      <h1 class="text-5xl font-black mb-2 tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+        22:30</h1>
+      <p class="text-gray-300 tracking-[0.2em] text-sm font-bold mb-16 uppercase">星期五, 13日</p>
+
+      <button onclick="startGame()"
+        class="group relative w-[80%] bg-white/10 hover:bg-white/20 backdrop-blur-lg border border-white/20 text-white py-4 rounded-full font-bold tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 overflow-hidden">
+        <div
+          class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700">
+        </div>
+        <i data-lucide="unlock" style="width: 18px; height: 18px;"></i> 滑動來解鎖並開始
+      </button>
+    </div>
+
+
+    <div id="playing-view" class="absolute inset-0 flex flex-col z-10 hidden">
+
+      <div id="chat-header"
+        class="w-full h-[85px] pt-6 bg-[#121215]/95 backdrop-blur-xl border-b border-white/5 flex items-center px-4 justify-between z-40 transition-colors duration-500">
+        <div class="flex items-center gap-3">
+          <button class="text-blue-500 hover:text-blue-400 font-medium text-[15px] flex items-center">
+            <i data-lucide="chevron-left" style="width: 22px; height: 22px; margin-right: -4px;"></i> 聊天
+          </button>
+          <div class="flex items-center gap-2.5">
+            <div id="header-avatar"
+              class="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center text-gray-300 overflow-hidden shadow-inner">
+            </div>
+            <div class="flex flex-col">
+              <span id="header-name" class="text-white font-bold text-[15px] tracking-wide">載入中...</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-5 text-blue-500">
+          <i data-lucide="phone" style="width: 20px; height: 20px;"></i>
+          <i data-lucide="video" style="width: 20px; height: 20px;"></i>
+        </div>
+      </div>
+
+      <div id="chat-history" class="flex-1 no-scrollbar overflow-y-auto p-4 flex flex-col z-20 relative scroll-smooth">
+        <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>
+      </div>
+
+      <div id="options-area"
+        class="absolute bottom-0 w-full bg-[#18181b]/95 backdrop-blur-xl border-t border-white/10 z-50 transform translate-y-full transition-transform duration-500 ease-out pb-safe rounded-t-2xl md:rounded-b-[2.5rem]">
+
+        <div id="timer-container" class="w-full h-1 bg-gray-800 overflow-hidden hidden">
+          <div id="timer-bar-fill"
+            class="h-full bg-red-500 transition-all duration-75 ease-linear shadow-[0_0_15px_rgba(239,68,68,1)]"
+            style="width: 100%;"></div>
+        </div>
+
+        <div class="p-4 pt-3 pb-6 md:pb-8">
+          <div id="qte-alert"
+            class="hidden flex items-center gap-1.5 text-red-400 text-[11px] font-bold tracking-widest uppercase mb-3 justify-center animate-pulse">
+            <i data-lucide="clock" style="width: 12px; height: 12px;"></i> 請立即回覆
+          </div>
+          <div id="options-container" class="flex flex-col gap-2">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="ending-view"
+      class="absolute inset-0 bg-[#09090b] z-50 no-scrollbar overflow-y-auto hidden flex flex-col pb-12">
+
+      <div
+        class="sticky top-0 bg-red-950/90 backdrop-blur-xl border-b border-red-900/50 p-4 pt-12 md:pt-10 flex items-center justify-center gap-2 z-10 shadow-lg">
+        <i data-lucide="triangle-alert" class="text-red-500 animate-pulse" style="width: 18px; height: 18px;"></i>
+        <span class="text-red-400 font-mono font-bold tracking-widest text-xs">SIMULATION_TERMINATED</span>
+      </div>
+
+      <div class="p-5 flex flex-col gap-4 animate-fade-in mt-2">
+
+        <h1 id="ending-title"
+          class="text-2xl font-black leading-snug tracking-wide text-white drop-shadow-md border-l-4 pl-3 border-red-500 mb-2">
+        </h1>
+
+        <div class="bg-gray-900/60 p-4 rounded-2xl border border-white/5">
+          <h3 class="text-gray-400 text-[10px] font-bold mb-2 tracking-[0.2em]">FILE // 紀錄</h3>
+          <p id="ending-content" class="text-gray-200 text-[13px] leading-relaxed"></p>
+        </div>
+
+        <div class="bg-red-950/20 p-4 rounded-2xl border border-red-900/30">
+          <h3 class="text-red-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="scan-face" style="width: 14px; height: 14px;"></i> 心理防禦評估
+          </h3>
+          <p id="ending-analysis" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+        <div id="legal-container" class="bg-blue-950/20 p-4 rounded-2xl border border-blue-900/30 hidden">
+          <h3 class="text-blue-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="scale" style="width: 14px; height: 14px;"></i> 法律責任判定
+          </h3>
+          <p id="ending-legal" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+        <div id="advice-container" class="bg-yellow-950/20 p-4 rounded-2xl border border-yellow-900/30 hidden">
+          <h3 class="text-yellow-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> 致命點與自救
+          </h3>
+          <p id="ending-advice" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+        <button onclick="location.reload()"
+          class="mt-4 w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white py-3.5 rounded-xl font-bold transition-all tracking-widest flex items-center justify-center gap-2 active:scale-95 text-sm">
+          <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i> 重新模擬
+        </button>
+        <button onclick="shareEnding()"
+          class="w-full bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 py-3.5 rounded-xl font-bold transition-all tracking-widest flex items-center justify-center gap-2 active:scale-95 text-sm">
+          <i data-lucide="share-2" style="width: 16px; height: 16px;"></i> 分享我的結局
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- 劇情與結局資料集 ---
+    const SCENE_IMAGES = {
+      STREET_NIGHT: 'https://images.unsplash.com/photo-1517568560156-fbd9c424df39?auto=format&fit=crop&q=80&w=1920',
+      ALLEY: 'https://images.unsplash.com/photo-1580974582391-a6649c82a85f?auto=format&fit=crop&q=80&w=1920',
+      PHONE_SCREEN: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=1920',
+      ATM: 'https://images.unsplash.com/photo-1559103009-8d184ebf32b7?auto=format&fit=crop&q=80&w=1920'
+    };
+
+    const STORY = {
+      START: {
+        bg: SCENE_IMAGES.STREET_NIGHT, speaker: '系統',
+        text: '剛下過暴雨的台北街頭。你正打算回家，手機卻狂震起來。是死黨阿杰的來電。',
+        options: [
+          { text: '滑開接聽：喂？幹嘛啦大半夜的。', next: 'S1' },
+          { text: '掛斷，裝作沒看到', next: 'S0_IGNORE' }
+        ]
+      },
+      S0_IGNORE: {
+        bg: SCENE_IMAGES.STREET_NIGHT, speaker: '系統', effect: 'shake',
+        text: '你按下了拒接。才走沒兩步，手機又狂震起來，這傢伙不接電話不會罷休的。',
+        options: [
+          { text: '受不了奪命連環Call，接聽', next: 'S1' },
+          { text: '把手機直接關機，與世隔絕', next: 'EARLY_EXIT_IGNORE' }
+        ]
+      },
+      S1: {
+        bg: SCENE_IMAGES.STREET_NIGHT, speaker: '阿杰 (語音)',
+        text: '兄弟！救命！我三萬塊的遊戲帳號賣掉了，買家堅持現在『面交拿現金』。但我被我媽反鎖出不去！你能不能幫我跑一趟中山站？',
+        options: [
+          { text: '拿三萬現金路邊面交？聽起來超怪？', next: 'S2_DOUBT' },
+          { text: '幫你可以，跑腿費兩千塊從裡面扣。', next: 'S2_GREED' },
+          { text: '我現在很累想回家了，找別人啦。', next: 'S2_REFUSE' },
+          { text: '沒問題，把地址給我。', next: 'S2_HELP' }
+        ]
+      },
+      S2_REFUSE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
+        text: '拜託啦！我通訊錄打一輪只有你接。這筆錢對我很重要，你今天不幫我拿，我機車會被扣走！我直接給你兩千當車馬費算我求你！',
+        options: [{ text: '唉好啦，下不為例。', next: 'S3' }]
+      },
+      S2_DOUBT: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
+        text: '你想太多了啦！買家是專門做代儲的工作室。我早就把帳號過去了，不拿錢我會虧死。大不了分你兩千！',
+        options: [{ text: '好吧，只幫這一次喔。', next: 'S3' }]
+      },
+      S2_GREED: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
+        text: '沒問題！我就知道兄弟最靠譜。你幫我拿錢，先抽兩千起來當車馬費，剩下的再匯給我！',
+        options: [{ text: '兩千？成交！約在哪？', next: 'S3' }]
+      },
+      S2_HELP: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
+        text: '太感謝了！我就知道你最挺我！你拿到錢先抽一千起來當車馬費，剩下的匯到我的戶頭。',
+        options: [{ text: '謝啦，待會見。', next: 'S3' }]
+      },
+      S3: {
+        bg: SCENE_IMAGES.ALLEY, speaker: '系統',
+        text: '你在中山站陰暗的無尾巷內。一個戴黑色鴨舌帽的男人快步走來，看了一眼你的手機末三碼，把厚重牛皮紙袋塞進你懷裡，轉身就走。',
+        options: [
+          { text: '這太詭異了，當場打開信封點清現金', next: 'S3_CHECK' },
+          { text: '緊張地把錢收進包包，趕快閃人', next: 'S4' },
+          { text: '欸等一下！你真的是買遊戲帳號嗎？', next: 'S3_ASK' },
+          { text: '覺得毛骨悚然，把錢丟在原地直接跑走', next: 'SAFE_EXIT_DROP' }
+        ]
+      },
+      S3_CHECK: {
+        bg: SCENE_IMAGES.ALLEY, speaker: '黑帽男', effect: 'shake',
+        text: '男人猛然回頭，惡狠狠地瞪了你一眼：看什麼看？他媽的這附近有雷，數字不會錯啦，快滾！',
+        options: [{ text: '心裡發毛，但還是把錢帶走去匯給阿杰', next: 'S4' }]
+      },
+      S3_ASK: {
+        bg: SCENE_IMAGES.ALLEY, speaker: '黑帽男', effect: 'shake',
+        text: '男人冷笑了一聲：小屁孩問那麼多幹嘛？拿錢辦事就對了，不該問的別問。',
+        options: [{ text: '有點害怕，但還是把錢帶走去匯給阿杰', next: 'S4' }]
+      },
+      S4: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
+        text: '黑帽回報收到點交了。看你手腳滿快的，膽子也不小。我們工作室缺兼職代購員，一天薪水三千起跳，現金日領，要不要加減賺？',
+        options: [
+          { text: '有興趣，具體工作內容是什麼？', next: 'S5' },
+          { text: '抱歉，我只幫阿杰這次而已。', next: 'S4_DECLINE' },
+          { text: '這絕對是詐騙集團，立刻封鎖', next: 'SAFE_EXIT_BLOCK1' }
+        ]
+      },
+      S4_DECLINE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
+        text: '別急著拒絕嘛，阿杰都在我們這做了好幾單了。只是幫忙跑跑腿領個錢。大學生賺點零用錢不香嗎？考慮一下啦。',
+        options: [
+          { text: '那工作內容到底是什麼？', next: 'S5' },
+          { text: '果斷封鎖對方', next: 'SAFE_EXIT_BLOCK1' }
+        ]
+      },
+      S5: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
+        text: '工作很簡單，就是幫忙過一下買賣虛擬幣的現金。為了避稅，我們會把錢匯到你的個人帳戶，你去ATM領出來交給專員。每一筆讓你抽 3%。',
+        options: [
+          { text: '喔喔避稅我懂，那我要怎麼配合？', next: 'S7' },
+          { text: '用我的帳戶？這樣不會成洗錢戶嗎？', next: 'S6' },
+          { text: '這聽起來就是車手！立刻封鎖', next: 'SAFE_EXIT_BLOCK2' }
+        ]
+      },
+      S6: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (LINE)',
+        text: '你想太多了啦！哪有那麼容易變洗錢。我自己也轉了好幾筆，穩的啦！出事K哥會扛啦。',
+        options: [
+          { text: '好吧，你都有做那我也試試看。', next: 'S7' },
+          { text: '不管，用我的名字我就是怕。拒絕並封鎖', next: 'SAFE_EXIT_BLOCK2' }
+        ]
+      },
+      S7: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)', timeLimit: 12, timeoutNext: 'S8_FORCE',
+        text: '要加入的話，照我們工作室實名認證的規矩。現在拍你的身分證正反面，還有提款卡傳過來。快點，總公司財務要建檔。',
+        options: [
+          { text: '立刻將身分證和提款卡照片傳過去', next: 'S8' },
+          { text: '只傳身分證可以嗎？提款卡不太方便', next: 'S7_PUSH' },
+          { text: '要證件絕對有鬼！立刻封鎖刪除', next: 'SAFE_EXIT_BLOCK3' }
+        ]
+      },
+      S7_PUSH: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)', effect: 'shake',
+        text: '公司規定就是這樣！沒有卡片照財務怎麼核對帳號？你以為我們會盜領你那空空的戶頭喔？要賺錢就快！',
+        options: [
+          { text: '妥協補傳提款卡照片', next: 'S8' },
+          { text: '那我不做了。封鎖', next: 'SAFE_EXIT_BLOCK3' }
+        ]
+      },
+      S8_FORCE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
+        text: '你還在猶豫什麼？你知不知道阿杰幫你擔保了多少？等一下這筆 10 萬塊的手續費 3000 元你不想賺是不是？照片快傳來！',
+        options: [
+          { text: '怕失去賺錢機會，趕快傳送照片', next: 'S8' },
+          { text: '緊迫盯人太不尋常了，直接封鎖', next: 'SAFE_EXIT_BLOCK3' }
+        ]
+      },
+      S8: {
+        bg: SCENE_IMAGES.ATM, speaker: '系統',
+        text: '隔天，戶頭裡真的匯進了 10 萬塊。你走到 ATM 前，插卡、輸入密碼。螢幕發出瑩綠色的光... 只要按下去，就正式越界了。',
+        options: [
+          { text: '深吸一口氣，把10萬現金全領出來', next: 'S9' },
+          { text: '手停在鍵盤上...這筆錢一定不乾淨吧？', next: 'S8_HESITATE' },
+          { text: '抽出提款卡，立刻撥打 165 專線', next: 'SAFE_EXIT_LATE1' },
+          { text: '轉到朋友戶頭藏起來，然後刪對話', next: 'BAD_ENDING_STEAL' }
+        ]
+      },
+      S8_HESITATE: {
+        bg: SCENE_IMAGES.ATM, speaker: 'K哥 (LINE)', effect: 'shake',
+        text: '系統顯示錢進去了，你站在ATM前面怎麼還沒領？快點，不要浪費大家時間。',
+        options: [
+          { text: '被監視的感覺嚇到，趕快領出來', next: 'S9' },
+          { text: '驚覺被監視，立刻抽出卡片逃離並報警', next: 'SAFE_EXIT_LATE1' }
+        ]
+      },
+      S9: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)', timeLimit: 10, timeoutNext: 'S10_THREAT',
+        text: '很好，帶著錢到指定公園廁所交給專員。還有，如果銀行打給你或被警察盤問，你就統一口徑說是要買高階電腦。沒問題吧？',
+        options: [
+          { text: '了解，自己要買電腦，記住了。', next: 'S11_SPIRAL' },
+          { text: '還要對警察說謊？我不幹了，錢還你們！', next: 'S10_THREAT' },
+          { text: '極度恐懼，拿著現金直接跑進警察局', next: 'SAFE_EXIT_LATE2' }
+        ]
+      },
+      S10_THREAT: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (語音)', effect: 'shake', timeLimit: 8, timeoutNext: 'S11_SPIRAL',
+        text: '想退出？你以為在玩扮家家酒？監視器畫面、你的身分證、戶籍地址我全都有！不配合，我現在就叫小弟去你家找你家人『喝茶』！',
+        options: [
+          { text: '對不起我繼續做，拜託別找我家人', next: 'S11_SPIRAL' },
+          { text: '掛斷電話雙手發抖，立刻打給阿杰求救', next: 'S10_AJIE' },
+          { text: '嚇壞了，帶著錢跑去網咖躲起來', next: 'BAD_ENDING_HIDE' }
+        ]
+      },
+      S10_AJIE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
+        text: '兄弟你千萬別惹K哥，他們背後有堂口！你就乖乖把錢交給他們。千萬別報警啊！報警我也會死！',
+        options: [
+          { text: '深深的絕望，只能乖乖去交錢', next: 'S11_SPIRAL' },
+          { text: '連阿杰都嚇成這樣，只能硬著頭皮報警了', next: 'SAFE_EXIT_LATE2' }
+        ]
+      },
+      S11_SPIRAL: {
+        bg: SCENE_IMAGES.ATM, speaker: '系統',
+        text: '接下來的整整一週，你戴著口罩穿梭在 ATM 之間瘋狂領錢。進出的金流越來越大，你的良知也越來越麻木... 你現在到底算什麼？',
+        options: [
+          { text: 'K哥說拉人可抽成，詢問室友要不要打工', next: 'BAD_ENDING_RECRUIT' },
+          { text: '每天提心吊膽受不了，決定切斷聯絡裝死', next: 'BAD_ENDING_SCARED' },
+          { text: '遇到巡邏員警盤查，心理防線崩潰全盤托出', next: 'SAFE_EXIT_LATE3' }
+        ]
+      }
+    };
+
+    const ENDINGS = {
+      EARLY_EXIT_IGNORE: {
+        title: '結局：與我無關的夜晚',
+        content: '你鐵了心掛斷並關機。一個月後，聽說阿杰因為涉嫌洗錢被警察帶走，名下財產全被凍結...',
+        analysis: '【防禦力 S 級】\n你完美避開了開端的「人情勒索」。保持警覺與學會無情拒絕，是保護自己的最好方式。',
+        legal: '【無法律責任】\n未參與行為，完全無罪。',
+        advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或撥打 165 尋求專業建議。'
+      },
+      SAFE_EXIT_DROP: {
+        title: '結局：暗巷中的直覺',
+        content: '在暗巷中面對詭異的黑帽男，你把現金丟在原地轉身就跑。成功避開了危機。',
+        analysis: '【防禦力 A 級】\n接觸到「大量不明現金」與「可疑人物」時，懂得相信直覺、及時煞車。',
+        legal: '【無法律責任】\n因未實際取得或移轉贓款，不構成洗錢防制法之罪責。',
+        advice: '【警訊】答應替朋友在路邊代收來路不明的現金。\n【自救】發覺不對勁立刻離開，事後若遭恐嚇請撥打 165。'
+      },
+      SAFE_EXIT_BLOCK1: {
+        title: '結局：斷絕暴利誘惑',
+        content: '對於高薪誘惑，你果斷選擇封鎖不明人士。保住了你的清白和前途。',
+        analysis: '【防禦力 A 級】\n面對「輕鬆高薪」等詐騙話術，不抱僥倖心態，直接封鎖是最有效的防禦。',
+        legal: '【無法律責任】\n幫朋友面交雖危險，但不知情且僅一次，難以構成犯罪故意。',
+        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作。\n【自救】截圖保留對話，不答應後續要求並封鎖。'
+      },
+      SAFE_EXIT_BLOCK2: {
+        title: '結局：死守帳戶生命線',
+        content: '當對方提出要「使用你的銀行帳戶」進行匯款時，你果斷拒絕並封鎖了他。',
+        analysis: '【防禦力 A 級】\n你敏銳地抓到了最重要紅旗：「絕對不能把帳戶提供給別人使用」。',
+        legal: '【無法律責任】\n未交付帳戶，成功避免成為人頭戶。',
+        advice: '【警訊】對方提出「匯款到你的帳戶，再由你領出」。\n【自救】100%是詐騙，立刻封鎖並撥打 165 舉報。'
+      },
+      SAFE_EXIT_BLOCK3: {
+        title: '結局：拒絕實名制陷阱',
+        content: '對方要求提供身分證與提款卡照片的瞬間，你意識到不對勁並立刻封鎖。',
+        analysis: '【防禦力 B+ 級】\n任何要求「寄送提款卡及密碼」或「拍卡片照」，都是騙車簿的手法。',
+        legal: '【無法律責任】\n未交出實體卡片、密碼，未構成幫助詐欺。',
+        advice: '【警訊】對方要求拍攝「提款卡」與「身分證」。\n【自救】絕對不要傳送！若已傳送請立刻撥打 165 並通知銀行掛失。'
+      },
+      SAFE_EXIT_LATE1: {
+        title: '結局：懸崖勒馬的冷汗',
+        content: '看著帳戶裡來路不明的 10 萬元，你選擇了撥打 165 並報警。',
+        analysis: '【防禦力 C 級】\n在「提領」這個構成犯罪既遂的關鍵動作前冷靜下來，將損害降到最低。',
+        legal: '【無刑事責任】\n未提領贓款不構成犯罪。但帳戶將被列為「警示帳戶」凍結。',
+        advice: '【警訊】戶頭收到不明大筆款項。\n【自救】絕對不可提領！第一時間帶證件親赴派出所報案凍結款項。'
+      },
+      SAFE_EXIT_LATE2: {
+        title: '結局：痛苦的坦白爭取',
+        content: '你已經親手提領了現金，但在遭到黑道恐嚇時，你選擇鼓起勇氣帶著現金去自首。',
+        analysis: '【防禦力 D 級】\n第一時間保留對話並報警自首，永遠是爭取減刑的最佳解。',
+        legal: '【涉嫌幫助詐欺罪】\n主動攜帶贓款自首，極高機率能獲檢察官緩起訴。',
+        advice: '【警訊】對方教導你對警察說謊或用語音恐嚇威脅。\n【自救】不要因為害怕就繼續做！立刻尋求警方保護與自首。'
+      },
+      SAFE_EXIT_LATE3: {
+        title: '結局：越陷越深的懊悔',
+        content: '你在多次提領後才向警方坦白。法官難以採信你「不知情」，需面對刑責與高額賠償。',
+        analysis: '【危險級別】\n連續得手會被認定具「未必故意」。越晚報案代價越大。',
+        legal: '【加重詐欺罪共犯】\n面臨有期徒刑，且必須承擔民事連帶賠償責任。',
+        advice: '【警訊】第一次親手提領他人匯入的現金並獲高報酬。\n【自救】立刻停止提款，撥打 165 前往警局自首。'
+      },
+      BAD_ENDING_STEAL: {
+        title: '結局：黑吃黑的慘痛代價',
+        content: '你自作聰明轉走詐騙集團的錢，警方透過金流追蹤到你，以詐欺及侵占罪逮捕。',
+        analysis: '【系統崩潰】\n黑吃黑不僅成為共犯，還會引來黑幫暴力討債。',
+        legal: '【詐欺/洗錢/侵占罪】\n私吞黑錢罪加一等。',
+        advice: '【警訊】產生想把不明匯入款據為己有的念頭。\n【自救】絕不能挪用！帶著存摺前往警署報案。'
+      },
+      BAD_ENDING_HIDE: {
+        title: '結局：無處可逃的通緝犯',
+        content: '你帶著錢躲起來。幾個月後被通緝逮捕，法官視為惡性重大直接發監執行。',
+        analysis: '【危險警告】\n逃避只會失去主動說明的機會，車手身分幾乎 100% 會被抓。',
+        legal: '【加重詐欺/通緝】\n逃亡屬犯後態度不佳，無法獲得減刑。',
+        advice: '【警訊】產生只要逃跑就抓不到的誤判。\n【自救】跑路絕不是辦法，請向家人坦白並尋求警方協助。'
+      },
+      BAD_ENDING_SCARED: {
+        title: '結局：自欺欺人的鴕鳥',
+        content: '你切斷聯絡假裝沒事。三個月後警方持搜索票來到你家，你面臨刑期與天價賠償。',
+        analysis: '【危險警告】\n提領過一次犯罪就成立，中途退出不能一筆勾銷。',
+        legal: '【加重詐欺罪共犯】\n面臨 1-7 年有期徒刑及高額民事求償。',
+        advice: '【警訊】害怕而選擇裝死躲在家。\n【自救】逃避只會加重刑責，請求長輩陪同自首。'
+      },
+      BAD_ENDING_RECRUIT: {
+        title: '結局：深淵的惡魔幹部',
+        content: '你開始拉同學下水。晉升為幹部，被依《組織犯罪防制條例》起訴，面臨十年以上重刑。',
+        analysis: '【徹底崩潰】\n拉人下水會讓你成為萬劫不復的加重犯。',
+        legal: '【組織犯罪防制條例】\n面臨 3-10 年極重刑罰，一生全毀。',
+        advice: '【警訊】想為了獎金把身邊朋友拖下水。\n【自救】遇到招募，請立刻撥打 165 檢舉防朋友受害。'
+      }
+    };
+
+    // --- 核心邏輯 ---
+    // ✅ 請將下方 URL 換成你的 Google Apps Script 部署網址
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycby39S9dN4lQQ1_voJlX5Qh_xt0wn5cZF9e6GSLrCuOsokuuDIVybo6bO33p2ukebitXSQ/exec';
+
+    let currentMinutes = 30; // 模擬 22:30 開始
+    let currentSpeaker = '';
+    let currentNodeId = '';
+    let isTransitioning = false;
+    let qteAnimationId;
+    let qteTimeoutNext;
+    let gameStartTime = null; // 記錄遊戲開始時間點
+
+    lucide.createIcons();
+
+    // 預載所有場景圖片，避免切換時卡頓
+    function preloadImages() {
+      Object.values(SCENE_IMAGES).forEach(url => {
+        const img = new Image();
+        img.src = url;
+      });
+    }
+    preloadImages();
+
+    // 取得動態時間
+    function getCurrentTime() {
+      let h = 22 + Math.floor(currentMinutes / 60);
+      let m = currentMinutes % 60;
+      if (h >= 24) h = h - 24;
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    }
+
+    function setView(viewId) {
+      document.getElementById('menu-view').classList.add('hidden');
+      document.getElementById('playing-view').classList.add('hidden');
+      document.getElementById('ending-view').classList.add('hidden');
+
+      const view = document.getElementById(viewId);
+      view.classList.remove('hidden');
+      if (viewId === 'menu-view') {
+        view.classList.remove('opacity-0');
+      }
+      lucide.createIcons();
+    }
+
+    function startGame() {
+      gameStartTime = Date.now(); // ✅ 記錄遊戲開始時間
+      // 淡出選單
+      document.getElementById('menu-view').classList.add('opacity-0');
+      setTimeout(() => {
+        setView('playing-view');
+        document.getElementById('chat-history').innerHTML = `
+                    <div class="text-center w-full my-4 text-[11px] text-gray-500 font-bold tracking-widest">
+                        今天 ${getCurrentTime()}
+                    </div>
+                    <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>`;
+        renderNode('START');
+      }, 700);
+    }
+
+    // 優化平滑捲動：確保能正確捲動到底部
+    function scrollToBottom() {
+      const history = document.getElementById('chat-history');
+      setTimeout(() => {
+        history.scrollTo({ top: history.scrollHeight, behavior: 'smooth' });
+      }, 50);
+    }
+
+    // 推播通知效果
+    function showPushNotification(name, text) {
+      const notif = document.getElementById('push-notification');
+      document.getElementById('push-title').innerText = name;
+      document.getElementById('push-desc').innerText = text.substring(0, 15) + '...';
+
+      notif.classList.remove('hidden');
+      notif.classList.remove('notify-anim');
+      void notif.offsetWidth; // trigger reflow
+      notif.classList.add('notify-anim');
+
+      setTimeout(() => { notif.classList.add('hidden'); }, 4000);
+    }
+
+    // 更新 Header 資訊
+    function updateChatHeader(speakerStr) {
+      if (speakerStr === '系統') return;
+
+      // 如果換人了，觸發推播通知感
+      const baseName = speakerStr.split(' ')[0];
+      if (currentSpeaker !== '' && currentSpeaker !== baseName && !speakerStr.includes('系統')) {
+        showPushNotification(baseName, "傳送了新訊息");
+      }
+      currentSpeaker = baseName;
+
+      const nameEl = document.getElementById('header-name');
+      const avatarEl = document.getElementById('header-avatar');
+      nameEl.innerText = baseName;
+
+      if (speakerStr.includes('阿杰')) {
+        avatarEl.innerHTML = '<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" class="w-full h-full object-cover">';
+      } else if (speakerStr.includes('K哥') || speakerStr.includes('黑帽')) {
+        avatarEl.innerHTML = '<i data-lucide="skull" style="width:18px; color:#ef4444;"></i>';
+      } else {
+        avatarEl.innerHTML = '<i data-lucide="user"></i>';
+      }
+      lucide.createIcons();
+    }
+
+    // 打字動畫 (仿真延遲)
+    function showTypingIndicator(speaker) {
+      return new Promise(resolve => {
+        if (speaker === '系統') { resolve(); return; }
+
+        const history = document.getElementById('chat-history');
+        const bubbleId = 'typing-' + Date.now();
+        const avatar = speaker.includes('阿杰')
+          ? `<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" class="w-7 h-7 rounded-full object-cover shrink-0">`
+          : `<div class="w-7 h-7 bg-gray-700 rounded-full flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-gray-400"></i></div>`;
+
+        const layout = `
+                    <div id="${bubbleId}" class="flex items-end gap-2 w-full animate-fade-in my-1.5 pl-2 pr-12">
+                        ${avatar}
+                        <div class="bg-[#27272a] px-4 py-3 rounded-2xl rounded-bl-sm border border-white/5 shadow-sm">
+                            <div class="flex items-center gap-1.5 h-3">
+                                <span class="typing-dot"></span>
+                                <span class="typing-dot"></span>
+                                <span class="typing-dot"></span>
+                            </div>
+                        </div>
+                    </div>`;
+
+        document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', layout);
+        lucide.createIcons();
+        scrollToBottom();
+
+        // 模擬真實打字等待時間 (1.5 ~ 2 秒)
+        setTimeout(() => {
+          const el = document.getElementById(bubbleId);
+          if (el) el.remove();
+          resolve();
+        }, 1500 + Math.random() * 500);
+      });
+    }
+
+    // 生成訊息泡泡
+    function appendBubble(speaker, text, type) {
+      const timeStr = getCurrentTime();
+      const bubbleId = 'msg-' + Date.now();
+      let html = '';
+
+      // 判斷是否為語音訊息
+      let contentHTML = text;
+      if (speaker.includes('(語音)')) {
+        contentHTML = `
+                    <div class="flex items-center gap-3 w-48">
+                        <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="play" class="w-4 h-4 text-white ml-0.5"></i>
+                        </button>
+                        <div class="flex-1 h-3 flex items-center gap-0.5 opacity-70">
+                            <div class="w-1 bg-white h-full rounded-full animate-pulse"></div>
+                            <div class="w-1 bg-white h-1/2 rounded-full"></div>
+                            <div class="w-1 bg-white h-3/4 rounded-full animate-pulse" style="animation-delay: 0.1s"></div>
+                            <div class="w-1 bg-white h-1/3 rounded-full"></div>
+                            <div class="w-1 bg-white h-full rounded-full"></div>
+                            <div class="w-1 bg-white h-2/3 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                            <div class="w-1 bg-white h-1/2 rounded-full"></div>
+                        </div>
+                        <span class="text-[11px] font-mono">0:${Math.floor(Math.random() * 15 + 5).toString().padStart(2, '0')}</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 mt-2 border-t border-white/10 pt-1.5 italic">「${text}」</p>
+                `;
+      }
+
+      if (type === 'outgoing') {
+        html = `
+                    <div class="flex items-end justify-end gap-1.5 w-full my-1.5 pl-12 pr-2 msg-pop">
+                        <div class="flex flex-col items-end gap-0.5 mb-1">
+                            <span id="${bubbleId}-read" class="text-[9px] text-blue-400 font-bold opacity-0 transition-opacity duration-500">已讀</span>
+                            <span class="text-[9px] text-gray-500">${timeStr}</span>
+                        </div>
+                        <div class="bg-blue-600 text-white px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow-sm text-[15px] leading-relaxed">
+                            ${contentHTML}
+                        </div>
+                    </div>`;
+      } else if (speaker === '系統') {
+        html = `
+                    <div class="flex justify-center w-full my-4 animate-fade-in">
+                        <div class="bg-gray-800/80 text-gray-300 text-[12px] px-4 py-2 rounded-lg border border-gray-700 backdrop-blur-md max-w-[85%] text-center leading-relaxed">
+                            ${text}
+                        </div>
+                    </div>`;
+      } else {
+        const avatar = speaker.includes('阿杰')
+          ? `<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" class="w-7 h-7 rounded-full object-cover shrink-0">`
+          : `<div class="w-7 h-7 bg-gray-700 rounded-full flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-gray-400"></i></div>`;
+
+        html = `
+                    <div class="flex items-end gap-2 w-full my-1.5 pl-2 pr-12 msg-pop">
+                        ${avatar}
+                        <div class="bg-[#27272a] text-white px-3.5 py-2.5 rounded-2xl rounded-bl-sm border border-white/5 shadow-sm text-[15px] leading-relaxed">
+                            ${contentHTML}
+                        </div>
+                        <span class="text-[9px] text-gray-500 mb-1">${timeStr}</span>
+                    </div>`;
+      }
+
+      document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', html);
+      lucide.createIcons();
+      scrollToBottom();
+
+      // 如果是發送的訊息，模擬「已讀」延遲
+      if (type === 'outgoing') {
+        setTimeout(() => {
+          const readEl = document.getElementById(`${bubbleId}-read`);
+          if (readEl) readEl.classList.remove('opacity-0');
+        }, 800 + Math.random() * 500); // 0.8s ~ 1.3s 後顯示已讀
+      }
+    }
+
+    // QTE 計時器
+    function startTimer(duration, timeoutNext) {
+      const bar = document.getElementById('timer-bar-fill');
+      const container = document.getElementById('timer-container');
+      const alertBox = document.getElementById('qte-alert');
+
+      container.classList.remove('hidden');
+      alertBox.classList.remove('hidden');
+      alertBox.classList.add('flex');
+
+      qteTimeoutNext = timeoutNext;
+      let start = Date.now();
+      let end = start + duration * 1000;
+
+      function tick() {
+        let now = Date.now();
+        let remaining = Math.max(0, end - now);
+        let percentage = (remaining / (duration * 1000)) * 100;
+        bar.style.width = percentage + '%';
+
+        if (remaining > 0) {
+          qteAnimationId = requestAnimationFrame(tick);
+        } else {
+          stopTimer();
+          handleOptionSelect(qteTimeoutNext, null);
+        }
+      }
+      qteAnimationId = requestAnimationFrame(tick);
+    }
+
+    function stopTimer() {
+      cancelAnimationFrame(qteAnimationId);
+      document.getElementById('timer-container').classList.add('hidden');
+      document.getElementById('qte-alert').classList.add('hidden');
+      document.getElementById('qte-alert').classList.remove('flex');
+    }
+
+    // 渲染主循環
+    async function renderNode(nodeId) {
+      currentNodeId = nodeId;
+      const node = STORY[nodeId];
+
+      if (!node && ENDINGS[nodeId]) {
+        renderEnding(nodeId);
+        return;
+      }
+
+      // 更新背景與震動（只在圖片真的不同時才更新，避免無謂重繪）
+      const bgEl = document.getElementById('scene-bg');
+      const newBg = `url('${node.bg}')`;
+      if (bgEl.style.backgroundImage !== newBg) {
+        bgEl.style.backgroundImage = newBg;
+      }
+      if (node.effect === 'shake') {
+        document.getElementById('phone-frame').classList.remove('animate-shake');
+        void document.getElementById('phone-frame').offsetWidth; // restart anim
+        document.getElementById('phone-frame').classList.add('animate-shake');
+      }
+
+      updateChatHeader(node.speaker);
+
+      // 推進時間 (每句對話過 0~2 分鐘)
+      currentMinutes += Math.floor(Math.random() * 3);
+
+      // 打字與顯示
+      await showTypingIndicator(node.speaker);
+      appendBubble(node.speaker, node.text, 'incoming');
+
+      // 準備選項面板
+      const optionsArea = document.getElementById('options-area');
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      if (node.options) {
+        // 保持原始選項順序，確保敘事邏輯連貫
+        node.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = "w-full bg-[#27272a] hover:bg-[#3f3f46] text-white border border-white/5 p-3.5 rounded-xl text-[14.5px] font-medium tracking-wide transition-colors text-center active:scale-[0.98] shadow-sm";
+          btn.innerText = opt.text;
+          btn.onclick = () => handleOptionSelect(opt.next, opt.text);
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      // 滑出選項面板並確保捲動到底部
+      optionsArea.classList.remove('translate-y-full');
+      scrollToBottom();
+
+      if (node.timeLimit) {
+        startTimer(node.timeLimit, node.timeoutNext);
+      }
+      isTransitioning = false;
+    }
+
+    function handleOptionSelect(nextId, optionText) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      stopTimer();
+
+      // 滑下收起選項面板
+      const optionsArea = document.getElementById('options-area');
+      optionsArea.classList.add('translate-y-full');
+
+      if (optionText) {
+        appendBubble('我', optionText, 'outgoing');
+      }
+
+      // 留時間給「已讀」動畫跑完再進入下一節點
+      setTimeout(() => {
+        renderNode(nextId);
+      }, 1800);
+    }
+
+    function renderEnding(endingId) {
+      const ending = ENDINGS[endingId];
+      document.getElementById('ending-title').innerText = ending.title;
+      document.getElementById('ending-content').innerText = ending.content;
+      document.getElementById('ending-analysis').innerText = ending.analysis;
+
+      const legalContainer = document.getElementById('legal-container');
+      if (ending.legal) {
+        legalContainer.classList.remove('hidden');
+        document.getElementById('ending-legal').innerText = ending.legal;
+      }
+
+      const adviceContainer = document.getElementById('advice-container');
+      if (ending.advice) {
+        adviceContainer.classList.remove('hidden');
+        document.getElementById('ending-advice').innerText = ending.advice;
+      }
+
+      // ✅ 回傳成果資料到 Google Sheets
+      if (SHEET_URL && !SHEET_URL.includes('請貼上')) {
+        const durationSec = gameStartTime ? Math.round((Date.now() - gameStartTime) / 1000) : 0;
+        const rankMatch = ending.analysis.match(/【(?:防禦力\s?)?(.*?)(?:\s?級)?】/);
+        const defenseRank = rankMatch ? rankMatch[1].trim() : '未知';
+
+        fetch(SHEET_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            endingId: endingId,
+            endingTitle: ending.title,
+            defenseRank: defenseRank,
+            durationSec: durationSec,
+            userId: generateUID()
+          })
+        }).catch(() => { }); // 靜默失敗，不影響遊戲
+      }
+
+      setTimeout(() => { setView('ending-view'); }, 1000);
+    }
+
+    // 分享結局功能（支援 Web Share API，不支援則複製到剪貼簿）
+    function shareEnding() {
+      const title = document.getElementById('ending-title').innerText;
+      const shareData = {
+        title: '午夜委託 - 沉浸式通訊解謎',
+        text: `我在「午夜委託」中的結局是：${title}\n你能識破詐騙集團的陷阱嗎？`,
+        url: location.href
+      };
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => { });
+      } else {
+        const text = `${shareData.text}\n${shareData.url}`;
+        navigator.clipboard.writeText(text).then(() => {
+          alert('已複製到剪貼簿！可貼上分享給朋友。');
+        }).catch(() => {
+          alert('請手動複製連結分享：' + location.href);
+        });
+      }
+    }
+
+    // 產生/取得匿名使用者 ID（存於 localStorage）
+    function generateUID() {
+      let uid = localStorage.getItem('game_uid');
+      if (!uid) {
+        uid = 'u_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('game_uid', uid);
+      }
+      return uid;
+    }
+
+    // 初始化
+    setView('menu-view');
+  </script>
+</body>
+
+</html>
