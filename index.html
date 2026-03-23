@@ -355,11 +355,27 @@
           <p id="ending-legal" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
         </div>
 
+        <!-- 心理陷阱分析區塊 (新加入) -->
+        <div id="psych-container" class="bg-purple-950/20 p-4 rounded-2xl border border-purple-900/30 hidden">
+          <h3 class="text-purple-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="brain-circuit" style="width: 14px; height: 14px;"></i> 致命心理陷阱
+          </h3>
+          <p id="ending-psych" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
+        </div>
+
         <div id="advice-container" class="bg-yellow-950/20 p-4 rounded-2xl border border-yellow-900/30 hidden">
           <h3 class="text-yellow-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
             <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> 致命點與自救
           </h3>
           <p id="ending-advice" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+        <!-- 真實案例警示區塊 (新加入) -->
+        <div id="case-container" class="bg-gray-800/50 p-4 rounded-2xl border border-gray-600/30 hidden">
+          <h3 class="text-gray-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="newspaper" style="width: 14px; height: 14px;"></i> 真實新聞案例
+          </h3>
+          <p id="ending-case" class="text-gray-400 text-[12px] leading-relaxed italic"></p>
         </div>
 
         <button onclick="location.reload()"
@@ -444,66 +460,107 @@
       },
       S1: {
         bg: SCENE_IMAGES.STREET_NIGHT, speaker: '阿杰 (語音)',
-        text: '兄弟！救命！我三萬塊的遊戲帳號賣掉了，買家堅持現在『面交拿現金』。但我被我媽反鎖出不去！你能不能幫我跑一趟中山站？',
+        text: '兄弟！救命啊！你現在有空嗎？拜託拜託，超級緊急的！',
         options: [
-          { text: '拿三萬現金路邊面交？聽起來超怪？', next: 'S2_DOUBT' },
+          { text: '怎麼了？你聲音怎麼這麼慌？', next: 'S1B' },
+          { text: '大半夜的你又出什麼事了？', next: 'S1B' }
+        ]
+      },
+      S1B: {
+        bg: SCENE_IMAGES.STREET_NIGHT, speaker: '阿杰 (語音)',
+        text: '我那個練了兩年的遊戲帳號終於賣掉了！三萬塊！但買家說他只做現金面交，而且堅持要在今晚十一點前拿到帳號驗證碼，不然就取消交易。',
+        options: [
+          { text: '三萬？哪個遊戲帳號值這麼多？', next: 'S1C' },
+          { text: '那你自己去拿錢啊？', next: 'S1C' }
+        ]
+      },
+      S1C: {
+        bg: SCENE_IMAGES.STREET_NIGHT, speaker: '阿杰 (語音)',
+        text: '我段考作弊被我媽抓到，她把門反鎖，我現在根本出不去！我通訊錄打了一輪，其他人不是關機就是已讀不回，只剩你了。拜託，中山站二號出口附近，幫我跑一趟就好！',
+        options: [
+          { text: '路邊面交拿三萬現金？聽起來超怪...', next: 'S2_DOUBT' },
           { text: '幫你可以，跑腿費兩千塊從裡面扣。', next: 'S2_GREED' },
-          { text: '我現在很累想回家了，找別人啦。', next: 'S2_REFUSE' },
-          { text: '沒問題，把地址給我。', next: 'S2_HELP' }
+          { text: '我明天還要模考，很累想回家了。', next: 'S2_REFUSE' },
+          { text: '好啦好啦，把地址傳給我。', next: 'S2_HELP' }
         ]
       },
       S2_REFUSE: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
-        text: '拜託啦！我通訊錄打一輪只有你接。這筆錢對我很重要，你今天不幫我拿，我機車會被扣走！我直接給你兩千當車馬費算我求你！',
+        text: '拜託啦！你是我最後一個希望了。這三萬我要拿去繳我機車的分期，明天不繳車就被扣走了！我給你兩千當車馬費，算我求你！',
         options: [{ text: '唉好啦，下不為例。', next: 'S3' }]
       },
       S2_DOUBT: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
-        text: '你想太多了啦！買家是專門做代儲的工作室。我早就把帳號過去了，不拿錢我會虧死。大不了分你兩千！',
+        text: '你想太多了啦！買家是專門做代儲的工作室，他們常常這樣現金交易。我帳號早就移轉過去了，不拿錢我虧死。大不了分你兩千當辛苦費！',
         options: [{ text: '好吧，只幫這一次喔。', next: 'S3' }]
       },
       S2_GREED: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
-        text: '沒問題！我就知道兄弟最靠譜。你幫我拿錢，先抽兩千起來當車馬費，剩下的再匯給我！',
+        text: '沒問題！我就知道兄弟最靠譜。你幫我拿錢，先抽兩千起來當車馬費，剩下的再轉帳給我就好！',
         options: [{ text: '兩千？成交！約在哪？', next: 'S3' }]
       },
       S2_HELP: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
-        text: '太感謝了！我就知道你最挺我！你拿到錢先抽一千起來當車馬費，剩下的匯到我的戶頭。',
-        options: [{ text: '謝啦，待會見。', next: 'S3' }]
+        text: '太感謝了！我就知道你最挺我。你到了之後拿到錢，先抽一千起來當車馬費，剩下的匯到我戶頭。我把位置傳給你！',
+        options: [{ text: '好，我出發了。', next: 'S3' }]
       },
       S3: {
         bg: SCENE_IMAGES.ALLEY, speaker: '系統',
-        text: '你在中山站陰暗的無尾巷內。一個戴黑色鴨舌帽的男人快步走來，看了一眼你的手機末三碼，把厚重牛皮紙袋塞進你懷裡，轉身就走。',
+        text: '你來到中山站二號出口旁的窄巷。路燈忽明忽暗，空氣中混著垃圾桶的酸臭味，遠處水溝蓋流水聲迴盪。一個戴黑色鴨舌帽、穿深色連帽外套的男人快步走來，低頭看了一眼你手機末三碼，把一個厚重的牛皮紙袋塞進你懷裡，轉身就走，全程不到十秒。',
         options: [
           { text: '這太詭異了，當場打開信封點清現金', next: 'S3_CHECK' },
           { text: '緊張地把錢收進包包，趕快閃人', next: 'S4' },
-          { text: '欸等一下！你真的是買遊戲帳號嗎？', next: 'S3_ASK' },
+          { text: '欸等一下！你真的是買遊戲帳號的人嗎？', next: 'S3_ASK' },
+          { text: '偷偷用手機拍下男人的背影再離開', next: 'S3_PHOTO' },
           { text: '覺得毛骨悚然，把錢丟在原地直接跑走', next: 'SAFE_EXIT_DROP' }
         ]
       },
       S3_CHECK: {
         bg: SCENE_IMAGES.ALLEY, speaker: '黑帽男', effect: 'shake',
-        text: '男人猛然回頭，惡狠狠地瞪了你一眼：看什麼看？他媽的這附近有雷，數字不會錯啦，快滾！',
-        options: [{ text: '心裡發毛，但還是把錢帶走去匯給阿杰', next: 'S4' }]
+        text: '男人猛然回頭，惡狠狠地瞪你一眼。「看什麼看？這附近有雷，數字不會錯啦！」他壓低帽沿湊近你的臉：「快滾，別在這裡磨蹭。」',
+        options: [{ text: '心臟狂跳，但還是把錢帶走去匯給阿杰', next: 'S4' }]
       },
       S3_ASK: {
         bg: SCENE_IMAGES.ALLEY, speaker: '黑帽男', effect: 'shake',
-        text: '男人冷笑了一聲：小屁孩問那麼多幹嘛？拿錢辦事就對了，不該問的別問。',
+        text: '男人冷笑了一聲，嚼著檳榔的嘴角微微上揚：「小屁孩問那麼多幹嘛？拿錢辦事就對了，不該問的別問。識相點。」',
         options: [{ text: '有點害怕，但還是把錢帶走去匯給阿杰', next: 'S4' }]
+      },
+      S3_PHOTO: {
+        bg: SCENE_IMAGES.ALLEY, speaker: '系統',
+        text: '你假裝看手機，偷偷拍了一張男人的背影。照片裡只看到模糊的黑色外套和鴨舌帽。你把照片傳給阿杰，他秒回：「不用拍啦，那是買家的跑腿小弟，正常的啦！錢拿到就好。」',
+        options: [
+          { text: '既然阿杰說正常，那就把錢帶走吧', next: 'S4' },
+          { text: '越想越不對勁，把錢放下離開', next: 'SAFE_EXIT_DROP' }
+        ]
       },
       S4: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
         text: '黑帽回報收到點交了。看你手腳滿快的，膽子也不小。我們工作室缺兼職代購員，一天薪水三千起跳，現金日領，要不要加減賺？',
         options: [
-          { text: '有興趣，具體工作內容是什麼？', next: 'S5' },
+          { text: '有興趣，具體工作內容是什麼？', next: 'S4_AJIE_PUSH' },
           { text: '抱歉，我只幫阿杰這次而已。', next: 'S4_DECLINE' },
-          { text: '這絕對是詐騙集團，立刻封鎖', next: 'SAFE_EXIT_BLOCK1' }
+          { text: '不認識的人突然找我？立刻封鎖', next: 'SAFE_EXIT_BLOCK1' }
+        ]
+      },
+      S4_AJIE_PUSH: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (LINE)',
+        text: '對對對！我也在他們這做了好幾單了，穩的啦。真的很簡單，就是跑跑腿而已。你不是說你段考完很缺錢嗎？機會難得欸！',
+        options: [
+          { text: '連阿杰都掛保證了，那到底做什麼？', next: 'S5' },
+          { text: '等等，你也在做？那你怎麼不自己跑？', next: 'S4B_DOUBT' }
+        ]
+      },
+      S4B_DOUBT: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (LINE)',
+        text: '我被我媽監控中啊你忘了？而且他們需要更多人輪流跑才不會被銀行注意。K哥說你條件很好，不做太可惜了！',
+        options: [
+          { text: '好吧，具體做什麼說來聽聽', next: 'S5' },
+          { text: '這整件事太詭異了，封鎖', next: 'SAFE_EXIT_BLOCK1' }
         ]
       },
       S4_DECLINE: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
-        text: '別急著拒絕嘛，阿杰都在我們這做了好幾單了。只是幫忙跑跑腿領個錢。大學生賺點零用錢不香嗎？考慮一下啦。',
+        text: '別急著拒絕嘛。只是幫忙跑跑腿領個錢，比打工輕鬆多了。高中生打工時薪才一百多，我們一天三千起跳，你好好考慮。',
         options: [
           { text: '那工作內容到底是什麼？', next: 'S5' },
           { text: '果斷封鎖對方', next: 'SAFE_EXIT_BLOCK1' }
@@ -511,16 +568,24 @@
       },
       S5: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)',
-        text: '工作很簡單，就是幫忙過一下買賣虛擬幣的現金。為了避稅，我們會把錢匯到你的個人帳戶，你去ATM領出來交給專員。每一筆讓你抽 3%。',
+        text: '工作很簡單。我們做虛擬貨幣買賣，為了節稅，會把客戶的現金匯到你的帳戶，你去 ATM 領出來交給我們的專員。每一筆讓你抽 3%，十萬就是三千塊。',
         options: [
-          { text: '喔喔避稅我懂，那我要怎麼配合？', next: 'S7' },
-          { text: '用我的帳戶？這樣不會成洗錢戶嗎？', next: 'S6' },
+          { text: '聽起來滿簡單的，我要怎麼配合？', next: 'S5_AJIE' },
+          { text: '用我的帳戶？這會不會變洗錢人頭？', next: 'S6' },
           { text: '這聽起來就是車手！立刻封鎖', next: 'SAFE_EXIT_BLOCK2' }
+        ]
+      },
+      S5_AJIE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (LINE)',
+        text: '就這樣而已啦，超簡單的！我上個月做了五筆賺了快一萬五，比在超商打工爽多了。你不做真的虧到爆 🔥',
+        options: [
+          { text: '好吧那我試試看，要怎麼開始？', next: 'S7' },
+          { text: '等等，這真的合法嗎？', next: 'S6' }
         ]
       },
       S6: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (LINE)',
-        text: '你想太多了啦！哪有那麼容易變洗錢。我自己也轉了好幾筆，穩的啦！出事K哥會扛啦。',
+        text: '你想太多了啦！哪有那麼容易變洗錢。我自己也跑了好幾筆，穩的啦！出事的話K哥會扛。你看我現在不是好好的嗎？放心啦！',
         options: [
           { text: '好吧，你都有做那我也試試看。', next: 'S7' },
           { text: '不管，用我的名字我就是怕。拒絕並封鎖', next: 'SAFE_EXIT_BLOCK2' }
@@ -528,7 +593,7 @@
       },
       S7: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)', timeLimit: 12, timeoutNext: 'S8_FORCE',
-        text: '要加入的話，照我們工作室實名認證的規矩。現在拍你的身分證正反面，還有提款卡傳過來。快點，總公司財務要建檔。',
+        text: '【系統提示：K哥傳送了一張寫著「公司實名認證制度」的截圖】\n要加入的話，照規矩來。現在拍你的身分證正反面，還有提款卡傳過來。快點，財務要建檔才能匯款給你。',
         options: [
           { text: '立刻將身分證和提款卡照片傳過去', next: 'S8' },
           { text: '只傳身分證可以嗎？提款卡不太方便', next: 'S7_PUSH' },
@@ -537,7 +602,7 @@
       },
       S7_PUSH: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)', effect: 'shake',
-        text: '公司規定就是這樣！沒有卡片照財務怎麼核對帳號？你以為我們會盜領你那空空的戶頭喔？要賺錢就快！',
+        text: '公司規定就是這樣！沒有卡片照財務怎麼核對帳戶？你以為我們會盜領你那空空的戶頭喔？別浪費我時間，要賺錢就快！',
         options: [
           { text: '妥協補傳提款卡照片', next: 'S8' },
           { text: '那我不做了。封鎖', next: 'SAFE_EXIT_BLOCK3' }
@@ -553,25 +618,25 @@
       },
       S8: {
         bg: SCENE_IMAGES.ATM, speaker: '系統',
-        text: '隔天，戶頭裡真的匯進了 10 萬塊。你走到 ATM 前，插卡、輸入密碼。螢幕發出瑩綠色的光... 只要按下去，就正式越界了。',
+        text: '隔天下午，手機震動：【銀行通知：您的帳戶已轉入 NT$100,000】。你走到超商 ATM 前，旁邊還有個阿伯在等。你插卡、輸入密碼，螢幕發出瑩綠色的光... 只要按下去，就正式越界了。',
         options: [
           { text: '深吸一口氣，把10萬現金全領出來', next: 'S9' },
           { text: '手停在鍵盤上...這筆錢一定不乾淨吧？', next: 'S8_HESITATE' },
           { text: '抽出提款卡，立刻撥打 165 專線', next: 'SAFE_EXIT_LATE1' },
-          { text: '轉到朋友戶頭藏起來，然後刪對話', next: 'BAD_ENDING_STEAL' }
+          { text: '心生貪念，轉到朋友戶頭藏起來', next: 'BAD_ENDING_STEAL' }
         ]
       },
       S8_HESITATE: {
         bg: SCENE_IMAGES.ATM, speaker: 'K哥 (LINE)', effect: 'shake',
-        text: '系統顯示錢進去了，你站在ATM前面怎麼還沒領？快點，不要浪費大家時間。',
+        text: '系統顯示錢進去了，你站在ATM前面怎麼還沒領？快點，不要浪費大家時間。監視器看得到你喔。',
         options: [
-          { text: '被監視的感覺嚇到，趕快領出來', next: 'S9' },
+          { text: '被監視的感覺嚇到手心冒汗，趕快領出來', next: 'S9' },
           { text: '驚覺被監視，立刻抽出卡片逃離並報警', next: 'SAFE_EXIT_LATE1' }
         ]
       },
       S9: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: 'K哥 (LINE)', timeLimit: 10, timeoutNext: 'S10_THREAT',
-        text: '很好，帶著錢到指定公園廁所交給專員。還有，如果銀行打給你或被警察盤問，你就統一口徑說是要買高階電腦。沒問題吧？',
+        text: '很好，帶著錢到二二八公園廁所交給專員。還有，如果銀行打給你或被警察盤問，你就統一口徑說是要「買高階電腦」。沒問題吧？',
         options: [
           { text: '了解，自己要買電腦，記住了。', next: 'S11_SPIRAL' },
           { text: '還要對警察說謊？我不幹了，錢還你們！', next: 'S10_THREAT' },
@@ -589,7 +654,7 @@
       },
       S10_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN, speaker: '阿杰 (語音)',
-        text: '兄弟你千萬別惹K哥，他們背後有堂口！你就乖乖把錢交給他們。千萬別報警啊！報警我也會死！',
+        text: '兄弟你千萬別惹K哥，他們背後有竹聯幫堂口！你就乖乖把錢交給他們。千萬別報警啊！報警我也會死！',
         options: [
           { text: '深深的絕望，只能乖乖去交錢', next: 'S11_SPIRAL' },
           { text: '連阿杰都嚇成這樣，只能硬著頭皮報警了', next: 'SAFE_EXIT_LATE2' }
@@ -597,11 +662,19 @@
       },
       S11_SPIRAL: {
         bg: SCENE_IMAGES.ATM, speaker: '系統',
-        text: '接下來的整整一週，你戴著口罩穿梭在 ATM 之間瘋狂領錢。進出的金流越來越大，你的良知也越來越麻木... 你現在到底算什麼？',
+        text: '接下來的整整一週，你戴著口罩、鴨舌帽穿梭在各個 ATM 之間瘋狂領錢。進出的金流越來越大，你的良知也越來越麻木... 你感覺自己像具行屍走肉。',
         options: [
           { text: 'K哥說拉人可抽成，詢問室友要不要打工', next: 'BAD_ENDING_RECRUIT' },
-          { text: '每天提心吊膽受不了，決定切斷聯絡裝死', next: 'BAD_ENDING_SCARED' },
-          { text: '遇到巡邏員警盤查，心理防線崩潰全盤托出', next: 'SAFE_EXIT_LATE3' }
+          { text: '每天提心吊膽受不了，把手機丟掉裝死', next: 'BAD_ENDING_SCARED' },
+          { text: '遇到巡邏員警盤查，心理防線崩潰全盤托出', next: 'SAFE_EXIT_LATE3' },
+          { text: '就這樣繼續做下去吧...', next: 'S12_CAUGHT' }
+        ]
+      },
+      S12_CAUGHT: {
+        bg: SCENE_IMAGES.STREET_NIGHT, speaker: '系統', effect: 'shake',
+        text: '某個清晨，你還在睡夢中，門外傳來急促的敲門聲。「警察！開門！」你被壓制在地上，冰冷的手銬銬上了雙腕。媽媽在一旁哭喊著，而你腦中一片空白...',
+        options: [
+          { text: '結束模擬', next: 'BAD_ENDING_CAUGHT' }
         ]
       }
     };
@@ -612,84 +685,117 @@
         content: '你鐵了心掛斷並關機。一個月後，聽說阿杰因為涉嫌洗錢被警察帶走，名下財產全被凍結...',
         analysis: '【防禦力 S 級】\n你完美避開了開端的「人情勒索」。保持警覺與學會無情拒絕，是保護自己的最好方式。',
         legal: '【無法律責任】\n未參與行為，完全無罪。',
-        advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或撥打 165 尋求專業建議。'
+        advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或撥打 165 尋求專業建議。',
+        psychTrap: '情感勒索 (Emptional Blackmail)',
+        realCase: '2023年新北一高中生因拒絕幫朋友「代收包裹」，事後發現該包裹為毒品，成功免除刑責。'
       },
       SAFE_EXIT_DROP: {
         title: '結局：暗巷中的直覺',
         content: '在暗巷中面對詭異的黑帽男，你把現金丟在原地轉身就跑。成功避開了危機。',
         analysis: '【防禦力 A 級】\n接觸到「大量不明現金」與「可疑人物」時，懂得相信直覺、及時煞車。',
         legal: '【無法律責任】\n因未實際取得或移轉贓款，不構成洗錢防制法之罪責。',
-        advice: '【警訊】答應替朋友在路邊代收來路不明的現金。\n【自救】發覺不對勁立刻離開，事後若遭恐嚇請撥打 165。'
+        advice: '【警訊】答應替朋友在路邊代收來路不明的現金。\n【自救】發覺不對勁立刻離開，事後若遭恐嚇請撥打 165。',
+        psychTrap: '沉沒成本謬誤 (Sunk Cost Fallacy) - 你成功克服了「都已經答應出門幫忙了」的牽絆。',
+        realCase: '2022年高雄某大學生於面交現場察覺異狀逃離，雖遭恐嚇但報警後平安無事。'
       },
       SAFE_EXIT_BLOCK1: {
         title: '結局：斷絕暴利誘惑',
         content: '對於高薪誘惑，你果斷選擇封鎖不明人士。保住了你的清白和前途。',
         analysis: '【防禦力 A 級】\n面對「輕鬆高薪」等詐騙話術，不抱僥倖心態，直接封鎖是最有效的防禦。',
         legal: '【無法律責任】\n幫朋友面交雖危險，但不知情且僅一次，難以構成犯罪故意。',
-        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作。\n【自救】截圖保留對話，不答應後續要求並封鎖。'
+        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作。\n【自救】截圖保留對話，不答應後續要求並封鎖。',
+        psychTrap: '貪婪與捷徑心理 (Greed & Shortcut Mentality) - 詐騙集團經常利用人想輕鬆賺錢的弱點。',
+        realCase: '某少年看見「日領三千包吃包住」廣告，幸運在交出帳戶前與家人討論而避免涉案。'
       },
       SAFE_EXIT_BLOCK2: {
         title: '結局：死守帳戶生命線',
         content: '當對方提出要「使用你的銀行帳戶」進行匯款時，你果斷拒絕並封鎖了他。',
         analysis: '【防禦力 A 級】\n你敏銳地抓到了最重要紅旗：「絕對不能把帳戶提供給別人使用」。',
         legal: '【無法律責任】\n未交付帳戶，成功避免成為人頭戶。',
-        advice: '【警訊】對方提出「匯款到你的帳戶，再由你領出」。\n【自救】100%是詐騙，立刻封鎖並撥打 165 舉報。'
+        advice: '【警訊】對方提出「匯款到你的帳戶，再由你領出」。\n【自救】100%是詐騙，立刻封鎖並撥打 165 舉報。',
+        psychTrap: '虛假合理化 (False Rationalization) - 他們用「避稅」等專業詞彙包裝洗錢行為。',
+        realCase: '2024年統計，高達三成青年車手是因為相信「虛擬幣避稅代購」說法而交出帳戶。'
       },
       SAFE_EXIT_BLOCK3: {
         title: '結局：拒絕實名制陷阱',
         content: '對方要求提供身分證與提款卡照片的瞬間，你意識到不對勁並立刻封鎖。',
         analysis: '【防禦力 B+ 級】\n任何要求「寄送提款卡及密碼」或「拍卡片照」，都是騙車簿的手法。',
         legal: '【無法律責任】\n未交出實體卡片、密碼，未構成幫助詐欺。',
-        advice: '【警訊】對方要求拍攝「提款卡」與「身分證」。\n【自救】絕對不要傳送！若已傳送請立刻撥打 165 並通知銀行掛失。'
+        advice: '【警訊】對方要求拍攝「提款卡」與「身分證」。\n【自救】絕對不要傳送！若已傳送請立刻撥打 165 並通知銀行掛失。',
+        psychTrap: '權威服從與時間壓力 (Authority & Time Pressure) - 假裝「公司財務規定」並催促你立刻執行。',
+        realCase: '台中一名高中生因聽信「公司建檔需要」，傳送卡片正反面，隨後帳戶被利用洗錢三百萬。'
       },
       SAFE_EXIT_LATE1: {
         title: '結局：懸崖勒馬的冷汗',
         content: '看著帳戶裡來路不明的 10 萬元，你選擇了撥打 165 並報警。',
         analysis: '【防禦力 C 級】\n在「提領」這個構成犯罪既遂的關鍵動作前冷靜下來，將損害降到最低。',
-        legal: '【無刑事責任】\n未提領贓款不構成犯罪。但帳戶將被列為「警示帳戶」凍結。',
-        advice: '【警訊】戶頭收到不明大筆款項。\n【自救】絕對不可提領！第一時間帶證件親赴派出所報案凍結款項。'
+        legal: '【無刑事責任】\n未提領贓款不構成犯罪。但帳戶將被列為「警示帳戶」被凍結。',
+        advice: '【警訊】戶頭收到不明大筆款項。\n【自救】絕對不可提領！第一時間帶證件親赴派出所報案凍結款項。',
+        psychTrap: '木已成舟的錯覺 (Fait Accompli) - 錢都進來了，不領好像不行？其實越過這條線才是萬丈深淵。',
+        realCase: '某大學生見帳戶多出50萬，經行員提醒未提領即報警，免除7年以下有期徒刑。'
       },
       SAFE_EXIT_LATE2: {
         title: '結局：痛苦的坦白爭取',
         content: '你已經親手提領了現金，但在遭到黑道恐嚇時，你選擇鼓起勇氣帶著現金去自首。',
         analysis: '【防禦力 D 級】\n第一時間保留對話並報警自首，永遠是爭取減刑的最佳解。',
-        legal: '【涉嫌幫助詐欺罪】\n主動攜帶贓款自首，極高機率能獲檢察官緩起訴。',
-        advice: '【警訊】對方教導你對警察說謊或用語音恐嚇威脅。\n【自救】不要因為害怕就繼續做！立刻尋求警方保護與自首。'
+        legal: '【涉嫌幫助詐欺罪】\n主動攜帶贓款自首，極高機率能獲檢察官緩起訴或減刑。',
+        advice: '【警訊】對方教導你對警察說謊或用語音恐嚇威脅。\n【自救】不要因為害怕就繼續做！立刻尋求警方保護與自首。',
+        psychTrap: '恐懼訴求 (Fear Appeal) - 詐騙集團常以「知道你家在哪」威脅，使受害者不敢報案。',
+        realCase: '台北一名17歲車手提領一次後因恐懼報警交出8萬贓款，法官考量其自首且全數繳回，判決緩刑。'
       },
       SAFE_EXIT_LATE3: {
         title: '結局：越陷越深的懊悔',
-        content: '你在多次提領後才向警方坦白。法官難以採信你「不知情」，需面對刑責與高額賠償。',
+        content: '你在多次提領後遇到盤查才坦白。法官難以採信你「不知情」，需面對刑責與高額賠償。',
         analysis: '【危險級別】\n連續得手會被認定具「未必故意」。越晚報案代價越大。',
-        legal: '【加重詐欺罪共犯】\n面臨有期徒刑，且必須承擔民事連帶賠償責任。',
-        advice: '【警訊】第一次親手提領他人匯入的現金並獲高報酬。\n【自救】立刻停止提款，撥打 165 前往警局自首。'
+        legal: '【加重詐欺罪共犯】\n面臨 1-7 年有期徒刑，且父母必須承擔民事連帶賠償責任。',
+        advice: '【警訊】第一次親手提領他人匯入的現金並獲高報酬。\n【自救】立刻停止提款，撥打 165 前往警局自首。',
+        psychTrap: '溫水煮青蛙效應 (Boiling Frog Syndrome) - 習慣了犯罪帶來的金錢，逐漸對風險麻木。',
+        realCase: '苗栗某學生擔任車手一個月領取上千萬元，落網後父母需賣房賠償被害人2000萬元。'
       },
       BAD_ENDING_STEAL: {
         title: '結局：黑吃黑的慘痛代價',
-        content: '你自作聰明轉走詐騙集團的錢，警方透過金流追蹤到你，以詐欺及侵占罪逮捕。',
-        analysis: '【系統崩潰】\n黑吃黑不僅成為共犯，還會引來黑幫暴力討債。',
-        legal: '【詐欺/洗錢/侵占罪】\n私吞黑錢罪加一等。',
-        advice: '【警訊】產生想把不明匯入款據為己有的念頭。\n【自救】絕不能挪用！帶著存摺前往警署報案。'
+        content: '你自作聰明轉走詐騙集團的錢，警方透過金流追蹤到你，更引來黑幫暴力討債。',
+        analysis: '【系統崩潰】\n黑吃黑不僅成為共犯，更會讓自己陷入無法求救的極度危險中。',
+        legal: '【詐欺/洗錢/侵占罪】\n私吞黑錢罪加一等，連帶面臨暴力威脅。',
+        advice: '【警訊】產生想把不明匯入款據為己有的念頭。\n【自救】絕不能挪用！帶著存摺前往警署報案。',
+        psychTrap: '僥倖心理 (Wishful Thinking) - 以為對方是犯罪集團就不敢報警，卻忽略警方主動查緝與黑道私刑。',
+        realCase: '2023年桃園一車手私吞200萬贓款，遭集團成員擄走囚禁毆打一星期，警方攻堅才獲救。'
       },
       BAD_ENDING_HIDE: {
         title: '結局：無處可逃的通緝犯',
         content: '你帶著錢躲起來。幾個月後被通緝逮捕，法官視為惡性重大直接發監執行。',
         analysis: '【危險警告】\n逃避只會失去主動說明的機會，車手身分幾乎 100% 會被抓。',
-        legal: '【加重詐欺/通緝】\n逃亡屬犯後態度不佳，無法獲得減刑。',
-        advice: '【警訊】產生只要逃跑就抓不到的誤判。\n【自救】跑路絕不是辦法，請向家人坦白並尋求警方協助。'
+        legal: '【加重詐欺/通緝】\n逃亡屬犯後態度不佳，無法獲得減刑，直接入獄。',
+        advice: '【警訊】產生只要逃跑就抓不到的誤判。\n【自救】跑路絕不是辦法，台灣監視器密度極高，請向家人坦白並尋求幫助。',
+        psychTrap: '逃避現實 (Escapism) - 面對巨大錯誤時，大腦會本能選擇逃跑，卻導致後果無限放大。',
+        realCase: '19歲青年擔任車手後躲藏於南部網咖半年，遭警方盤查逮捕，因曾逃亡遭法院重判 4 年不得緩刑。'
       },
       BAD_ENDING_SCARED: {
         title: '結局：自欺欺人的鴕鳥',
-        content: '你切斷聯絡假裝沒事。三個月後警方持搜索票來到你家，你面臨刑期與天價賠償。',
-        analysis: '【危險警告】\n提領過一次犯罪就成立，中途退出不能一筆勾銷。',
+        content: '你切斷聯絡裝作沒事。三個月後警方持搜索票清晨來到你家，你面臨刑期與天價賠償。',
+        analysis: '【危險警告】\n提領過一次犯罪就成立，中途退出不能一筆勾銷，報案才是唯一解。',
         legal: '【加重詐欺罪共犯】\n面臨 1-7 年有期徒刑及高額民事求償。',
-        advice: '【警訊】害怕而選擇裝死躲在家。\n【自救】逃避只會加重刑責，請求長輩陪同自首。'
+        advice: '【警訊】害怕而選擇刪除對話紀錄躲在家中。\n【自救】逃避無法撤銷犯罪，刪除紀錄反而銷毀了對自己有利的證據。',
+        psychTrap: '鴕鳥心態 (Ostrich Effect) - 假裝沒看見危險，危險就不存在的嚴重認知偏誤。',
+        realCase: '多數基層車手都是在家中遭拘提，許多家長直到警察破門才知道孩子在外犯下重罪。'
       },
       BAD_ENDING_RECRUIT: {
         title: '結局：深淵的惡魔幹部',
-        content: '你開始拉同學下水。晉升為幹部，被依《組織犯罪防制條例》起訴，面臨十年以上重刑。',
-        analysis: '【徹底崩潰】\n拉人下水會讓你成為萬劫不復的加重犯。',
-        legal: '【組織犯罪防制條例】\n面臨 3-10 年極重刑罰，一生全毀。',
-        advice: '【警訊】想為了獎金把身邊朋友拖下水。\n【自救】遇到招募，請立刻撥打 165 檢舉防朋友受害。'
+        content: '你開始拉同學下水賺抽成。晉升為幹部，被依《組織犯罪防制條例》起訴，面臨十年以上重刑。',
+        analysis: '【徹底崩潰】\n拉人下水會讓你從「被害人/輕犯」變成萬劫不復的「主謀加重犯」。',
+        legal: '【組織犯罪防制條例】\n面臨 3-10 年極重刑罰，且將面臨數十人的集體求償，一生全毀。',
+        advice: '【警訊】想為了高額獎金把身邊同學好友拖下水。\n【自救】遇到招募，請立刻撥打 165 檢舉以防同學受害。',
+        psychTrap: '去人性化 (Dehumanization) - 把朋友轉換為「商品」與「搖錢樹」，徹底喪失道德底線。',
+        realCase: '2024年破獲校園詐騙幫派，高三主嫌招攬5名學弟當車手，主嫌遭重判 8 年並面臨高達 8000 萬求償。'
+      },
+      BAD_ENDING_CAUGHT: {
+        title: '結局：冰冷的手銬',
+        content: '你帶著僥倖心理繼續當車手。直到警察破門而入的那天，你看著媽媽痛哭的臉龐，後悔已經太遲。',
+        analysis: '【Game Over】\n天網恢恢，所有的提款機都有監視器。車手被抓的機率接近 100%。',
+        legal: '【加重詐欺/洗錢防制法】\n面臨極重刑罰與民事賠償，青春將在鐵窗內度過。',
+        advice: '【警訊】覺得自己不會這麼倒楣被抓到。\n【自救】沒有完美的犯罪。只要曾經參與，唯一自救的方法就是立刻自首。',
+        psychTrap: '樂觀偏誤 (Optimism Bias) - 誤以為別人才會被抓，自己運氣好不會有事。',
+        realCase: '警政署統計：「99%的車手在其犯案後的3至6個月內，便會遭到警方循線逮捕。」'
       }
     };
 
@@ -697,7 +803,7 @@
     // ✅ 請將下方 URL 換成你的 Google Apps Script 部署網址
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycby39S9dN4lQQ1_voJlX5Qh_xt0wn5cZF9e6GSLrCuOsokuuDIVybo6bO33p2ukebitXSQ/exec';
 
-    let currentMinutes = 30; // 模擬 22:30 開始
+    let currentMinutesOffset = 0; // 距離開始經過的分鐘數
     let currentSpeaker = '';
     let currentNodeId = '';
     let isTransitioning = false;
@@ -706,6 +812,7 @@
     let gameStartTime = null;   // 記錄遊戲開始時間點
     let vibrationInterval = null; // 來電震動計時器
     let callDeclineCount = 0;    // 拒接次數計數
+    let playerPath = [];         // 記錄玩家選擇路線
 
     lucide.createIcons();
 
@@ -718,12 +825,11 @@
     }
     preloadImages();
 
-    // 取得動態時間
+    // 取得動態時間 (真實開始時間 + 經過分鐘數)
     function getCurrentTime() {
-      let h = 22 + Math.floor(currentMinutes / 60);
-      let m = currentMinutes % 60;
-      if (h >= 24) h = h - 24;
-      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+      const now = new Date(gameStartTime || Date.now());
+      now.setMinutes(now.getMinutes() + currentMinutesOffset);
+      return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
 
     function setView(viewId) {
@@ -742,6 +848,7 @@
     function startGame() {
       gameStartTime = Date.now();
       callDeclineCount = 0;
+      playerPath = ['START']; // 初始化路徑
       document.getElementById('menu-view').classList.add('opacity-0');
       setTimeout(() => {
         setView('playing-view');
@@ -988,7 +1095,7 @@
       updateChatHeader(node.speaker);
 
       // 推進時間 (每句對話過 0~2 分鐘)
-      currentMinutes += Math.floor(Math.random() * 3);
+      currentMinutesOffset += Math.floor(Math.random() * 3);
 
       // 打字與顯示
       await showTypingIndicator(node.speaker);
@@ -1024,6 +1131,8 @@
       if (isTransitioning) return;
       isTransitioning = true;
       stopTimer();
+
+      playerPath.push(nextId); // 記錄路徑
 
       const optionsArea = document.getElementById('options-area');
       optionsArea.classList.add('translate-y-full');
@@ -1083,6 +1192,7 @@
         setTimeout(() => showIncomingCall(true), 2200); // 延遲再次彈出來電
       } else {
         // 第二次拒接：關機結局
+        playerPath.push('EARLY_EXIT_IGNORE');
         appendBubble('系統', '你把手機直接關機，與世隔絕。一個月後，聽說阿杰因涉嫌洗錢被帶走...', 'incoming');
         setTimeout(() => renderNode('EARLY_EXIT_IGNORE'), 1800);
       }
