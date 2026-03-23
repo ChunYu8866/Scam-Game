@@ -169,9 +169,17 @@
 
     /* 來電光環動畫 */
     @keyframes ring-expand {
-      0%   { transform: scale(1); opacity: 0.5; }
-      100% { transform: scale(2.2); opacity: 0; }
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
     }
+
     .call-ring {
       position: absolute;
       inset: 0;
@@ -179,15 +187,31 @@
       background: rgba(255, 255, 255, 0.12);
       animation: ring-expand 2s ease-out infinite;
     }
-    .call-ring:nth-child(2) { animation-delay: 0.65s; }
-    .call-ring:nth-child(3) { animation-delay: 1.3s; }
+
+    .call-ring:nth-child(2) {
+      animation-delay: 0.65s;
+    }
+
+    .call-ring:nth-child(3) {
+      animation-delay: 1.3s;
+    }
 
     /* 接聽按鈕脈衝 */
     @keyframes accept-pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
-      50%       { box-shadow: 0 0 0 14px rgba(34,197,94,0); }
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      }
+
+      50% {
+        box-shadow: 0 0 0 14px rgba(34, 197, 94, 0);
+      }
     }
-    .btn-accept { animation: accept-pulse 1.4s ease infinite; }
+
+    .btn-accept {
+      animation: accept-pulse 1.4s ease infinite;
+    }
   </style>
 </head>
 
@@ -221,18 +245,31 @@
     </div>
 
     <div id="menu-view"
-      class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-black/60 backdrop-blur-md p-6 text-center transition-opacity duration-700">
-      <h1 class="text-5xl font-black mb-2 tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-        22:30</h1>
-      <p class="text-gray-300 tracking-[0.2em] text-sm font-bold mb-16 uppercase">星期五, 13日</p>
+      class="absolute inset-0 flex flex-col items-center justify-between z-50 bg-black/60 backdrop-blur-md p-6 pt-20 pb-8 text-center transition-opacity duration-700">
 
-      <button onclick="startGame()"
-        class="group relative w-[80%] bg-white/10 hover:bg-white/20 backdrop-blur-lg border border-white/20 text-white py-4 rounded-full font-bold tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 overflow-hidden">
-        <div
-          class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700">
+      <!-- 鎖屏上半：時間與日期 -->
+      <div class="flex flex-col items-center">
+        <h1 id="lock-time"
+          class="text-6xl font-black mb-1 tracking-[0.15em] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+          --:--</h1>
+        <p id="lock-date" class="text-gray-300 tracking-[0.2em] text-sm font-bold uppercase"></p>
+      </div>
+
+      <!-- 鎖屏中間空白 -->
+      <div></div>
+
+      <!-- 鎖屏底部：仿 iPhone 底部橫條 + 小圖示 -->
+      <div class="w-full flex flex-col items-center gap-4">
+        <div class="flex justify-between w-full px-8">
+          <div class="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+            <i data-lucide="flashlight" style="width:16px;height:16px;color:rgba(255,255,255,0.6)"></i>
+          </div>
+          <div class="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+            <i data-lucide="camera" style="width:16px;height:16px;color:rgba(255,255,255,0.6)"></i>
+          </div>
         </div>
-        <i data-lucide="unlock" style="width: 18px; height: 18px;"></i> 滑動來解鎖並開始
-      </button>
+        <div class="w-[35%] h-[5px] bg-white/30 rounded-full"></div>
+      </div>
     </div>
 
 
@@ -344,7 +381,7 @@
       <div class="flex flex-col items-center gap-3 mt-6">
         <p class="text-gray-500 text-xs tracking-[0.3em] uppercase">行動電話 · 來電</p>
         <h2 class="text-white text-4xl font-bold tracking-wide">阿杰</h2>
-        <p class="text-green-400 text-sm tracking-widest animate-pulse font-medium">來電中...</p>
+        <p id="call-subtitle-text" class="text-green-400 text-sm tracking-widest animate-pulse font-medium">來電中...</p>
       </div>
 
       <!-- 頭像 + 光環 -->
@@ -668,6 +705,7 @@
     let qteTimeoutNext;
     let gameStartTime = null;   // 記錄遊戲開始時間點
     let vibrationInterval = null; // 來電震動計時器
+    let callDeclineCount = 0;    // 拒接次數計數
 
     lucide.createIcons();
 
@@ -703,24 +741,31 @@
 
     function startGame() {
       gameStartTime = Date.now();
+      callDeclineCount = 0;
       document.getElementById('menu-view').classList.add('opacity-0');
       setTimeout(() => {
         setView('playing-view');
         document.getElementById('chat-history').innerHTML = `
                     <div class="text-center w-full my-4 text-[11px] text-gray-500 font-bold tracking-widest">
-                        今天 ${getCurrentTime()}
+                        今天 ${getRealTime()}
                     </div>
                     <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>`;
 
-        // 設定夜晚街道背景
+        // 設定夜晩街道背景
         document.getElementById('scene-bg').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
 
-        // 先顯示情境旁白，再彈出來電介面
+        // 顯示情境旁白 + 來電介面
         setTimeout(() => {
           appendBubble('系統', '剛下過暴雨的台北街頭。你正打算回家，手機突然劇烈震動...', 'incoming');
           setTimeout(() => showIncomingCall(), 1400);
         }, 600);
       }, 700);
+    }
+
+    // 取得真實系統時間（給聊天室用）
+    function getRealTime() {
+      const now = new Date();
+      return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
 
     // 優化平滑捲動：確保能正確捲動到底部
@@ -991,8 +1036,12 @@
     }
 
     // ===== 來電介面邏輯 =====
-    function showIncomingCall() {
+    function showIncomingCall(isRetry = false) {
       const callView = document.getElementById('call-view');
+      // 第二次來電換副標文字
+      const subtitle = document.getElementById('call-subtitle-text');
+      if (subtitle) subtitle.textContent = isRetry ? '奪命連環Call...' : '來電中...';
+
       callView.classList.remove('hidden');
       lucide.createIcons();
 
@@ -1011,10 +1060,10 @@
 
     function acceptCall() {
       stopRingtone();
+      callDeclineCount = 0;
       if (navigator.vibrate) navigator.vibrate(50); // 短促觸覺回饋
       const callView = document.getElementById('call-view');
       callView.classList.add('hidden');
-      // 接聽後顯示阿杰説話
       renderNode('S1');
     }
 
@@ -1022,7 +1071,21 @@
       stopRingtone();
       const callView = document.getElementById('call-view');
       callView.classList.add('hidden');
-      renderNode('S0_IGNORE');
+      callDeclineCount++;
+
+      if (callDeclineCount === 1) {
+        // 第一次拒接：顯示旁白 + 手機震動 + 再次來電
+        appendBubble('系統', '才走沒兩步，手機又狂震起來，這傢伙不接電話不會罷休的。', 'incoming');
+        const frame = document.getElementById('phone-frame');
+        frame.classList.remove('animate-shake');
+        void frame.offsetWidth;
+        frame.classList.add('animate-shake');
+        setTimeout(() => showIncomingCall(true), 2200); // 延遲再次彈出來電
+      } else {
+        // 第二次拒接：關機結局
+        appendBubble('系統', '你把手機直接關機，與世隔絕。一個月後，聽說阿杰因涉嫌洗錢被帶走...', 'incoming');
+        setTimeout(() => renderNode('EARLY_EXIT_IGNORE'), 1800);
+      }
     }
 
     function renderEnding(endingId) {
@@ -1094,8 +1157,30 @@
       return uid;
     }
 
-    // 初始化
-    setView('menu-view');
+    // 初始化：顯示鎖屏 + 自動取得當前時間 + 3~5秒後自動來電
+    (function init() {
+      setView('menu-view');
+
+      // 插入真實時間與日期
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const mins = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('lock-time').textContent = `${hours}:${mins}`;
+
+      const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      document.getElementById('lock-date').textContent = `${weekdays[now.getDay()]}\uff0c${month}月${day}日`;
+
+      lucide.createIcons();
+
+      // 設定背景圖片（鎖屏狀態就顯示夜景）
+      document.getElementById('scene-bg').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
+
+      // 3~5秒後自動啟動遊戲
+      const delay = 3000 + Math.random() * 2000;
+      setTimeout(() => startGame(), delay);
+    })();
   </script>
 </body>
 
