@@ -21,8 +21,15 @@
       color: #fff;
       overflow: hidden;
       user-select: none;
-      -webkit-user-select: none;
       touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+      /* 移除點擊預設藍框 */
+    }
+
+    button:focus {
+      outline: none;
+      /* 讓按鈕 focus 不會有外框 */
+      box-shadow: none !important;
     }
 
     /* ---------------- 動畫庫 ---------------- */
@@ -106,6 +113,18 @@
       }
     }
 
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .animate-slow-pan {
       animation: slow-pan 25s ease-in-out infinite alternate;
     }
@@ -137,6 +156,14 @@
 
     .typing-dot:nth-child(2) {
       animation-delay: -0.16s;
+    }
+
+    .animate-fade-in {
+      animation: fade-in 0.35s ease-out both;
+    }
+
+    .pb-safe {
+      padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     }
 
     /* 隱藏原生捲軸，但保留捲動功能 */
@@ -196,21 +223,65 @@
       animation-delay: 1.3s;
     }
 
-    /* 接聽按鈕脈衝 */
-    @keyframes accept-pulse {
-
-      0%,
-      100% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-      }
-
-      50% {
-        box-shadow: 0 0 0 14px rgba(34, 197, 94, 0);
-      }
+    .call-slider {
+      position: relative;
+      width: 100%;
+      height: 68px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      touch-action: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
 
-    .btn-accept {
-      animation: accept-pulse 1.4s ease infinite;
+    .call-slider-fill {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      bottom: 4px;
+      width: 60px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.75), rgba(22, 163, 74, 0.9));
+      transition: width 0.22s ease;
+      box-shadow: 0 0 24px rgba(34, 197, 94, 0.28);
+    }
+
+    .call-slider-thumb {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 30px rgba(34, 197, 94, 0.35);
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.22s ease;
+    }
+
+    .call-slider-thumb:active {
+      cursor: grabbing;
+    }
+
+    .call-slider-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 11px;
+      font-weight: 700;
+      transition: opacity 0.18s ease;
     }
   </style>
 </head>
@@ -245,30 +316,30 @@
     </div>
 
     <div id="menu-view"
-      class="absolute inset-0 flex flex-col items-center justify-between z-50 bg-black/60 backdrop-blur-md p-6 pt-20 pb-8 text-center transition-opacity duration-700">
+      class="absolute inset-0 z-50 flex flex-col items-center justify-between text-white transition-opacity duration-1000 bg-cover bg-center"
+      style="background-image: url('https://images.unsplash.com/photo-1517568560156-fbd9c424df39?auto=format&fit=crop&q=80&w=1920');">
 
       <!-- 鎖屏上半：時間與日期 -->
-      <div class="flex flex-col items-center">
-        <h1 id="lock-time"
-          class="text-6xl font-black mb-1 tracking-[0.15em] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-          --:--</h1>
-        <p id="lock-date" class="text-gray-300 tracking-[0.2em] text-sm font-bold uppercase"></p>
+      <div class="flex flex-col items-center gap-1.5 mt-20 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+        <i data-lucide="lock" class="text-white/80 mb-2" style="width: 20px; height: 20px;"></i>
+        <div id="lockscreen-time" class="text-7xl font-light tracking-wider"></div>
+        <div id="lockscreen-date" class="text-lg font-medium text-white/90 tracking-wide mt-1"></div>
       </div>
 
       <!-- 鎖屏中間空白 -->
       <div></div>
 
-      <!-- 鎖屏底部：仿 iPhone 底部橫條 + 小圖示 -->
-      <div class="w-full flex flex-col items-center gap-4">
+      <!-- 鎖屏底部：捷徑與提示 -->
+      <div class="w-full flex flex-col items-center gap-4 pb-4">
         <div class="flex justify-between w-full px-8">
-          <div class="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
-            <i data-lucide="flashlight" style="width:16px;height:16px;color:rgba(255,255,255,0.6)"></i>
+          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+            <i data-lucide="flashlight" style="width:20px;height:20px;color:rgba(255,255,255,0.9)"></i>
           </div>
-          <div class="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
-            <i data-lucide="camera" style="width:16px;height:16px;color:rgba(255,255,255,0.6)"></i>
+          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+            <i data-lucide="camera" style="width:20px;height:20px;color:rgba(255,255,255,0.9)"></i>
           </div>
         </div>
-        <div class="w-[35%] h-[5px] bg-white/30 rounded-full"></div>
+        <div class="w-32 h-1.5 bg-white/50 rounded-full mt-2"></div>
       </div>
     </div>
 
@@ -391,7 +462,7 @@
 
     <!-- ===== 來電介面 ===== -->
     <div id="call-view"
-      class="absolute inset-0 z-[60] flex flex-col items-center justify-between bg-gradient-to-b from-[#0d1117] via-[#161b22] to-[#0d1117] px-6 pt-16 pb-14 hidden">
+      class="absolute inset-0 z-[60] flex flex-col items-center justify-between bg-gradient-to-b from-black/55 via-black/70 to-black/85 backdrop-blur-[6px] px-6 pt-16 pb-14 hidden">
 
       <!-- 來電資訊 -->
       <div class="flex flex-col items-center gap-3 mt-6">
@@ -410,22 +481,16 @@
       </div>
 
       <!-- 操作按鈕 -->
-      <div class="flex justify-around w-full px-6">
-        <!-- 拒接 -->
-        <div class="flex flex-col items-center gap-2">
-          <button onclick="declineCall()"
-            class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-[0_0_25px_rgba(239,68,68,0.5)] active:scale-90 transition-transform">
-            <i data-lucide="phone-off" style="width:22px;height:22px;color:white"></i>
-          </button>
-          <span class="text-white/60 text-xs tracking-widest">拒接</span>
-        </div>
-        <!-- 接聽 -->
-        <div class="flex flex-col items-center gap-2">
-          <button onclick="acceptCall()"
-            class="btn-accept w-16 h-16 rounded-full bg-green-500 flex items-center justify-center active:scale-90 transition-transform">
-            <i data-lucide="phone" style="width:22px;height:22px;color:white"></i>
-          </button>
-          <span class="text-white/60 text-xs tracking-widest">接聽</span>
+      <div class="w-full max-w-[320px]">
+        <div class="w-full">
+          <div id="answer-slider" class="call-slider">
+            <div id="answer-slider-fill" class="call-slider-fill"></div>
+            <div id="answer-slider-label" class="call-slider-label">滑動接聽</div>
+            <button id="answer-slider-thumb" type="button" class="call-slider-thumb" aria-label="滑動接聽">
+              <i data-lucide="phone" style="width:22px;height:22px;color:white"></i>
+            </button>
+          </div>
+          <p class="mt-2 text-center text-[10px] uppercase tracking-[0.35em] text-white/35">slide to answer</p>
         </div>
       </div>
     </div>
@@ -444,26 +509,20 @@
     const STORY = {
       START: {
         bg: SCENE_IMAGES.STREET_NIGHT, speaker: '系統',
-        text: '剛下過暴雨的台北街頭。你正打算回家，手機卻狂震起來。是死黨阿杰的來電。',
-        options: [
-          { text: '滑開接聽：喂？幹嘛啦大半夜的。', next: 'S1' },
-          { text: '掛斷，裝作沒看到', next: 'S0_IGNORE' }
-        ]
+        text: '你正打算回家，手機卻狂震起來。是死黨阿杰的來電。', // This text will be dynamically set by startGame
+        options: []
       },
       S0_IGNORE: {
         bg: SCENE_IMAGES.STREET_NIGHT, speaker: '系統', effect: 'shake',
         text: '你按下了拒接。才走沒兩步，手機又狂震起來，這傢伙不接電話不會罷休的。',
-        options: [
-          { text: '受不了奪命連環Call，接聽', next: 'S1' },
-          { text: '把手機直接關機，與世隔絕', next: 'EARLY_EXIT_IGNORE' }
-        ]
+        options: []
       },
       S1: {
         bg: SCENE_IMAGES.STREET_NIGHT, speaker: '阿杰 (語音)',
         text: '兄弟！救命啊！你現在有空嗎？拜託拜託，超級緊急的！',
         options: [
           { text: '怎麼了？你聲音怎麼這麼慌？', next: 'S1B' },
-          { text: '大半夜的你又出什麼事了？', next: 'S1B' }
+          { text: '又出什麼事了？', next: 'S1B' }
         ]
       },
       S1B: {
@@ -686,7 +745,7 @@
         analysis: '【防禦力 S 級】\n你完美避開了開端的「人情勒索」。保持警覺與學會無情拒絕，是保護自己的最好方式。',
         legal: '【無法律責任】\n未參與行為，完全無罪。',
         advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或撥打 165 尋求專業建議。',
-        psychTrap: '情感勒索 (Emptional Blackmail)',
+        psychTrap: '情感勒索 (Emotional Blackmail)',
         realCase: '2023年新北一高中生因拒絕幫朋友「代收包裹」，事後發現該包裹為毒品，成功免除刑責。'
       },
       SAFE_EXIT_DROP: {
@@ -702,8 +761,8 @@
         title: '結局：斷絕暴利誘惑',
         content: '對於高薪誘惑，你果斷選擇封鎖不明人士。保住了你的清白和前途。',
         analysis: '【防禦力 A 級】\n面對「輕鬆高薪」等詐騙話術，不抱僥倖心態，直接封鎖是最有效的防禦。',
-        legal: '【無法律責任】\n幫朋友面交雖危險，但不知情且僅一次，難以構成犯罪故意。',
-        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作。\n【自救】截圖保留對話，不答應後續要求並封鎖。',
+        legal: '【仍有法律風險】\n就算只是幫朋友面交或代領一次，也可能接觸到贓款，或成為車手作案的斷點；是否涉責仍要看知情程度、參與過程與後續處置。',
+        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作，或要你替朋友代領、面交不明現金。\n【自救】就算對方說只是幫忙領錢，也可能是髒錢或車手斷點；立刻停止、保留對話並撥打 165。',
         psychTrap: '貪婪與捷徑心理 (Greed & Shortcut Mentality) - 詐騙集團經常利用人想輕鬆賺錢的弱點。',
         realCase: '某少年看見「日領三千包吃包住」廣告，幸運在交出帳戶前與家人討論而避免涉案。'
       },
@@ -813,6 +872,15 @@
     let vibrationInterval = null; // 來電震動計時器
     let callDeclineCount = 0;    // 拒接次數計數
     let playerPath = [];         // 記錄玩家選擇路線
+    let introNarration = '';
+    let callSliderState = {
+      dragging: false,
+      pointerId: null,
+      startX: 0,
+      startOffset: 0,
+      currentX: 0,
+      accepted: false
+    };
 
     lucide.createIcons();
 
@@ -836,6 +904,7 @@
       document.getElementById('menu-view').classList.add('hidden');
       document.getElementById('playing-view').classList.add('hidden');
       document.getElementById('ending-view').classList.add('hidden');
+      document.getElementById('call-view').classList.add('hidden');
 
       const view = document.getElementById(viewId);
       view.classList.remove('hidden');
@@ -845,28 +914,52 @@
       lucide.createIcons();
     }
 
-    function startGame() {
-      gameStartTime = Date.now();
-      callDeclineCount = 0;
-      playerPath = ['START']; // 初始化路徑
-      document.getElementById('menu-view').classList.add('opacity-0');
-      setTimeout(() => {
-        setView('playing-view');
-        document.getElementById('chat-history').innerHTML = `
+    function configureOpeningScene() {
+      const currentHour = new Date().getHours();
+      const isDaytime = currentHour >= 6 && currentHour < 18;
+      const startBg = isDaytime
+        ? 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=1920'
+        : SCENE_IMAGES.STREET_NIGHT;
+
+      SCENE_IMAGES.STREET_NIGHT = startBg;
+      STORY.START.text = isDaytime
+        ? '喧鬧的台北街頭。你正打算回家，手機卻狂震起來。是死黨阿杰的來電。'
+        : '剛下過雨的台北街頭。你正打算回家，手機卻狂震起來。是死黨阿杰的來電。';
+      introNarration = isDaytime
+        ? '週末午後的台北街頭。你正打算回家，手機突然劇烈震動...'
+        : '剛下過雨的台北街頭。你正打算回家，手機突然劇烈震動...';
+
+      document.getElementById('scene-bg').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
+      document.getElementById('menu-view').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
+    }
+
+    function prepareChatView() {
+      document.getElementById('chat-history').innerHTML = `
                     <div class="text-center w-full my-4 text-[11px] text-gray-500 font-bold tracking-widest">
                         今天 ${getRealTime()}
                     </div>
                     <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>`;
+      document.getElementById('options-container').innerHTML = '';
+      document.getElementById('options-area').classList.add('translate-y-full');
+      stopTimer();
+    }
 
-        // 設定夜晩街道背景
-        document.getElementById('scene-bg').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
+    function startGame() {
+      gameStartTime = Date.now();
+      currentMinutesOffset = 0;
+      currentSpeaker = '';
+      currentNodeId = '';
+      isTransitioning = false;
+      callDeclineCount = 0;
+      playerPath = ['START']; // 初始化路徑
 
-        // 顯示情境旁白 + 來電介面
-        setTimeout(() => {
-          appendBubble('系統', '剛下過暴雨的台北街頭。你正打算回家，手機突然劇烈震動...', 'incoming');
-          setTimeout(() => showIncomingCall(), 1400);
-        }, 600);
-      }, 700);
+      stopRingtone();
+      configureOpeningScene();
+      setView('menu-view');
+      document.getElementById('menu-view').classList.remove('opacity-0');
+
+      const delay = 1200 + Math.random() * 800;
+      setTimeout(() => showIncomingCall(), delay);
     }
 
     // 取得真實系統時間（給聊天室用）
@@ -1110,7 +1203,7 @@
         // 保持原始選項順序，確保敘事邏輯連貫
         node.options.forEach(opt => {
           const btn = document.createElement('button');
-          btn.className = "w-full bg-[#27272a] hover:bg-[#3f3f46] text-white border border-white/5 p-3.5 rounded-xl text-[14.5px] font-medium tracking-wide transition-colors text-center active:scale-[0.98] shadow-sm";
+          btn.className = "w-full bg-[#27272a] hover:bg-[#3f3f46] text-white border border-white/5 p-3.5 rounded-xl text-[14.5px] font-medium tracking-wide transition-colors text-center active:scale-[0.98] shadow-sm select-none";
           btn.innerText = opt.text;
           btn.onclick = () => handleOptionSelect(opt.next, opt.text);
           optionsContainer.appendChild(btn);
@@ -1144,14 +1237,112 @@
       setTimeout(() => { renderNode(nextId); }, 1800);
     }
 
+    function getCallSliderMetrics() {
+      const slider = document.getElementById('answer-slider');
+      const thumb = document.getElementById('answer-slider-thumb');
+      const fill = document.getElementById('answer-slider-fill');
+      const label = document.getElementById('answer-slider-label');
+      const maxX = Math.max(0, slider.clientWidth - thumb.offsetWidth - 8);
+      return { slider, thumb, fill, label, maxX };
+    }
+
+    function updateCallSlider(positionX, animate = false) {
+      const { thumb, fill, label, maxX } = getCallSliderMetrics();
+      const clamped = Math.max(0, Math.min(positionX, maxX));
+      const progress = maxX === 0 ? 0 : clamped / maxX;
+
+      thumb.style.transition = animate ? 'transform 0.22s ease' : 'none';
+      fill.style.transition = animate ? 'width 0.22s ease' : 'none';
+      label.style.transition = animate ? 'opacity 0.18s ease' : 'none';
+
+      thumb.style.transform = `translateX(${clamped}px)`;
+      fill.style.width = `${clamped + thumb.offsetWidth}px`;
+      label.style.opacity = `${Math.max(0.12, 1 - progress * 0.92)}`;
+
+      callSliderState.currentX = clamped;
+    }
+
+    function resetCallSlider(animate = false) {
+      callSliderState.dragging = false;
+      callSliderState.pointerId = null;
+      callSliderState.startX = 0;
+      callSliderState.startOffset = 0;
+      callSliderState.currentX = 0;
+      callSliderState.accepted = false;
+
+      const { slider } = getCallSliderMetrics();
+      slider.classList.remove('ring-2', 'ring-green-400/40');
+      updateCallSlider(0, animate);
+    }
+
+    function completeCallSlider() {
+      if (callSliderState.accepted) return;
+      callSliderState.accepted = true;
+      const { maxX } = getCallSliderMetrics();
+      updateCallSlider(maxX, true);
+      setTimeout(() => acceptCall(), 140);
+    }
+
+    function bindCallSlider() {
+      const { slider, thumb } = getCallSliderMetrics();
+      if (slider.dataset.bound === 'true') return;
+      slider.dataset.bound = 'true';
+
+      const endDrag = event => {
+        if (!callSliderState.dragging) return;
+        if (event.pointerId !== undefined && callSliderState.pointerId !== null && event.pointerId !== callSliderState.pointerId) return;
+
+        const { maxX } = getCallSliderMetrics();
+        callSliderState.dragging = false;
+        callSliderState.pointerId = null;
+        slider.classList.remove('ring-2', 'ring-green-400/40');
+
+        if (callSliderState.currentX >= maxX * 0.58) {
+          completeCallSlider();
+        } else {
+          resetCallSlider(true);
+        }
+      };
+
+      thumb.addEventListener('pointerdown', event => {
+        if (callSliderState.accepted) return;
+        callSliderState.dragging = true;
+        callSliderState.pointerId = event.pointerId;
+        callSliderState.startX = event.clientX;
+        callSliderState.startOffset = callSliderState.currentX;
+        thumb.setPointerCapture(event.pointerId);
+        slider.classList.add('ring-2', 'ring-green-400/40');
+      });
+
+      thumb.addEventListener('pointermove', event => {
+        if (!callSliderState.dragging || event.pointerId !== callSliderState.pointerId) return;
+        const nextX = callSliderState.startOffset + (event.clientX - callSliderState.startX);
+        updateCallSlider(nextX);
+      });
+
+      thumb.addEventListener('pointerup', endDrag);
+      thumb.addEventListener('pointercancel', endDrag);
+      thumb.addEventListener('lostpointercapture', endDrag);
+    }
+
+    function enterChatFromCall() {
+      setTimeout(() => {
+        setView('playing-view');
+        prepareChatView();
+        appendBubble('系統', introNarration, 'incoming');
+        setTimeout(() => renderNode('S1'), 1200);
+      }, 320);
+    }
+
     // ===== 來電介面邏輯 =====
     function showIncomingCall(isRetry = false) {
-      const callView = document.getElementById('call-view');
+      setView('call-view');
+
       // 第二次來電換副標文字
       const subtitle = document.getElementById('call-subtitle-text');
       if (subtitle) subtitle.textContent = isRetry ? '奪命連環Call...' : '來電中...';
 
-      callView.classList.remove('hidden');
+      resetCallSlider(false);
       lucide.createIcons();
 
       // Web Vibration API：模擬手機鈴聲震動節奏
@@ -1170,31 +1361,40 @@
     function acceptCall() {
       stopRingtone();
       callDeclineCount = 0;
+      resetCallSlider(false);
       if (navigator.vibrate) navigator.vibrate(50); // 短促觸覺回饋
-      const callView = document.getElementById('call-view');
-      callView.classList.add('hidden');
-      renderNode('S1');
+      enterChatFromCall();
     }
 
     function declineCall() {
       stopRingtone();
+      resetCallSlider(false);
       const callView = document.getElementById('call-view');
       callView.classList.add('hidden');
       callDeclineCount++;
 
       if (callDeclineCount === 1) {
-        // 第一次拒接：顯示旁白 + 手機震動 + 再次來電
-        appendBubble('系統', '才走沒兩步，手機又狂震起來，這傢伙不接電話不會罷休的。', 'incoming');
-        const frame = document.getElementById('phone-frame');
-        frame.classList.remove('animate-shake');
-        void frame.offsetWidth;
-        frame.classList.add('animate-shake');
-        setTimeout(() => showIncomingCall(true), 2200); // 延遲再次彈出來電
+        // 第一次拒接：退回鎖定畫面幾秒鐘後再次來電
+        document.getElementById('menu-view').classList.remove('opacity-0');
+        setView('menu-view');
+        setTimeout(() => {
+          showIncomingCall(true);
+        }, 2200); // 退回首頁 2.2 秒後再次彈出
       } else {
-        // 第二次拒接：關機結局
+        // 第二次拒接：回到鎖定畫面並結束
         playerPath.push('EARLY_EXIT_IGNORE');
-        appendBubble('系統', '你把手機直接關機，與世隔絕。一個月後，聽說阿杰因涉嫌洗錢被帶走...', 'incoming');
-        setTimeout(() => renderNode('EARLY_EXIT_IGNORE'), 1800);
+        document.getElementById('menu-view').classList.remove('opacity-0');
+        setView('menu-view');
+
+        // 將紀錄直接丟給 Sheets 不顯示結局畫面了，這符合「手機關機忽略」
+        if (SHEET_URL && !SHEET_URL.includes('請貼上')) {
+          fetch(SHEET_URL, {
+            method: 'POST', mode: 'no-cors',
+            body: JSON.stringify({
+              endingId: 'EARLY_EXIT_IGNORE', endingTitle: '結局：與我無關的夜晚', defenseRank: 'S', durationSec: 10, userId: generateUID(), path: playerPath.join(' -> ')
+            })
+          }).catch(() => { });
+        }
       }
     }
 
@@ -1205,15 +1405,31 @@
       document.getElementById('ending-analysis').innerText = ending.analysis;
 
       const legalContainer = document.getElementById('legal-container');
+      legalContainer.classList.add('hidden');
       if (ending.legal) {
         legalContainer.classList.remove('hidden');
-        document.getElementById('ending-legal').innerText = ending.legal;
+        document.getElementById('ending-legal').innerHTML = ending.legal + '<br><br><a href="https://laws010.com/blog/criminal-offense/fraud/fraud-03" target="_blank" class="text-blue-500 underline text-xs">📚 參考資料：車手會被判多重？詐欺法條解析 (法律010)</a>';
       }
 
       const adviceContainer = document.getElementById('advice-container');
+      adviceContainer.classList.add('hidden');
       if (ending.advice) {
         adviceContainer.classList.remove('hidden');
         document.getElementById('ending-advice').innerText = ending.advice;
+      }
+
+      const psychContainer = document.getElementById('psych-container');
+      psychContainer.classList.add('hidden');
+      if (ending.psychTrap) {
+        psychContainer.classList.remove('hidden');
+        document.getElementById('ending-psych').innerText = ending.psychTrap;
+      }
+
+      const caseContainer = document.getElementById('case-container');
+      caseContainer.classList.add('hidden');
+      if (ending.realCase) {
+        caseContainer.classList.remove('hidden');
+        document.getElementById('ending-case').innerText = ending.realCase;
       }
 
       // ✅ 回傳成果資料到 Google Sheets
@@ -1224,12 +1440,14 @@
 
         fetch(SHEET_URL, {
           method: 'POST',
+          mode: 'no-cors',
           body: JSON.stringify({
             endingId: endingId,
             endingTitle: ending.title,
             defenseRank: defenseRank,
             durationSec: durationSec,
-            userId: generateUID()
+            userId: generateUID(),
+            path: playerPath.join(' -> ')
           })
         }).catch(() => { }); // 靜默失敗，不影響遊戲
       }
@@ -1267,29 +1485,27 @@
       return uid;
     }
 
-    // 初始化：顯示鎖屏 + 自動取得當前時間 + 3~5秒後自動來電
-    (function init() {
-      setView('menu-view');
-
-      // 插入真實時間與日期
+    function updateLockscreenClock() {
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, '0');
       const mins = now.getMinutes().toString().padStart(2, '0');
-      document.getElementById('lock-time').textContent = `${hours}:${mins}`;
+      document.getElementById('lockscreen-time').textContent = `${hours}:${mins}`;
 
       const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
       const month = now.getMonth() + 1;
       const day = now.getDate();
-      document.getElementById('lock-date').textContent = `${weekdays[now.getDay()]}\uff0c${month}月${day}日`;
+      document.getElementById('lockscreen-date').textContent = `${weekdays[now.getDay()]}\uff0c${month}月${day}日`;
+    }
+
+    // 初始化：顯示鎖屏 + 自動取得當前時間 + 3~5秒後直接來電
+    (function init() {
+      setView('menu-view');
+      updateLockscreenClock();
+      setInterval(updateLockscreenClock, 30000);
 
       lucide.createIcons();
-
-      // 設定背景圖片（鎖屏狀態就顯示夜景）
-      document.getElementById('scene-bg').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
-
-      // 3~5秒後自動啟動遊戲
-      const delay = 3000 + Math.random() * 2000;
-      setTimeout(() => startGame(), delay);
+      bindCallSlider();
+      startGame();
     })();
   </script>
 </body>
