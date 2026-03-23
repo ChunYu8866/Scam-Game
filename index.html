@@ -166,6 +166,28 @@
       border-bottom-right-radius: 16px;
       z-index: 100;
     }
+
+    /* 來電光環動畫 */
+    @keyframes ring-expand {
+      0%   { transform: scale(1); opacity: 0.5; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .call-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      animation: ring-expand 2s ease-out infinite;
+    }
+    .call-ring:nth-child(2) { animation-delay: 0.65s; }
+    .call-ring:nth-child(3) { animation-delay: 1.3s; }
+
+    /* 接聽按鈕脈衝 */
+    @keyframes accept-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+      50%       { box-shadow: 0 0 0 14px rgba(34,197,94,0); }
+    }
+    .btn-accept { animation: accept-pulse 1.4s ease infinite; }
   </style>
 </head>
 
@@ -311,6 +333,47 @@
           class="w-full bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 py-3.5 rounded-xl font-bold transition-all tracking-widest flex items-center justify-center gap-2 active:scale-95 text-sm">
           <i data-lucide="share-2" style="width: 16px; height: 16px;"></i> 分享我的結局
         </button>
+      </div>
+    </div>
+
+    <!-- ===== 來電介面 ===== -->
+    <div id="call-view"
+      class="absolute inset-0 z-[60] flex flex-col items-center justify-between bg-gradient-to-b from-[#0d1117] via-[#161b22] to-[#0d1117] px-6 pt-16 pb-14 hidden">
+
+      <!-- 來電資訊 -->
+      <div class="flex flex-col items-center gap-3 mt-6">
+        <p class="text-gray-500 text-xs tracking-[0.3em] uppercase">行動電話 · 來電</p>
+        <h2 class="text-white text-4xl font-bold tracking-wide">阿杰</h2>
+        <p class="text-green-400 text-sm tracking-widest animate-pulse font-medium">來電中...</p>
+      </div>
+
+      <!-- 頭像 + 光環 -->
+      <div class="relative flex items-center justify-center" style="width:140px;height:140px;">
+        <div class="call-ring"></div>
+        <div class="call-ring"></div>
+        <div class="call-ring"></div>
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=60"
+          class="w-28 h-28 rounded-full object-cover relative z-10 border-[3px] border-white/25 shadow-2xl">
+      </div>
+
+      <!-- 操作按鈕 -->
+      <div class="flex justify-around w-full px-6">
+        <!-- 拒接 -->
+        <div class="flex flex-col items-center gap-2">
+          <button onclick="declineCall()"
+            class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-[0_0_25px_rgba(239,68,68,0.5)] active:scale-90 transition-transform">
+            <i data-lucide="phone-off" style="width:22px;height:22px;color:white"></i>
+          </button>
+          <span class="text-white/60 text-xs tracking-widest">拒接</span>
+        </div>
+        <!-- 接聽 -->
+        <div class="flex flex-col items-center gap-2">
+          <button onclick="acceptCall()"
+            class="btn-accept w-16 h-16 rounded-full bg-green-500 flex items-center justify-center active:scale-90 transition-transform">
+            <i data-lucide="phone" style="width:22px;height:22px;color:white"></i>
+          </button>
+          <span class="text-white/60 text-xs tracking-widest">接聽</span>
+        </div>
       </div>
     </div>
 
@@ -603,7 +666,8 @@
     let isTransitioning = false;
     let qteAnimationId;
     let qteTimeoutNext;
-    let gameStartTime = null; // 記錄遊戲開始時間點
+    let gameStartTime = null;   // 記錄遊戲開始時間點
+    let vibrationInterval = null; // 來電震動計時器
 
     lucide.createIcons();
 
@@ -638,8 +702,7 @@
     }
 
     function startGame() {
-      gameStartTime = Date.now(); // ✅ 記錄遊戲開始時間
-      // 淡出選單
+      gameStartTime = Date.now();
       document.getElementById('menu-view').classList.add('opacity-0');
       setTimeout(() => {
         setView('playing-view');
@@ -648,7 +711,15 @@
                         今天 ${getCurrentTime()}
                     </div>
                     <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>`;
-        renderNode('START');
+
+        // 設定夜晚街道背景
+        document.getElementById('scene-bg').style.backgroundImage = `url('${SCENE_IMAGES.STREET_NIGHT}')`;
+
+        // 先顯示情境旁白，再彈出來電介面
+        setTimeout(() => {
+          appendBubble('系統', '剛下過暴雨的台北街頭。你正打算回家，手機突然劇烈震動...', 'incoming');
+          setTimeout(() => showIncomingCall(), 1400);
+        }, 600);
       }, 700);
     }
 
@@ -909,7 +980,6 @@
       isTransitioning = true;
       stopTimer();
 
-      // 滑下收起選項面板
       const optionsArea = document.getElementById('options-area');
       optionsArea.classList.add('translate-y-full');
 
@@ -917,10 +987,42 @@
         appendBubble('我', optionText, 'outgoing');
       }
 
-      // 留時間給「已讀」動畫跑完再進入下一節點
-      setTimeout(() => {
-        renderNode(nextId);
-      }, 1800);
+      setTimeout(() => { renderNode(nextId); }, 1800);
+    }
+
+    // ===== 來電介面邏輯 =====
+    function showIncomingCall() {
+      const callView = document.getElementById('call-view');
+      callView.classList.remove('hidden');
+      lucide.createIcons();
+
+      // Web Vibration API：模擬手機鈴聲震動節奏
+      if (navigator.vibrate) {
+        const pattern = [700, 300, 700, 300, 700, 1500];
+        navigator.vibrate(pattern);
+        vibrationInterval = setInterval(() => navigator.vibrate(pattern), 4200);
+      }
+    }
+
+    function stopRingtone() {
+      if (vibrationInterval) { clearInterval(vibrationInterval); vibrationInterval = null; }
+      if (navigator.vibrate) navigator.vibrate(0); // 立即停止震動
+    }
+
+    function acceptCall() {
+      stopRingtone();
+      if (navigator.vibrate) navigator.vibrate(50); // 短促觸覺回饋
+      const callView = document.getElementById('call-view');
+      callView.classList.add('hidden');
+      // 接聽後顯示阿杰説話
+      renderNode('S1');
+    }
+
+    function declineCall() {
+      stopRingtone();
+      const callView = document.getElementById('call-view');
+      callView.classList.add('hidden');
+      renderNode('S0_IGNORE');
     }
 
     function renderEnding(endingId) {
