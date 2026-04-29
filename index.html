@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>午夜委託 - 沉浸式通訊解謎</title>
-  <meta name="description" content="午夜委託：沉浸式防詐騙互動故事遊戲。體驗真實詐騙情境，測試你的防詐意識。" />
-  <meta property="og:title" content="午夜委託 - 沉浸式通訊解謎" />
-  <meta property="og:description" content="你能識破詐騙集團的陷阱嗎？體驗真實的詐騙情境，學會保護自己。" />
+  <title>午夜委託 0429v1 - 沉浸式通訊解謎</title>
+  <meta name="description" content="午夜委託：沉浸式防詐騙互動故事遊戲。體驗情境式詐騙壓力，練習防詐3C與165查證。" />
+  <meta property="og:title" content="午夜委託 0429v1 - 沉浸式通訊解謎" />
+  <meta property="og:description" content="你能識破詐騙集團的陷阱嗎？練習冷靜、查證、求助，並學會使用165官方管道。" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -440,7 +440,7 @@
           <div id="qte-challenge">
             <div class="flex items-center justify-between mb-2">
               <span id="qte-title" class="text-red-300 text-[11px] font-black tracking-[0.18em] uppercase">壓力操作</span>
-              <span id="qte-subtitle" class="text-gray-500 text-[10px]">保持冷靜完成動作</span>
+              <span id="qte-subtitle" class="text-gray-500 text-[10px]">防詐3C：冷靜、查證、求助</span>
             </div>
             <button id="qte-action-btn" type="button" class="qte-action-btn">
               <i id="qte-action-icon" data-lucide="shield-alert" style="width:16px;height:16px"></i>
@@ -521,6 +521,26 @@
           <p id="ending-advice" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
         </div>
 
+        <div class="bg-blue-950/20 p-4 rounded-2xl border border-blue-900/30">
+          <h3 class="text-blue-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="badge-info" style="width: 14px; height: 14px;"></i> 官方查證工具
+          </h3>
+          <p class="text-gray-300 text-[13px] leading-relaxed">
+            遇到可疑電話、簡訊、交易連結、帳戶或門號要求，先套用防詐3C：冷靜、查證、求助。可撥打165反詐騙諮詢專線，或自行輸入網址進入
+            <a class="text-blue-300 underline" href="https://165.npa.gov.tw" target="_blank" rel="noopener">165全民防騙網</a>
+            查詢；涉及匯款、帳戶或提款時，改聯絡銀行官方客服或直接到派出所處理。
+          </p>
+        </div>
+
+        <div class="bg-slate-900/70 p-4 rounded-2xl border border-white/10">
+          <h3 class="text-slate-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
+            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i> 資料與法規說明
+          </h3>
+          <p class="text-gray-400 text-[12px] leading-relaxed">
+            本研究工具會匿名記錄遊玩路徑、結局、分數、耗時、蒐證次數與錯誤次數，不收集姓名、電話或可直接識別身分的資料。遊戲內法律文字為防詐教育摘要，請以法務部法規資料庫之《洗錢防制法》、《組織犯罪防制條例》與《詐欺犯罪危害防制條例》最新條文為準。
+          </p>
+        </div>
+
         <div id="mistake-container" class="bg-orange-950/20 p-4 rounded-2xl border border-orange-900/30 hidden">
           <h3 class="text-orange-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
             <i data-lucide="siren" style="width: 14px; height: 14px;"></i> 關鍵失誤回顧
@@ -554,6 +574,9 @@
       </div>
 
       <div class="w-full max-w-[320px]">
+        <div class="mb-3 rounded-2xl border border-white/10 bg-black/25 px-3 py-2 text-[11px] leading-relaxed text-white/65">
+          研究告知：本遊戲將匿名記錄遊玩路徑、結局、分數與耗時，用於整體統計分析；不收集姓名、電話或可直接識別身分的資料。
+        </div>
         <div id="answer-slider" class="call-slider" aria-label="滑動接聽">
           <div id="answer-slider-fill" class="call-slider-fill"></div>
           <div id="answer-slider-label" class="call-slider-label">滑動接聽</div>
@@ -634,6 +657,37 @@
           }),
           opt('那你自己去拿錢啊？', 'S1C', {
             effects: { awareness: 1, trust: -1 }
+          }),
+          opt('把交易平台網址傳來，我先確認是不是官方。', 'S_PHISHING_LINK', {
+            effects: { awareness: 1 },
+            evidence: '要求交易平台網址',
+            actionType: 'evidence',
+            postTip: '查證不是點對方給的連結，而是自己從官方管道進入。'
+          })
+        ]
+      },
+
+      S_PHISHING_LINK: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: '阿杰 (LINE)',
+        instantTip: '警訊：短網址、仿冒交易平台、要求登入帳密或簡訊驗證碼，是典型釣魚連結流程。',
+        text: '阿杰傳來一個「遊戲交易平台」連結，網址看起來像官方，但中間多了奇怪的字元。頁面要求你登入遊戲帳號、輸入手機簡訊驗證碼，還跳出「逾時訂單將失效」的倒數。',
+        options: [
+          opt('網址看起來差不多，我先登入確認。', 'BAD_ENDING_PHISHING', {
+            effects: { trust: 1, awareness: -3, risk: 5 },
+            isMistake: true,
+            hint: '只要帳密或驗證碼輸入仿冒頁面，帳號與個資就會被對方接管。',
+            educationalType: '釣魚連結'
+          }),
+          opt('不點連結，我自己搜尋官方平台再查訂單。', 'SAFE_EXIT_PHISHING', {
+            effects: { awareness: 4, trust: -1 },
+            hint: '你把「對方提供的入口」改成「自己找到的官方入口」，切斷了釣魚頁面的控制。'
+          }),
+          opt('我先撥165或到165全民防騙網查這個網址。', 'SAFE_EXIT_PHISHING', {
+            effects: { awareness: 5, fear: -1 },
+            evidence: '165查證可疑交易連結',
+            actionType: 'verifyOfficial',
+            hint: '你使用165官方管道查證，符合防詐3C：冷靜、查證、求助。'
           })
         ]
       },
@@ -843,10 +897,10 @@
           opt('不行，這件事太怪，我不幫。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 3, trust: -1 }
           }),
-          opt('我先打給你媽媽確認。', 'SAFE_EXIT_BLOCK1', {
+          opt('我先打給你媽媽確認，必要時撥165。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4, trust: -2 },
             requiredState: { awareness: { min: 1 } },
-            hint: '多一層交叉驗證，可以大幅降低熟人詐騙成功率。'
+            hint: '多一層交叉驗證，可以大幅降低熟人詐騙成功率；165是可疑詐騙的官方查證管道。'
           })
         ]
       },
@@ -866,12 +920,12 @@
           opt('不合理，我先離開這件事。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 3, trust: -2 }
           }),
-          opt('你把交易畫面截圖傳來，我看完再決定。', 'S_CASH_FAKE_VERIFY', {
+          opt('你把交易畫面截圖傳來，我再用165或官方平台查。', 'S_CASH_FAKE_VERIFY', {
             effects: { awareness: 1, trust: 1 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '要求阿杰提供交易畫面截圖',
+            evidence: '要求阿杰提供交易畫面截圖並準備165查證',
             actionType: 'evidence',
-            hint: '要求資料只是第一步，接下來還要判斷資料能不能被獨立驗證。'
+            hint: '要求資料只是第一步，接下來要用165、官方平台或可信任大人做獨立驗證。'
           })
         ]
       },
@@ -961,12 +1015,12 @@
           opt('覺得毛骨悚然，把錢丟在原地直接跑走', 'SAFE_EXIT_DROP', {
             effects: { awareness: 3, fear: 1 }
           }),
-          opt('立刻向可信任大人確認這是否異常', 'SAFE_EXIT_DROP', {
+          opt('立刻向可信任大人或165確認這是否異常', 'SAFE_EXIT_DROP', {
             effects: { awareness: 4 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '官方查證紀錄',
+            evidence: '165或可信任大人查證紀錄',
             actionType: 'verifyOfficial',
-            hint: '你在風險落地前就切斷流程，這是非常好的處置。'
+            hint: '你在風險落地前就切斷流程，這符合防詐3C的查證與求助。'
           })
         ]
       },
@@ -1058,12 +1112,12 @@
           opt('我先不要加陌生工作室。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 3, trust: -1 }
           }),
-          opt('我先問老師或家人再說。', 'SAFE_EXIT_BLOCK1', {
+          opt('我先問老師、家人或165再說。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '向可信任對象確認紀錄',
+            evidence: '向可信任對象或165確認紀錄',
             actionType: 'verifyOfficial',
-            hint: '當未知風險出現時，先找局外且可信任的人確認，而不是先答應。'
+            hint: '當未知風險出現時，先找局外且可信任的人或165確認，而不是先答應。'
           })
         ]
       },
@@ -1171,12 +1225,12 @@
           opt('這聽起來就是車手！立刻封鎖', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, fear: -1 }
           }),
-          opt('我先離開，找可信任的人確認。', 'SAFE_EXIT_BLOCK2', {
+          opt('我先離開，找可信任的人或165確認。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, trust: -2 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '向可信任對象確認帳戶代收風險',
+            evidence: '向可信任對象或165確認帳戶代收風險',
             actionType: 'verifyOfficial',
-            hint: '你選擇交叉驗證，而不是繼續跟對方學規則。'
+            hint: '你選擇交叉驗證，而不是繼續跟對方學規則，符合防詐3C。'
           })
         ]
       },
@@ -1243,7 +1297,7 @@
         timeoutNext: 'S8_FORCE',
         challenge: {
           title: '證件傳送前停手',
-          subtitle: '長按 1.5 秒，把手從傳送鍵移開',
+          subtitle: '防詐3C：冷靜停手，再查證求助',
           label: '長按拒絕傳送證件',
           icon: 'id-card',
           holdMs: 1500,
@@ -1252,7 +1306,7 @@
           completeEffects: { awareness: 4, fear: -1, risk: -2 },
           evidence: 'K哥要求身分證與提款卡截圖',
           hint: '你在資料外流前停手，保住了最關鍵的身分與金融資訊。',
-          postTip: '遇到要求拍攝身分證、提款卡或密碼的流程，應立即停止並保留對話。'
+          postTip: '遇到要求拍攝身分證、提款卡或密碼的流程，應立即停止、保留對話，並撥165或聯絡銀行官方客服。'
         },
         instantTip: '超高危險紅旗：要求提供身分證、提款卡照片。',
         text: '【系統提示：K哥傳送了一張寫著「公司身分驗證制度」的截圖】\n要加入的話，照規矩來。現在拍你的身分證正反面，還有提款卡傳過來。快點，財務要建檔才能匯款給你。',
@@ -1271,12 +1325,12 @@
           opt('要證件絕對有鬼！立刻封鎖刪除', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 4, trust: -2 }
           }),
-          opt('我先打給銀行確認這種流程是否正常', 'SAFE_EXIT_BLOCK3', {
+          opt('我先打給銀行或165確認這種流程是否正常', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 5 },
             requiredState: { awareness: { min: 2 } },
             evidence: 'K哥要求證件與提款卡照片的截圖',
-            actionType: 'evidence',
-            hint: '你啟動外部驗證，切斷詐騙節奏。'
+            actionType: 'verifyOfficial',
+            hint: '你啟動銀行或165外部驗證，切斷詐騙節奏。'
           })
         ]
       },
@@ -1352,11 +1406,11 @@
           opt('手停在鍵盤上...這筆錢一定不乾淨吧？', 'S8_HESITATE', {
             effects: { awareness: 1, fear: 1 }
           }),
-          opt('抽出提款卡，立刻聯絡銀行與警方', 'SAFE_EXIT_LATE1', {
+          opt('抽出提款卡，立刻聯絡銀行、警方或165', 'SAFE_EXIT_LATE1', {
             effects: { awareness: 5, fear: 1 },
             evidence: '銀行十萬元入帳通知',
             actionType: 'verifyOfficial',
-            postTip: '不明款項進帳時先不要提領，保留通知並聯絡銀行與警方。'
+            postTip: '不明款項進帳時先不要提領，保留通知並聯絡銀行、警方或165。'
           }),
           opt('心生貪念，轉到朋友戶頭藏起來', 'BAD_ENDING_STEAL', {
             effects: { greed: 4, risk: 6, awareness: -3 },
@@ -1378,7 +1432,7 @@
             isMistake: true,
             hint: '恐懼使你選擇服從，而不是停損。'
           }),
-          opt('驚覺被監視，立刻抽出卡片逃離並報警', 'SAFE_EXIT_LATE1', {
+          opt('驚覺被監視，立刻抽出卡片逃離並報警或撥165', 'SAFE_EXIT_LATE1', {
             effects: { awareness: 4, fear: 1 }
           })
         ]
@@ -1391,16 +1445,16 @@
         timeoutNext: 'S10_THREAT',
         challenge: {
           title: '謊言腳本中斷',
-          subtitle: '長按 1.8 秒，拒絕背誦對警方的說詞',
+          subtitle: '防詐3C：冷靜、保留、求助',
           label: '長按刪除謊言腳本',
           icon: 'ban',
           holdMs: 1800,
-          completeText: '停下來，不照對方教的話術，帶現金去警局',
+          completeText: '停下來，不照對方教的話術，帶現金去警局或撥165求助',
           completeNext: 'SAFE_EXIT_LATE2',
           completeEffects: { awareness: 4, fear: 1, risk: -2 },
           evidence: 'K哥要求對銀行與警方說謊的對話',
           hint: '當對方開始教你說謊，代表這已經不是正常交易。',
-          postTip: '保留對方要求你說謊的紀錄，能幫助釐清你是在壓力下被指揮。'
+          postTip: '保留對方要求你說謊的紀錄，並向警方或165求助，能幫助釐清你是在壓力下被指揮。'
         },
         instantTip: '只要開始教你如何對銀行或警方說謊，就已經不是灰色地帶，而是明確犯罪流程。',
         text: '很好，帶著錢到二二八公園廁所交給專員。還有，如果銀行打給你或被警察盤問，你就統一口徑說是要「買高階電腦」。沒問題吧？',
@@ -1413,10 +1467,10 @@
           opt('還要對警察說謊？我不幹了，錢還你們！', 'S10_THREAT', {
             effects: { awareness: 1, fear: 2 }
           }),
-          opt('極度恐懼，拿著現金直接跑進派出所', 'SAFE_EXIT_LATE2', {
+          opt('極度恐懼，拿著現金直接跑進派出所或撥165', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 4, fear: 2 },
             evidence: 'K哥要求前往交款地點與說謊腳本的對話',
-            actionType: 'evidence'
+            actionType: 'verifyOfficial'
           })
         ]
       },
@@ -1429,16 +1483,16 @@
         timeoutNext: 'S11_SPIRAL',
         challenge: {
           title: '恐嚇語音停損',
-          subtitle: '長按 2 秒，保留語音並切斷通話',
+          subtitle: '防詐3C：冷靜保留證據，立即求助',
           label: '長按保留恐嚇語音',
           icon: 'audio-lines',
           holdMs: 2000,
-          completeText: '保留恐嚇語音，不再回覆，帶現金去警局',
+          completeText: '保留恐嚇語音，不再回覆，帶現金去警局或撥165',
           completeNext: 'SAFE_EXIT_LATE2',
           completeEffects: { awareness: 5, fear: 1, risk: -3 },
           evidence: 'K哥恐嚇家人安全的語音',
           hint: '你把恐嚇內容轉成求助證據，而不是繼續被恐懼指揮。',
-          postTip: '遭威脅時不要私下談判；保留語音、對話與帳號，交給警方處理。'
+          postTip: '遭威脅時不要私下談判；保留語音、對話與帳號，交給警方或165處理。'
         },
         instantTip: '恐嚇家人安全，是常見的高壓控制手段。',
         text: '想退出？你以為在玩扮家家酒？監視器畫面、你的身分證、戶籍地址我全都有！不配合，我現在就叫小弟去你家找你家人「喝茶」！',
@@ -1456,11 +1510,11 @@
             isMistake: true,
             hint: '逃跑不會中止風險，只會失去主動處理空間。'
           }),
-          opt('不再對話，帶現金去警局自首', 'SAFE_EXIT_LATE2', {
+          opt('不再對話，帶現金去警局自首或撥165', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 5, fear: 2 },
             requiredState: { awareness: { min: 1 } },
             evidence: 'K哥恐嚇家人安全的語音',
-            actionType: 'evidence'
+            actionType: 'verifyOfficial'
           })
         ]
       },
@@ -1476,10 +1530,10 @@
             isMistake: true,
             hint: '你再次把決策權交給恐懼與熟人壓力。'
           }),
-          opt('連阿杰都嚇成這樣，只能硬著頭皮報警了', 'SAFE_EXIT_LATE2', {
+          opt('連阿杰都嚇成這樣，只能硬著頭皮報警或撥165', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 4, fear: 2 },
             evidence: '阿杰要求不要報警的語音',
-            actionType: 'evidence'
+            actionType: 'verifyOfficial'
           })
         ]
       },
@@ -1503,7 +1557,7 @@
           opt('遇到巡邏員警盤查，心理防線崩潰全盤托出', 'SAFE_EXIT_LATE3', {
             effects: { awareness: 2, fear: 3 },
             evidence: '多次提款後的對話紀錄',
-            actionType: 'evidence'
+            actionType: 'verifyOfficial'
           }),
           opt('就這樣繼續做下去吧...', 'S12_CAUGHT', {
             effects: { greed: 1, awareness: -2, risk: 6 },
@@ -1532,9 +1586,8 @@
         content: '你鐵了心掛斷並關機。一個月後，聽說阿杰因為涉嫌洗錢被警察帶走，名下財產全被凍結...',
         analysis: '【防禦力 S 級】\n你完美避開了開端的「人情勒索」。保持警覺與學會無情拒絕，是保護自己的最好方式。',
         legal: '【無法律責任】\n未參與行為，完全無罪。',
-        advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或向警方、官方管道尋求專業建議。',
-        psychTrap: '情感勒索 (Emotional Blackmail)',
-        realCase: '2023年新北一高中生因拒絕幫朋友「代收包裹」，事後發現該包裹為毒品，成功免除刑責。'
+        advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或向警方、165尋求專業建議。',
+        psychTrap: '情感勒索 (Emotional Blackmail)'
       },
 
       SAFE_EXIT_DROP: {
@@ -1542,9 +1595,8 @@
         content: '在暗巷中面對詭異的黑帽男，你把現金丟在原地轉身就跑。成功避開了危機。',
         analysis: '【防禦力 A 級】\n接觸到「大量不明現金」與「可疑人物」時，懂得相信直覺、及時煞車。',
         legal: '【無法律責任】\n因未實際取得或移轉贓款，不構成洗錢防制法之罪責。',
-        advice: '【警訊】答應替朋友在路邊代收來路不明的現金。\n【自救】發覺不對勁立刻離開，事後若遭恐嚇請報警求助。',
-        psychTrap: '沉沒成本謬誤 (Sunk Cost Fallacy) - 你成功克服了「都已經答應出門幫忙了」的牽絆。',
-        realCase: '2022年高雄某大學生於面交現場察覺異狀逃離，雖遭恐嚇但報警後平安無事。'
+        advice: '【警訊】答應替朋友在路邊代收來路不明的現金。\n【自救】發覺不對勁立刻離開，事後若遭恐嚇請報警或撥165求助。',
+        psychTrap: '沉沒成本謬誤 (Sunk Cost Fallacy) - 你成功克服了「都已經答應出門幫忙了」的牽絆。'
       },
 
       SAFE_EXIT_BLOCK1: {
@@ -1552,9 +1604,17 @@
         content: '對於高薪誘惑，你果斷選擇封鎖不明人士。保住了你的清白和前途。',
         analysis: '【防禦力 A 級】\n面對「輕鬆高薪」等詐騙話術，不抱僥倖心態，直接封鎖是最有效的防禦。',
         legal: '【仍有法律風險】\n就算只是幫朋友面交或代領一次，也可能接觸到贓款，或成為車手作案的斷點；是否涉責仍要看知情程度、參與過程與後續處置。',
-        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作，或要你替朋友代領、面交不明現金。\n【自救】就算對方說只是幫忙領錢，也可能是髒錢或車手斷點；立刻停止、保留對話並向警方或官方管道查證。',
-        psychTrap: '貪婪與捷徑心理 (Greed & Shortcut Mentality) - 詐騙集團經常利用人想輕鬆賺錢的弱點。',
-        realCase: '某少年看見「日領三千包吃包住」廣告，幸運在交出帳戶前與家人討論而避免涉案。'
+        advice: '【警訊】陌生人提供「無腦高薪、現金日領」的工作，或要你替朋友代領、面交不明現金。\n【自救】就算對方說只是幫忙領錢，也可能是髒錢或車手斷點；立刻停止、保留對話並向警方或165查證。',
+        psychTrap: '貪婪與捷徑心理 (Greed & Shortcut Mentality) - 詐騙集團經常利用人想輕鬆賺錢的弱點。'
+      },
+
+      SAFE_EXIT_PHISHING: {
+        title: '結局：識破釣魚連結',
+        content: '你沒有點開阿杰傳來的交易連結，而是自行搜尋官方平台並使用165查證。倒數壓力消失後，你發現那個網址只是仿冒頁面。',
+        analysis: '【防禦力 A 級】\n你沒有被「看起來像官方」的介面騙走，並成功做到防詐3C：冷靜、查證、求助。',
+        legal: '【無法律責任】\n未輸入帳密、驗證碼或個資，未讓帳號與資料外流。',
+        advice: '【警訊】短網址、仿冒交易平台、要求登入帳密或輸入簡訊驗證碼。\n【自救】不要點對方給的連結；自行輸入官方網址、使用官方App，或撥打165、查詢165全民防騙網。',
+        psychTrap: '仿冒介面與時間壓迫 (Phishing & Urgency) - 詐騙者用相似網址與倒數時間降低你的查證意願。'
       },
 
       SAFE_EXIT_BLOCK2: {
@@ -1562,9 +1622,8 @@
         content: '當對方提出要「使用你的銀行帳戶」進行匯款時，你果斷拒絕並封鎖了他。',
         analysis: '【防禦力 A 級】\n你敏銳地抓到了最重要紅旗：「絕對不能把帳戶提供給別人使用」。',
         legal: '【無法律責任】\n未交付帳戶，成功避免成為人頭戶。',
-        advice: '【警訊】對方提出「匯款到你的帳戶，再由你領出」。\n【自救】100%是詐騙，立刻封鎖並報警或向官方管道檢舉。',
-        psychTrap: '虛假合理化 (False Rationalization) - 他們用「避稅」等專業詞彙包裝洗錢行為。',
-        realCase: '2024年統計，高達三成青年車手是因為相信「虛擬幣避稅代購」說法而交出帳戶。'
+        advice: '【警訊】對方提出「匯款到你的帳戶，再由你領出」。\n【自救】高度疑似詐騙，立刻封鎖並報警或撥165檢舉查證。',
+        psychTrap: '虛假合理化 (False Rationalization) - 他們用「避稅」等專業詞彙包裝洗錢行為。'
       },
 
       SAFE_EXIT_BLOCK3: {
@@ -1572,9 +1631,8 @@
         content: '對方要求提供身分證與提款卡照片的瞬間，你意識到不對勁並立刻封鎖。',
         analysis: '【防禦力 B+ 級】\n任何要求「寄送提款卡及密碼」或「拍卡片照」，都是騙車簿的手法。',
         legal: '【無法律責任】\n未交出實體卡片、密碼，未構成幫助詐欺。',
-        advice: '【警訊】對方要求拍攝「提款卡」與「身分證」。\n【自救】絕對不要傳送！若已傳送請立刻聯絡警方並通知銀行掛失。',
-        psychTrap: '權威服從與時間壓力 (Authority & Time Pressure) - 假裝「公司財務規定」並催促你立刻執行。',
-        realCase: '台中一名高中生因聽信「公司建檔需要」，傳送卡片正反面，隨後帳戶被利用洗錢三百萬。'
+        advice: '【警訊】對方要求拍攝「提款卡」與「身分證」。\n【自救】絕對不要傳送！若已傳送請立刻聯絡銀行、警方或165。',
+        psychTrap: '權威服從與時間壓力 (Authority & Time Pressure) - 假裝「公司財務規定」並催促你立刻執行。'
       },
 
       SAFE_EXIT_LATE1: {
@@ -1582,9 +1640,8 @@
         content: '看著帳戶裡來路不明的 10 萬元，你選擇了聯絡銀行並報警。',
         analysis: '【防禦力 C 級】\n在「提領」這個構成犯罪既遂的關鍵動作前冷靜下來，將損害降到最低。',
         legal: '【無刑事責任】\n未提領贓款不構成犯罪。但帳戶將被列為「警示帳戶」被凍結。',
-        advice: '【警訊】戶頭收到不明大筆款項。\n【自救】絕對不可提領！第一時間帶證件親赴派出所報案凍結款項。',
-        psychTrap: '木已成舟的錯覺 (Fait Accompli) - 錢都進來了，不領好像不行？其實越過這條線才是萬丈深淵。',
-        realCase: '某大學生見帳戶多出50萬，經行員提醒未提領即報警，免除7年以下有期徒刑。'
+        advice: '【警訊】戶頭收到不明大筆款項。\n【自救】絕對不可提領！第一時間聯絡銀行、撥165或親赴派出所報案凍結款項。',
+        psychTrap: '木已成舟的錯覺 (Fait Accompli) - 錢都進來了，不領好像不行？其實越過這條線才是萬丈深淵。'
       },
 
       SAFE_EXIT_LATE2: {
@@ -1592,9 +1649,8 @@
         content: '你已經親手提領了現金，但在遭到黑道恐嚇時，你選擇鼓起勇氣帶著現金去自首。',
         analysis: '【防禦力 D 級】\n第一時間保留對話並報警自首，永遠是爭取減刑的最佳解。',
         legal: '【涉嫌幫助詐欺罪】\n主動攜帶贓款自首，極高機率能獲檢察官緩起訴或減刑。',
-        advice: '【警訊】對方教導你對警察說謊或用語音恐嚇威脅。\n【自救】不要因為害怕就繼續做！立刻尋求警方保護與自首。',
-        psychTrap: '恐懼訴求 (Fear Appeal) - 詐騙集團常以「知道你家在哪」威脅，使受害者不敢報案。',
-        realCase: '台北一名17歲車手提領一次後因恐懼報警交出8萬贓款，法官考量其自首且全數繳回，判決緩刑。'
+        advice: '【警訊】對方教導你對警察說謊或用語音恐嚇威脅。\n【自救】不要因為害怕就繼續做！立刻尋求警方保護、自首或撥165求助。',
+        psychTrap: '恐懼訴求 (Fear Appeal) - 詐騙集團常以「知道你家在哪」威脅，使受害者不敢報案。'
       },
 
       SAFE_EXIT_LATE3: {
@@ -1602,9 +1658,8 @@
         content: '你在多次提領後遇到盤查才坦白。法官難以採信你「不知情」，需面對刑責與高額賠償。',
         analysis: '【危險級別】\n連續得手會被認定具「未必故意」。越晚報案代價越大。',
         legal: '【加重詐欺罪共犯】\n面臨 1-7 年有期徒刑，且父母必須承擔民事連帶賠償責任。',
-        advice: '【警訊】第一次親手提領他人匯入的現金並獲高報酬。\n【自救】立刻停止提款，前往警局自首。',
-        psychTrap: '溫水煮青蛙效應 (Boiling Frog Syndrome) - 習慣了犯罪帶來的金錢，逐漸對風險麻木。',
-        realCase: '苗栗某學生擔任車手一個月領取上千萬元，落網後父母需賣房賠償被害人2000萬元。'
+        advice: '【警訊】第一次親手提領他人匯入的現金並獲高報酬。\n【自救】立刻停止提款，前往警局自首或撥165求助。',
+        psychTrap: '溫水煮青蛙效應 (Boiling Frog Syndrome) - 習慣了犯罪帶來的金錢，逐漸對風險麻木。'
       },
 
       BAD_ENDING_STEAL: {
@@ -1613,8 +1668,16 @@
         analysis: '【系統崩潰】\n黑吃黑不僅成為共犯，更會讓自己陷入無法求救的極度危險中。',
         legal: '【詐欺/洗錢/侵占罪】\n私吞黑錢罪加一等，連帶面臨暴力威脅。',
         advice: '【警訊】產生想把不明匯入款據為己有的念頭。\n【自救】絕不能挪用！帶著存摺前往警局或派出所報案。',
-        psychTrap: '僥倖心理 (Wishful Thinking) - 以為對方是犯罪集團就不敢報警，卻忽略警方主動查緝與黑道私刑。',
-        realCase: '2023年桃園一車手私吞200萬贓款，遭集團成員擄走囚禁毆打一星期，警方攻堅才獲救。'
+        psychTrap: '僥倖心理 (Wishful Thinking) - 以為對方是犯罪集團就不敢報警，卻忽略警方主動查緝與黑道私刑。'
+      },
+
+      BAD_ENDING_PHISHING: {
+        title: '結局：被釣走的帳號與個資',
+        content: '你在仿冒交易頁面輸入帳號、密碼與簡訊驗證碼。幾分鐘後，帳號被改密碼，個資也被對方拿來繼續威脅你配合後續任務。',
+        analysis: '【危險警告】\n釣魚網站的核心不是頁面像不像，而是它把你引到對方控制的入口，讓你主動交出登入權限。',
+        legal: '【個資與帳號風險】\n你可能成為個資外洩、帳號盜用或後續詐騙流程的受害者；若再配合收款、提款或轉交資料，法律風險會升高。',
+        advice: '【警訊】交易頁面要求帳密、簡訊驗證碼、身分證或金融資料。\n【自救】立刻停止輸入，從官方App或自行輸入網址登入；已輸入者應立即改密碼、通知平台、保留畫面並撥165。',
+        psychTrap: '權威仿冒 (Authority Spoofing) - 看似官方的頁面會讓人誤把介面信任成制度信任。'
       },
 
       BAD_ENDING_HIDE: {
@@ -1623,8 +1686,7 @@
         analysis: '【危險警告】\n逃避只會失去主動說明的機會，車手身分幾乎 100% 會被抓。',
         legal: '【加重詐欺/通緝】\n逃亡屬犯後態度不佳，無法獲得減刑，直接入獄。',
         advice: '【警訊】產生只要逃跑就抓不到的誤判。\n【自救】跑路絕不是辦法，台灣監視器密度極高，請向家人坦白並尋求幫助。',
-        psychTrap: '逃避現實 (Escapism) - 面對巨大錯誤時，大腦會本能選擇逃跑，卻導致後果無限放大。',
-        realCase: '19歲青年擔任車手後躲藏於南部網咖半年，遭警方盤查逮捕，因曾逃亡遭法院重判 4 年不得緩刑。'
+        psychTrap: '逃避現實 (Escapism) - 面對巨大錯誤時，大腦會本能選擇逃跑，卻導致後果無限放大。'
       },
 
       BAD_ENDING_SCARED: {
@@ -1633,8 +1695,7 @@
         analysis: '【危險警告】\n提領過一次犯罪就成立，中途退出不能一筆勾銷，報案才是唯一解。',
         legal: '【加重詐欺罪共犯】\n面臨 1-7 年有期徒刑及高額民事求償。',
         advice: '【警訊】害怕而選擇刪除對話紀錄躲在家中。\n【自救】逃避無法撤銷犯罪，刪除紀錄反而銷毀了對自己有利的證據。',
-        psychTrap: '鴕鳥心態 (Ostrich Effect) - 假裝沒看見危險，危險就不存在的嚴重認知偏誤。',
-        realCase: '多數基層車手都是在家中遭拘提，許多家長直到警察破門才知道孩子在外犯下重罪。'
+        psychTrap: '鴕鳥心態 (Ostrich Effect) - 假裝沒看見危險，危險就不存在的嚴重認知偏誤。'
       },
 
       BAD_ENDING_RECRUIT: {
@@ -1643,8 +1704,7 @@
         analysis: '【徹底崩潰】\n拉人下水會讓你從「被害人/輕犯」變成萬劫不復的「主謀加重犯」。',
         legal: '【組織犯罪防制條例】\n面臨 3-10 年極重刑罰，且將面臨數十人的集體求償，一生全毀。',
         advice: '【警訊】想為了高額獎金把身邊同學好友拖下水。\n【自救】遇到招募，請立刻報警檢舉以防同學受害。',
-        psychTrap: '去人性化 (Dehumanization) - 把朋友轉換為「商品」與「搖錢樹」，徹底喪失道德底線。',
-        realCase: '2024年破獲校園詐騙幫派，高三主嫌招攬5名學弟當車手，主嫌遭重判 8 年並面臨高達 8000 萬求償。'
+        psychTrap: '去人性化 (Dehumanization) - 把朋友轉換為「商品」與「搖錢樹」，徹底喪失道德底線。'
       },
 
       BAD_ENDING_CAUGHT: {
@@ -1653,8 +1713,7 @@
         analysis: '【Game Over】\n天網恢恢，所有的提款機都有監視器。車手被抓的機率接近 100%。',
         legal: '【加重詐欺/洗錢防制法】\n面臨極重刑罰與民事賠償，青春將在鐵窗內度過。',
         advice: '【警訊】覺得自己不會這麼倒楣被抓到。\n【自救】沒有完美的犯罪。只要曾經參與，唯一自救的方法就是立刻自首。',
-        psychTrap: '樂觀偏誤 (Optimism Bias) - 誤以為別人才會被抓，自己運氣好不會有事。',
-        realCase: '警政署統計：「99%的車手在其犯案後的3至6個月內，便會遭到警方循線逮捕。」'
+        psychTrap: '樂觀偏誤 (Optimism Bias) - 誤以為別人才會被抓，自己運氣好不會有事。'
       },
 
       BAD_ENDING_RENT_ACCOUNT: {
@@ -1663,14 +1722,16 @@
         analysis: '【徹底崩潰】\n出借、販賣帳戶是詐騙集團最愛的人頭來源。你不僅一毛錢都沒賺到，還要背負詐欺共犯的罪名。',
         legal: '【幫助詐欺/洗錢防制法】\n面臨有期徒刑，且被害人的損失都會算在你頭上，面臨鉅額民事賠償。',
         advice: '【警訊】有人提議「租借」、「購買」你的銀行帳戶或提款卡。\n【自救】絕對不提供！立刻向警方檢舉。',
-        psychTrap: '不勞而獲的貪念 (Greed) - 認為「沒用的帳戶」能換錢，忽略了背後的巨大風險。',
-        realCase: '新法上訴後，提供人頭戶將面臨告誡、帳戶限制，甚至有期徒刑及高額罰款。'
+        psychTrap: '不勞而獲的貪念 (Greed) - 認為「沒用的帳戶」能換錢，忽略了背後的巨大風險。'
       },
 
       BAD_ENDING_SIM_CARD: {
         title: '結局：背負沉重債務的受害者',
         content: '你拿到了幾千塊現金，把新手機交給了對方，自己留下了SIM卡。幾個月後，你開始收到電信公司的催繳通知。對方早就人間蒸發，沒有匯錢給你繳月費。',
-        analysis: '【危險警告】\n這就是典型的「辦機換現」詐騙。你為了幾千塊的眼前小利，背負了長達兩三年、動輒數萬元的合約月租費與違約金。你的信用評分也因此受損。'
+        analysis: '【危險警告】\n這就是典型的「辦機換現」詐騙。你為了幾千塊的眼前小利，背負了長達兩三年、動輒數萬元的合約月租費與違約金。你的信用評分也因此受損。',
+        legal: '【民事與信用風險】\n門號、分期、月租與違約金登記在你的名下，後續催繳、停話、違約紀錄與債務責任會回到你身上。',
+        advice: '【警訊】對方要求你用自己的名字辦門號、領手機，再把手機交給第三人。\n【自救】不要簽約、不要交付手機；若已簽約，立即聯絡電信業者、家長或165，確認停損方式。',
+        psychTrap: '眼前小利與現場壓力 (Immediate Reward & On-site Pressure) - 對方用現金與店內催促，讓你忽略合約責任。'
       }
     };
 
@@ -1767,11 +1828,15 @@
     function getOfficialAdviceForNode(nodeId = currentNodeId) {
       const adviceMap = {
         S1C: {
-          text: '朋友要求你深夜代收不明現金，建議先拒絕、截圖保留對話，並向家長或官方管道查證。',
+          text: '朋友要求你深夜代收不明現金，建議先拒絕、截圖保留對話，並向家長、警方或165查證。',
           next: 'SAFE_EXIT_BLOCK1'
         },
+        S_PHISHING_LINK: {
+          text: '可疑交易連結不可直接點擊或登入。請自行輸入官方網址、使用官方App，或撥打165查證。',
+          next: 'SAFE_EXIT_PHISHING'
+        },
         S2_REFUSE: {
-          text: '對方用情緒與急迫感施壓，建議停止協助，改由當事人自己與家人或警方處理。',
+          text: '對方用情緒與急迫感施壓，建議停止協助，改由當事人自己與家人、警方或165處理。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S2_DOUBT: {
@@ -1787,28 +1852,28 @@
           next: 'SAFE_EXIT_BLOCK1'
         },
         S5: {
-          text: '要求使用你的帳戶收款再領現，這是車手招募高風險特徵，建議立刻停止。',
+          text: '要求使用你的帳戶收款再領現，這是車手招募高風險特徵，建議立刻停止並撥165查證。',
           next: 'SAFE_EXIT_BLOCK2'
         },
         S7: {
-          text: '要求拍攝身分證、提款卡是重大紅旗，建議不要傳送，立刻封鎖並保留截圖。',
+          text: '要求拍攝身分證、提款卡是重大紅旗，建議不要傳送，立刻封鎖、保留截圖並聯絡銀行或165。',
           next: 'SAFE_EXIT_BLOCK3'
         },
         S8: {
-          text: '帳戶出現不明款項時不要提領，建議抽出卡片、聯絡銀行與警方。',
+          text: '帳戶出現不明款項時不要提領，建議抽出卡片、聯絡銀行、警方或165。',
           next: 'SAFE_EXIT_LATE1'
         },
         S9: {
-          text: '對方教你向銀行或警方說謊，代表已進入犯罪流程；帶現金尋求警方協助。',
+          text: '對方教你向銀行或警方說謊，代表已進入犯罪流程；帶現金尋求警方協助或撥165求助。',
           next: 'SAFE_EXIT_LATE2'
         },
         S10_THREAT: {
-          text: '遭恐嚇時不要再與對方談判，保留語音與對話，直接尋求警方保護。',
+          text: '遭恐嚇時不要再與對方談判，保留語音與對話，直接尋求警方保護或撥165。',
           next: 'SAFE_EXIT_LATE2'
         }
       };
       return adviceMap[nodeId] || {
-        text: '目前建議：停止轉帳、不要交付帳戶或證件，保留對話紀錄後向警方或官方管道查證。',
+        text: '目前建議：停止轉帳、不要交付帳戶或證件，保留對話紀錄後向警方、165或官方管道查證。',
         next: gameState.risk >= 7 ? 'SAFE_EXIT_LATE2' : 'SAFE_EXIT_BLOCK1'
       };
     }
@@ -1817,14 +1882,14 @@
       if (isTransitioning) return;
       gameState.usedOfficialCheck = true;
       applyEffects({ awareness: 2, fear: -2, risk: -3 });
-      collectEvidence('官方查證紀錄');
+      collectEvidence('165或官方查證紀錄');
       const advice = getOfficialAdviceForNode();
       handleOptionSelect({
         next: advice.next,
-        text: '採用官方建議，停止流程並保留紀錄',
+        text: '採用165或官方建議，停止流程並保留紀錄',
         effects: {},
         tags: ['used_official_check'],
-        hint: '你讓外部專線介入判斷，成功切斷對方的節奏。',
+        hint: '你讓165或外部官方管道介入判斷，成功切斷對方的節奏。',
         postTip: advice.text,
         actionType: 'verifyOfficial'
       });
@@ -2619,6 +2684,7 @@
         ['車手招募', /車手招募|代領現金|ATM|領出來|現金/],
         ['人頭帳戶', /帳戶|提款卡|存摺|末四碼|對帳/],
         ['辦門號換現金', /門號|電信|手機|月租|簽約/],
+        ['釣魚連結', /釣魚|仿冒|短網址|交易連結|網址|驗證碼/],
         ['證件蒐集', /證件蒐集|身分證|學生證|健保卡|驗證/],
         ['時間壓迫', /時間壓迫|逾時|快來不及|倒數|急/],
         ['現場壓力', /現場|店門口|簽名|都到現場/],
