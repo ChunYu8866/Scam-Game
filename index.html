@@ -3,222 +3,501 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>午夜委託</title>
-  <meta name="description" content="午夜委託：高中校園防詐互動故事。玩家在社群、遊戲帳號交易與同儕壓力情境中練習停手、查證與求助。" />
-  <meta property="og:title" content="午夜委託 0706_v18 - 高中校園社群文字修正版" />
-  <meta property="og:description" content="在班群、限動與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
+  <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
+  <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
+  <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+    /* ============================================================
+       午夜委託 v19 — 設計系統（單檔自足，無外部資源）
+    ============================================================ */
+    :root {
+      --bg-page: #05060a;
+      --frame-bg: #0b0e14;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface-2: rgba(255, 255, 255, 0.08);
+      --solid: #161a22;
+      --border: rgba(255, 255, 255, 0.09);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #eef1f6;
+      --dim: #9aa4b5;
+      --faint: #677182;
+      --accent: #34d399;
+      --accent-deep: #10b981;
+      --accent-ink: #032117;
+      --blue: #3b82f6;
+      --blue-deep: #2563eb;
+      --danger: #f43f5e;
+      --danger-soft: #fda4af;
+      --warn: #f59e0b;
+      --warn-soft: #fcd34d;
+      --info: #38bdf8;
+      --radius: 18px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --notch: 0px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { height: 100%; }
 
     body {
-      font-family: 'Noto Sans TC', sans-serif;
-      background-color: #000;
-      color: #fff;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei UI", "Microsoft JhengHei", "Heiti TC", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-page);
+      color: var(--text);
       overflow: hidden;
-      user-select: none;
-      touch-action: pan-y;
       -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      touch-action: manipulation;
     }
 
-    button:focus {
-      outline: none;
-      box-shadow: none !important;
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      touch-action: manipulation;
     }
 
-    @keyframes slow-pan {
-      0% {
-        transform: scale(1) translate(0, 0);
-      }
+    button:focus { outline: none; }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-      50% {
-        transform: scale(1.05) translate(-1%, -1%);
-      }
+    a { color: var(--info); }
 
-      100% {
-        transform: scale(1) translate(0, 0);
-      }
+    .hidden { display: none !important; }
+
+    /* ── 圖示 ── */
+    .ic {
+      width: 1em; height: 1em;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      flex-shrink: 0; display: inline-block; vertical-align: -0.12em;
     }
 
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0);
-      }
-
-      25% {
-        transform: translateX(-3px);
-      }
-
-      75% {
-        transform: translateX(3px);
-      }
+    /* ── 版面：置中容器與手機外框 ── */
+    #app {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      background:
+        radial-gradient(1100px 700px at 50% -12%, #111a2c 0%, transparent 60%),
+        radial-gradient(900px 600px at 85% 110%, #0d1a16 0%, transparent 55%),
+        var(--bg-page);
     }
 
-    @keyframes message-pop {
-      0% {
-        opacity: 0;
-        transform: translateY(15px) scale(0.95);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes notify-drop {
-      0% {
-        transform: translateY(-150%);
-        opacity: 0;
-      }
-
-      10% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-
-      90% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-
-      100% {
-        transform: translateY(-150%);
-        opacity: 0;
-      }
-    }
-
-    @keyframes bounce {
-
-      0%,
-      80%,
-      100% {
-        transform: translateY(0);
-      }
-
-      40% {
-        transform: translateY(-4px);
-      }
-    }
-
-    @keyframes fade-in {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .animate-slow-pan {
-      animation: slow-pan 25s ease-in-out infinite alternate;
-    }
-
-    .animate-shake {
-      animation: shake 0.2s ease-in-out 2;
-    }
-
-    .msg-pop {
-      animation: message-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    .notify-anim {
-      animation: notify-drop 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .typing-dot {
-      width: 5px;
-      height: 5px;
-      background-color: #9ca3af;
-      border-radius: 50%;
-      display: inline-block;
-      animation: bounce 1.4s infinite ease-in-out both;
-    }
-
-    .typing-dot:nth-child(1) {
-      animation-delay: -0.32s;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: -0.16s;
-    }
-
-    .animate-fade-in {
-      animation: fade-in 0.35s ease-out both;
-    }
-
-    .pb-safe {
-      padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    .scanlines {
-      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNCIgaGVpZ2h0PSI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=');
-    }
-
-    .iphone-notch {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 25px;
-      background-color: #000;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-      z-index: 100;
-    }
-
-    @keyframes ring-expand {
-      0% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-
-      100% {
-        transform: scale(2.2);
-        opacity: 0;
-      }
-    }
-
-    .call-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      animation: ring-expand 2s ease-out infinite;
-    }
-
-    .call-ring:nth-child(2) {
-      animation-delay: 0.65s;
-    }
-
-    .call-ring:nth-child(3) {
-      animation-delay: 1.3s;
-    }
-
-    .call-slider {
+    #phone-frame {
       position: relative;
       width: 100%;
-      height: 68px;
+      height: 100vh;
+      height: 100dvh;
+      background: var(--frame-bg);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: box-shadow 0.4s ease;
+    }
+
+    .notch { display: none; }
+
+    @media (min-width: 768px) and (min-height: 720px) {
+      :root { --notch: 26px; --safe-top: 0px; --safe-bottom: 0px; }
+
+      #app { padding: 28px; }
+
+      #phone-frame {
+        width: min(412px, 94vw);
+        height: min(864px, 92dvh);
+        border-radius: 46px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow:
+          0 0 0 10px #05070b,
+          0 0 0 11px rgba(255, 255, 255, 0.07),
+          0 50px 130px rgba(0, 0, 0, 0.8);
+      }
+
+      .notch {
+        display: block;
+        position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+        width: 108px; height: 26px;
+        background: #05070b;
+        border-radius: 999px;
+        z-index: 200;
+        pointer-events: none;
+      }
+    }
+
+    #phone-frame.ring-danger {
+      box-shadow:
+        0 0 0 10px #05070b,
+        0 0 0 11px rgba(244, 63, 94, 0.45),
+        0 0 60px rgba(244, 63, 94, 0.25),
+        0 50px 130px rgba(0, 0, 0, 0.8);
+    }
+
+    /* ── 場景背景 ── */
+    #scene-bg {
+      position: absolute; inset: 0; z-index: 0;
+      pointer-events: none;
+      transition: background 1s ease;
+      background: #0f172a;
+    }
+
+    /* ── 視圖共通 ── */
+    .view {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+    }
+
+    #guide-view   { z-index: 70; background: #0b0e14; }
+    #menu-view    { z-index: 50; }
+    #call-view    { z-index: 60; }
+    #playing-view { z-index: 10; }
+    #ending-view  { z-index: 80; background: #0b0e14; }
+
+    .scroll-area {
+      flex: 1; overflow-y: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+      overscroll-behavior: contain;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── 動畫 ── */
+    @keyframes msg-pop {
+      0%   { opacity: 0; transform: translateY(14px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .msg-pop { animation: msg-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fade-in 0.4s ease-out both; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .animate-shake { animation: shake 0.18s ease-in-out 3; }
+
+    @keyframes notify-drop {
+      0%   { transform: translate(-50%, -160%); opacity: 0; }
+      10%  { transform: translate(-50%, 0);     opacity: 1; }
+      88%  { transform: translate(-50%, 0);     opacity: 1; }
+      100% { transform: translate(-50%, -160%); opacity: 0; }
+    }
+    .notify-anim { animation: notify-drop 4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes dot-bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+      40% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    @keyframes soft-pulse {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
+    .pulse { animation: soft-pulse 1.6s ease-in-out infinite; }
+
+    @keyframes ring-expand {
+      0%   { transform: scale(1);   opacity: 0.45; }
+      100% { transform: scale(2.1); opacity: 0; }
+    }
+
+    @keyframes swipe-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ── 頭像（文字型） ── */
+    .avatar {
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: #fff;
+      flex-shrink: 0;
+      width: 36px; height: 36px; font-size: 15px;
+      letter-spacing: 0;
+      box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.25);
+    }
+    .avatar.sm { width: 28px; height: 28px; font-size: 12px; }
+    .avatar.xl { width: 112px; height: 112px; font-size: 44px; }
+    .av-jie { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .av-k   { background: linear-gradient(135deg, #881337, #450a0a); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .av-sys { background: linear-gradient(135deg, #374151, #1f2937); color: #d1d5db; }
+
+    /* ── 卡片 ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .card + .card { margin-top: 12px; }
+
+    .card h2 {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--dim);
+      margin-bottom: 10px;
+    }
+    .card h2 .ic { font-size: 15px; }
+
+    /* ============================================================
+       推播通知
+    ============================================================ */
+    #push-notification {
+      position: absolute;
+      top: calc(var(--notch) + var(--safe-top) + 14px);
+      left: 50%; transform: translateX(-50%);
+      width: min(90%, 360px);
+      background: rgba(24, 27, 34, 0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 11px 13px;
+      display: flex; align-items: center; gap: 11px;
+      z-index: 150;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+    }
+    .push-icon {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 18px; flex-shrink: 0;
+    }
+    .push-body { flex: 1; min-width: 0; }
+    .push-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+    .push-row strong { font-size: 13px; }
+    .push-row time { font-size: 10.5px; color: var(--faint); }
+    .push-body p {
+      font-size: 12px; color: var(--dim);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ============================================================
+       遊玩介紹（guide-view）
+    ============================================================ */
+    #guide-view .scroll-area {
+      padding: calc(var(--notch) + var(--safe-top) + 30px) 20px 8px;
+    }
+
+    .guide-hero { text-align: center; margin-bottom: 20px; position: relative; }
+    .hero-badge {
+      width: 60px; height: 60px; margin: 0 auto 14px;
+      border-radius: 20px;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 30px;
+      box-shadow: 0 0 40px rgba(52, 211, 153, 0.15);
+    }
+    .hero-kicker {
+      font-size: 11.5px; font-weight: 800;
+      letter-spacing: 0.3em; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .hero-title {
+      font-size: 36px; font-weight: 900; letter-spacing: 0.12em;
+      line-height: 1.15;
+    }
+    .hero-sub { font-size: 13px; color: var(--dim); margin-top: 8px; letter-spacing: 0.08em; }
+    .ver-chip {
+      position: absolute; top: -12px; right: -4px;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 10px; color: var(--faint);
+      border: 1px solid var(--border); border-radius: 999px;
+      padding: 3px 9px;
+    }
+
+    .intro-card p { font-size: 13.5px; line-height: 1.85; color: #d3d9e3; }
+
+    .goal-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; margin: 12px 0;
+    }
+    .goal-chip {
+      border-radius: 15px; padding: 12px 10px;
+      display: flex; flex-direction: column; gap: 8px;
+      border: 1px solid;
+    }
+    .goal-chip .ic { font-size: 18px; }
+    .goal-chip span { font-size: 12px; font-weight: 700; color: var(--text); }
+    .goal-sky     { background: rgba(56, 189, 248, 0.09);  border-color: rgba(56, 189, 248, 0.25);  color: #7dd3fc; }
+    .goal-amber   { background: rgba(245, 158, 11, 0.09);  border-color: rgba(245, 158, 11, 0.25);  color: var(--warn-soft); }
+    .goal-emerald { background: rgba(52, 211, 153, 0.09);  border-color: rgba(52, 211, 153, 0.25);  color: var(--accent); }
+
+    .guide-list { list-style: none; }
+    .guide-list li {
+      position: relative;
+      padding-left: 18px;
+      font-size: 13px; line-height: 1.8; color: #c6cdd9;
+    }
+    .guide-list li + li { margin-top: 6px; }
+    .guide-list li::before {
+      content: "";
+      position: absolute; left: 2px; top: 0.72em;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); opacity: 0.7;
+    }
+    .guide-list.numbered { counter-reset: step; }
+    .guide-list.numbered li { padding-left: 26px; }
+    .guide-list.numbered li::before {
+      content: counter(step);
+      counter-increment: step;
+      top: 0.28em; left: 0;
+      width: 17px; height: 17px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--dim);
+      font-size: 10.5px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 1;
+    }
+
+    .c3-row { display: flex; align-items: flex-start; gap: 10px; }
+    .c3-row + .c3-row { margin-top: 10px; }
+    .c3-key {
+      flex-shrink: 0;
+      min-width: 44px; text-align: center;
+      background: rgba(52, 211, 153, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: var(--accent);
+      font-size: 12.5px; font-weight: 800;
+      border-radius: 9px; padding: 4px 8px;
+    }
+    .c3-row p { font-size: 13px; line-height: 1.7; color: #c6cdd9; padding-top: 3px; }
+
+    .guide-footer {
+      padding: 12px 20px calc(var(--safe-bottom) + 16px);
+      background: linear-gradient(180deg, transparent, #0b0e14 32%);
+    }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #3ddc97, #10b981);
+      color: var(--accent-ink);
+      font-size: 16px; font-weight: 900; letter-spacing: 0.22em;
+      padding: 16px;
+      border-radius: 17px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 16px 38px rgba(16, 185, 129, 0.28);
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .btn-primary:hover { filter: brightness(1.06); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary .ic { font-size: 17px; }
+
+    .research-note {
+      font-size: 10.5px; line-height: 1.7;
+      color: var(--faint);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* ============================================================
+       鎖定畫面（menu-view）
+    ============================================================ */
+    #menu-view {
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--notch) + var(--safe-top) + 44px) 18px calc(var(--safe-bottom) + 24px);
+      transition: opacity 0.9s ease;
+      background: #0f172a;
+    }
+    .lock-clock { text-align: center; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7); }
+    .lock-clock .ic { font-size: 17px; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px; }
+    #lockscreen-time {
+      font-size: 74px; font-weight: 200; letter-spacing: 0.03em; line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    #lockscreen-date { font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.82); margin-top: 10px; letter-spacing: 0.06em; }
+
+    .notif-banner {
+      background: rgba(26, 29, 38, 0.85);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 18px;
+      padding: 11px 14px;
+      display: flex; align-items: center; gap: 11px;
+      width: min(100%, 340px);
+    }
+    .notif-icon {
+      width: 36px; height: 36px; border-radius: 11px;
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 16px; flex-shrink: 0;
+    }
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .notif-row strong { font-size: 13px; }
+    .notif-row time { font-size: 11px; color: rgba(255, 255, 255, 0.45); }
+    .notif-body p { font-size: 12px; color: rgba(255, 255, 255, 0.72); margin-top: 2px; }
+
+    .lock-bottom { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .lock-quick { width: 100%; display: flex; justify-content: space-between; padding: 0 26px; }
+    .quick-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255, 255, 255, 0.85); font-size: 18px;
+    }
+    #swipe-hint {
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      color: rgba(255, 255, 255, 0.6);
+      animation: swipe-bounce 2.2s ease-in-out infinite;
+      cursor: pointer;
+    }
+    #swipe-hint .ic { font-size: 22px; }
+    #swipe-hint span { font-size: 12px; letter-spacing: 0.2em; }
+    .home-bar { width: 116px; height: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.4); }
+
+    /* ============================================================
+       來電畫面（call-view）
+    ============================================================ */
+    #call-view {
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--notch) + var(--safe-top) + 52px) 24px calc(var(--safe-bottom) + 40px);
+      background: linear-gradient(180deg, rgba(5, 8, 14, 0.55), rgba(5, 8, 14, 0.78) 55%, rgba(5, 8, 14, 0.92));
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .call-top { text-align: center; }
+    .call-kicker { font-size: 11px; letter-spacing: 0.32em; color: var(--faint); text-transform: uppercase; }
+    .call-name { font-size: 40px; font-weight: 800; letter-spacing: 0.1em; margin-top: 12px; }
+    .call-status { font-size: 13.5px; color: var(--accent); letter-spacing: 0.22em; margin-top: 10px; font-weight: 600; }
+
+    .call-avatar-wrap { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
+    .call-ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: ring-expand 2s ease-out infinite;
+    }
+    .call-ring:nth-child(2) { animation-delay: 0.65s; }
+    .call-ring:nth-child(3) { animation-delay: 1.3s; }
+    .call-avatar-wrap .avatar { position: relative; z-index: 2; border: 3px solid rgba(255, 255, 255, 0.25); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); }
+
+    .call-actions {
+      width: 100%; max-width: 330px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .call-slider {
+      position: relative; flex: 1; height: 62px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(255, 255, 255, 0.08);
@@ -226,456 +505,868 @@
       touch-action: none;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
-
     .call-slider-fill {
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      bottom: 4px;
-      width: 60px;
-      border-radius: 999px;
+      position: absolute; top: 4px; left: 4px; bottom: 4px;
+      width: 54px; border-radius: 999px;
       background: linear-gradient(135deg, rgba(34, 197, 94, 0.75), rgba(22, 163, 74, 0.9));
-      transition: width 0.22s ease;
       box-shadow: 0 0 24px rgba(34, 197, 94, 0.28);
     }
-
     .call-slider-thumb {
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      width: 60px;
-      height: 60px;
-      border-radius: 999px;
-      border: 0;
+      position: absolute; top: 4px; left: 4px;
+      width: 54px; height: 54px; border-radius: 999px;
       background: linear-gradient(135deg, #22c55e, #16a34a);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 22px;
       box-shadow: 0 14px 30px rgba(34, 197, 94, 0.35);
-      cursor: grab;
-      touch-action: none;
-      transition: transform 0.22s ease;
+      cursor: grab; touch-action: none;
     }
-
-    .call-slider-thumb:active {
-      cursor: grabbing;
-    }
-
+    .call-slider-thumb:active { cursor: grabbing; }
     .call-slider-label {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
       pointer-events: none;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 11px;
-      font-weight: 700;
+      padding-left: 34px;
+      letter-spacing: 0.3em;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 11.5px; font-weight: 700;
       transition: opacity 0.18s ease;
     }
 
-    .pressure-red {
-      box-shadow: 0 0 80px rgba(239, 68, 68, 0.16);
+    /* ============================================================
+       聊天畫面（playing-view）
+    ============================================================ */
+    #chat-header {
+      padding: calc(var(--notch) + var(--safe-top) + 10px) 14px 10px;
+      background: rgba(15, 17, 23, 0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px;
+      z-index: 40;
+      transition: background 0.5s ease;
+    }
+    .hdr-back {
+      display: flex; align-items: center;
+      color: var(--info); font-size: 14.5px; font-weight: 500;
+      gap: 0;
+    }
+    .hdr-back .ic { font-size: 21px; margin-right: -3px; }
+    .hdr-id { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .hdr-meta { display: flex; flex-direction: column; min-width: 0; }
+    #header-name { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; }
+    #header-sub { font-size: 10.5px; color: var(--faint); margin-top: 1px; }
+    #header-sub.sub-danger { color: var(--danger-soft); }
+    .hdr-actions { display: flex; align-items: center; gap: 14px; color: var(--info); font-size: 19px; }
+    .btn-165 {
+      font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+      color: var(--accent);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      background: rgba(52, 211, 153, 0.1);
+      border-radius: 999px;
+      padding: 5px 11px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .btn-165:active { transform: scale(0.94); background: rgba(52, 211, 153, 0.2); }
+
+    #chat-history {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding: 14px 14px 0;
+      display: flex; flex-direction: column;
+      position: relative; z-index: 20;
+      scroll-behavior: smooth;
+      overscroll-behavior: contain;
+    }
+    #chat-history::-webkit-scrollbar { display: none; }
+
+    .time-divider {
+      text-align: center;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      color: var(--faint);
+      margin: 8px 0 14px;
     }
 
-    .danger-pulse { animation: pulse 1s ease-in-out infinite; }
+    /* 訊息列 */
+    .msg-row { display: flex; align-items: flex-end; gap: 8px; margin: 4px 0; }
+    .msg-row.in  { padding-right: 44px; }
+    .msg-row.out { justify-content: flex-end; padding-left: 44px; }
 
-    @keyframes pulse {
-      0% {
-        opacity: 0.65;
-      }
-
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0.65;
-      }
+    .bubble {
+      padding: 10px 14px;
+      border-radius: 19px;
+      font-size: 15px; line-height: 1.65;
+      max-width: 100%;
+      word-break: break-word;
     }
-  </style>
-  <style>
-    /* ── SWIPE LOCKSCREEN ── */
-    #swipe-hint{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-    @keyframes swipe-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-12px)}}
-    .swipe-anim{animation:swipe-bounce 2.2s ease-in-out infinite}
-    .notif-banner{background:rgba(28,28,32,.88);backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.13);border-radius:18px;padding:11px 14px;display:flex;align-items:center;gap:11px;width:88%;margin:0 auto}
-    /* ── RAIN ── */
-    .rain-canvas{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.32}
-    .risk-hot #chat-header{background:rgba(69,10,10,.94)!important}
-    .risk-hot #options-area{box-shadow:0 -24px 50px rgba(239,68,68,.13)}
-    /* ── ENDING THEMES ── */
-    #ending-view.end-safe{background:#04150f}
-    #ending-view.end-safe #ending-header{background:linear-gradient(135deg,rgba(4,120,87,.92),rgba(6,78,59,.95));border-color:rgba(52,211,153,.3)}
-    #ending-view.end-safe #ending-header span{color:#6ee7b7}
-    #ending-view.end-safe #ending-title{border-color:#10b981}
-    #ending-view.end-neutral{background:#0f0e04}
-    #ending-view.end-neutral #ending-header{background:linear-gradient(135deg,rgba(92,60,5,.92),rgba(69,39,4,.95));border-color:rgba(251,191,36,.3)}
-    #ending-view.end-neutral #ending-header span{color:#fcd34d}
-    #ending-view.end-neutral #ending-title{border-color:#f59e0b}
-    /* ── K哥 DANGER BUBBLE ── */
-    .bubble-k{background:linear-gradient(135deg,rgba(50,8,8,.95),rgba(35,5,5,.98))!important;border:1px solid rgba(239,68,68,.22)!important;box-shadow:0 0 18px rgba(239,68,68,.07)!important}
-    #qte-challenge{display:none;margin-bottom:10px;border:1px solid rgba(239,68,68,.26);background:linear-gradient(135deg,rgba(127,29,29,.28),rgba(24,24,27,.96));border-radius:16px;padding:12px;box-shadow:0 0 28px rgba(239,68,68,.1)}
-    #qte-challenge.show{display:block;animation:fade-in .25s ease}
-    .qte-action-btn{width:100%;height:48px;border-radius:13px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);color:#fff;font-size:13px;font-weight:800;letter-spacing:.08em;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:none;user-select:none;transition:transform .15s,background .15s}
-    .qte-action-btn:active{transform:scale(.985);background:rgba(255,255,255,.14)}
-    .qte-progress{height:5px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:9px}
-    #qte-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#60a5fa,#34d399);border-radius:999px;transition:width .08s linear}
-    /* ── OPTION MICRO ── */
-    #options-container button:active{transform:scale(.985)}
+    .bubble.in {
+      background: #20242e;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .bubble.in.bubble-k {
+      background: linear-gradient(135deg, rgba(56, 9, 12, 0.95), rgba(36, 6, 8, 0.98));
+      border: 1px solid rgba(244, 63, 94, 0.26);
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.09);
+    }
+    .bubble.out {
+      background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+      color: #fff;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+    }
+    .msg-time { font-size: 9.5px; color: var(--faint); margin-bottom: 3px; flex-shrink: 0; }
+    .out-meta {
+      display: flex; justify-content: flex-end; align-items: center; gap: 5px;
+      font-size: 9.5px; color: var(--faint);
+      margin-top: 3px; padding-right: 4px;
+    }
+    .read-mark { opacity: 0; transition: opacity 0.4s ease; color: var(--info); }
+    .out-wrap { display: flex; flex-direction: column; align-items: flex-end; max-width: 100%; }
+
+    /* 語音訊息 */
+    .voice-msg { display: flex; align-items: center; gap: 10px; width: 190px; }
+    .voice-play {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0;
+    }
+    .voice-bars { flex: 1; display: flex; align-items: center; gap: 2.5px; height: 16px; }
+    .voice-bars i {
+      width: 2.5px; border-radius: 999px; background: currentColor; opacity: 0.65;
+    }
+    .voice-dur { font-size: 11px; font-family: ui-monospace, Consolas, monospace; opacity: 0.8; }
+    .voice-text {
+      font-size: 12px; color: var(--dim);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 9px; padding-top: 8px;
+      line-height: 1.7;
+    }
+
+    /* 系統訊息 */
+    .sys-row { display: flex; justify-content: center; margin: 12px 0; }
+    .sys-msg {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: #c3cad6;
+      font-size: 12.5px; line-height: 1.75;
+      padding: 9px 15px;
+      border-radius: 13px;
+      max-width: 88%;
+      text-align: center;
+    }
+
+    /* 實境場景卡 */
+    .scene-row { display: flex; justify-content: center; margin: 18px 0; }
+    .scene-card {
+      width: 92%;
+      background: rgba(4, 6, 10, 0.82);
+      border: 1px solid var(--border-strong);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: 17px;
+      padding: 15px 17px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+    .scene-kicker {
+      display: block;
+      font-size: 10.5px; font-weight: 800; letter-spacing: 0.24em;
+      color: var(--dim);
+      margin-bottom: 8px;
+    }
+    .scene-card p { font-size: 14.5px; line-height: 1.8; color: #e6eaf1; }
+
+    /* 教學提示卡（即時回饋） */
+    .tip {
+      margin: 10px 2px;
+      border-radius: 14px;
+      padding: 10px 13px;
+      border: 1px solid;
+      border-left-width: 3px;
+    }
+    .tip-head {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 900; letter-spacing: 0.16em;
+      margin-bottom: 5px;
+    }
+    .tip-head .ic { font-size: 13px; }
+    .tip p { font-size: 12.5px; line-height: 1.75; color: #ccd3df; }
+    .tip p + p { margin-top: 5px; }
+    .tip-warning  { background: rgba(245, 158, 11, 0.07); border-color: rgba(245, 158, 11, 0.3); }
+    .tip-warning .tip-head { color: var(--warn-soft); }
+    .tip-danger   { background: rgba(244, 63, 94, 0.07);  border-color: rgba(244, 63, 94, 0.32); }
+    .tip-danger .tip-head { color: var(--danger-soft); }
+    .tip-success  { background: rgba(52, 211, 153, 0.07); border-color: rgba(52, 211, 153, 0.32); }
+    .tip-success .tip-head { color: var(--accent); }
+    .tip-info     { background: rgba(56, 189, 248, 0.07); border-color: rgba(56, 189, 248, 0.32); }
+    .tip-info .tip-head { color: #7dd3fc; }
+
+    /* 打字指示 */
+    .typing-bubble {
+      background: #20242e;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 19px; border-bottom-left-radius: 6px;
+      padding: 13px 16px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .typing-bubble i {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #9ca3af;
+      animation: dot-bounce 1.3s infinite ease-in-out both;
+    }
+    .typing-bubble i:nth-child(1) { animation-delay: -0.3s; }
+    .typing-bubble i:nth-child(2) { animation-delay: -0.15s; }
+
+    #scroll-anchor { height: 300px; flex-shrink: 0; width: 100%; }
+
+    /* 選項面板 */
+    #options-area {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(16, 18, 24, 0.94);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      z-index: 50;
+      transform: translateY(0);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+      overflow: hidden;
+    }
+    #options-area.sheet-hidden { transform: translateY(110%); }
+    #options-area.pressure { box-shadow: 0 -22px 55px rgba(244, 63, 94, 0.14); border-top-color: rgba(244, 63, 94, 0.3); }
+    @media (min-width: 768px) and (min-height: 720px) {
+      #options-area { border-radius: 22px 22px 44px 44px; }
+    }
+
+    #timer-container { width: 100%; height: 3px; background: rgba(255, 255, 255, 0.07); }
+    #timer-bar-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg, #fb7185, #ef4444);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.9);
+      transition: width 0.08s linear;
+    }
+
+    .sheet-inner { padding: 13px 14px calc(var(--safe-bottom) + 18px); }
+
+    #qte-alert {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      color: var(--danger-soft);
+      font-size: 11px; font-weight: 800; letter-spacing: 0.22em;
+      margin-bottom: 10px;
+    }
+    #qte-alert .ic { font-size: 12px; }
+
+    #qte-challenge {
+      margin-bottom: 11px;
+      border: 1px solid rgba(244, 63, 94, 0.26);
+      background: linear-gradient(135deg, rgba(127, 29, 29, 0.24), rgba(20, 22, 28, 0.95));
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 0 26px rgba(244, 63, 94, 0.1);
+    }
+    .qte-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      margin-bottom: 9px;
+    }
+    #qte-title { color: var(--danger-soft); font-size: 11px; font-weight: 900; letter-spacing: 0.18em; }
+    #qte-subtitle { color: var(--faint); font-size: 10px; text-align: right; }
+    #qte-action-btn {
+      width: 100%; height: 48px;
+      border-radius: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.08em;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      touch-action: none; user-select: none;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    #qte-action-btn:active { transform: scale(0.985); background: rgba(255, 255, 255, 0.14); }
+    #qte-action-btn .ic, #qte-action-icon { font-size: 16px; }
+    .qte-progress {
+      height: 5px; margin-top: 9px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px; overflow: hidden;
+    }
+    #qte-progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #60a5fa, #34d399);
+      border-radius: 999px;
+      transition: width 0.08s linear;
+    }
+
+    #options-container { display: flex; flex-direction: column; gap: 8px; }
+    .opt-btn {
+      width: 100%;
+      background: #232834;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      padding: 13px 14px;
+      border-radius: 14px;
+      font-size: 14.5px; font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: background 0.15s ease, transform 0.12s ease, border-color 0.15s ease;
+    }
+    .opt-btn:hover { background: #2b3140; border-color: rgba(255, 255, 255, 0.13); }
+    .opt-btn:active { transform: scale(0.98); }
+
+    /* ============================================================
+       結局畫面（ending-view）
+    ============================================================ */
+    #ending-view .scroll-area { padding: 0 18px calc(var(--safe-bottom) + 26px); }
+
+    .end-hero {
+      text-align: center;
+      padding: calc(var(--notch) + var(--safe-top) + 42px) 20px 26px;
+      margin: 0 -18px 16px;
+      background: linear-gradient(180deg, var(--end-tint, rgba(244, 63, 94, 0.16)), transparent);
+    }
+    .end-badge {
+      width: 62px; height: 62px; margin: 0 auto 14px;
+      border-radius: 50%;
+      background: var(--end-badge-bg, rgba(244, 63, 94, 0.14));
+      border: 1px solid var(--end-badge-bd, rgba(244, 63, 94, 0.4));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--end-color, var(--danger-soft));
+      font-size: 30px;
+    }
+    .end-label {
+      font-size: 11.5px; font-weight: 900; letter-spacing: 0.34em;
+      color: var(--end-color, var(--danger-soft));
+      margin-bottom: 10px;
+    }
+    #ending-title {
+      font-size: 23px; font-weight: 900; letter-spacing: 0.04em;
+      line-height: 1.45;
+    }
+
+    #ending-view.end-safe    { --end-tint: rgba(16, 185, 129, 0.17); --end-color: var(--accent);       --end-badge-bg: rgba(16, 185, 129, 0.13);  --end-badge-bd: rgba(16, 185, 129, 0.4); }
+    #ending-view.end-neutral { --end-tint: rgba(245, 158, 11, 0.15); --end-color: var(--warn-soft);    --end-badge-bg: rgba(245, 158, 11, 0.12);  --end-badge-bd: rgba(245, 158, 11, 0.4); }
+    #ending-view.end-bad     { --end-tint: rgba(244, 63, 94, 0.17);  --end-color: var(--danger-soft);  --end-badge-bg: rgba(244, 63, 94, 0.13);   --end-badge-bd: rgba(244, 63, 94, 0.4); }
+
+    /* 分數卡 */
+    .score-card { display: flex; align-items: center; gap: 16px; }
+    .score-main { flex: 1; }
+    .score-label { font-size: 11px; font-weight: 800; letter-spacing: 0.18em; color: var(--dim); margin-bottom: 4px; }
+    .score-num {
+      font-size: 46px; font-weight: 900; line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .score-num small { font-size: 15px; font-weight: 700; color: var(--faint); margin-left: 4px; }
+    .rank-ring {
+      width: 74px; height: 74px; border-radius: 50%;
+      border: 2px solid var(--end-badge-bd, var(--border-strong));
+      background: var(--end-badge-bg, var(--surface));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1px; flex-shrink: 0;
+    }
+    #ending-rank { font-size: 27px; font-weight: 900; color: var(--end-color, var(--text)); line-height: 1; }
+    .rank-cap { font-size: 9px; letter-spacing: 0.22em; color: var(--faint); font-weight: 800; }
+
+    .stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 9px 16px;
+      margin-top: 15px; padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { }
+    .stat-top { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 5px; }
+    .stat-top span:first-child { color: var(--dim); font-weight: 700; }
+    .stat-top span:last-child { color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .stat-bar { height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+    .stat-bar i { display: block; height: 100%; border-radius: 999px; transition: width 0.8s ease; }
+    .bar-awareness i { background: linear-gradient(90deg, #34d399, #10b981); }
+    .bar-trust i     { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+    .bar-greed i     { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+    .bar-fear i      { background: linear-gradient(90deg, #fb7185, #f43f5e); }
+    .risk-chip-row {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11.5px; color: var(--dim); font-weight: 700;
+    }
+    #end-risk {
+      font-size: 11.5px; font-weight: 900; letter-spacing: 0.1em;
+      border-radius: 999px; padding: 3px 12px;
+      border: 1px solid;
+    }
+
+    .end-body { font-size: 13px; line-height: 1.85; color: #ccd3df; white-space: pre-line; }
+
+    .mistake-item {
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px; padding: 11px 13px;
+    }
+    .mistake-item + .mistake-item { margin-top: 8px; }
+    .mistake-item .m-title { font-size: 11px; font-weight: 900; letter-spacing: 0.1em; color: #fdba74; margin-bottom: 4px; }
+    .mistake-item .m-text { font-size: 12.5px; color: var(--text); line-height: 1.65; }
+    .mistake-item .m-hint { font-size: 12px; color: var(--dim); line-height: 1.65; margin-top: 3px; }
+
+    #trap-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    #trap-tags span {
+      font-size: 12px; font-weight: 600;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(217, 70, 239, 0.28);
+      color: #f0abfc;
+      border-radius: 999px;
+      padding: 5px 12px;
+    }
+
+    .path-step {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .path-step + .path-step, .path-skip + .path-step, .path-step + .path-skip { margin-top: 7px; }
+    .step-no {
+      flex-shrink: 0;
+      width: 22px; height: 22px; border-radius: 7px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--dim);
+      font-size: 10.5px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .path-step.is-mistake .step-no { background: rgba(244, 63, 94, 0.16); color: var(--danger-soft); }
+    .path-step.is-safe .step-no    { background: rgba(52, 211, 153, 0.14); color: var(--accent); }
+    .path-step p { flex: 1; font-size: 12.5px; line-height: 1.65; color: #ccd3df; }
+    .path-flag { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; flex-shrink: 0; margin-top: 3px; }
+    .path-step.is-mistake .path-flag { color: var(--danger-soft); }
+    .path-step.is-safe .path-flag    { color: var(--accent); }
+    .path-skip { text-align: center; font-size: 11.5px; color: var(--faint); padding: 4px 0; }
+
+    .btn-restart {
+      width: 100%;
+      margin-top: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 15px;
+      border-radius: 15px;
+      font-size: 14px; font-weight: 800; letter-spacing: 0.18em;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+    .btn-restart:hover { background: rgba(255, 255, 255, 0.13); }
+    .btn-restart:active { transform: scale(0.98); }
+
+    /* ============================================================
+       165 確認視窗
+    ============================================================ */
+    .overlay {
+      position: absolute; inset: 0; z-index: 160;
+      background: rgba(3, 5, 9, 0.6);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 26px;
+    }
+    .modal {
+      width: 100%; max-width: 320px;
+      background: #161a23;
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 24px 20px 18px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      animation: msg-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2) both;
+    }
+    .modal-icon {
+      width: 54px; height: 54px; margin: 0 auto 13px;
+      border-radius: 50%;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 24px;
+    }
+    .modal h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 9px; }
+    .modal p { font-size: 12.5px; line-height: 1.8; color: var(--dim); margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 9px; }
+    .modal-actions button {
+      flex: 1; padding: 12px;
+      border-radius: 13px;
+      font-size: 13.5px; font-weight: 800;
+      transition: transform 0.12s ease, filter 0.15s ease;
+    }
+    .modal-actions button:active { transform: scale(0.97); }
+    .modal-cancel { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--dim); }
+    .modal-confirm { background: linear-gradient(135deg, #3ddc97, #10b981); color: var(--accent-ink); }
   </style>
 </head>
 
-<body class="flex items-center justify-center min-h-[100dvh]">
-  <div id="phone-frame"
-    class="relative w-full h-[100dvh] md:max-w-[400px] md:h-[85dvh] md:rounded-[3rem] md:border-[10px] border-gray-900 overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.8)] bg-[#0a0a0c] flex flex-col transition-all duration-300">
+<body>
+  <div id="app">
+    <div id="phone-frame">
+      <div class="notch" aria-hidden="true"></div>
+      <div id="scene-bg" aria-hidden="true"></div>
 
-    <div class="hidden md:block iphone-notch"></div>
-
-    <div class="absolute inset-0 z-0 pointer-events-none">
-      <div id="scene-bg"
-        class="absolute inset-0 transition-colors duration-[1000ms] ease-out bg-slate-900">
+      <!-- 推播通知 -->
+      <div id="push-notification" class="hidden" role="status">
+        <div class="push-icon"><i data-ic="message-alert"></i></div>
+        <div class="push-body">
+          <div class="push-row">
+            <strong id="push-title">K哥</strong>
+            <time>現在</time>
+          </div>
+          <p id="push-desc">有新訊息</p>
+        </div>
       </div>
-    </div>
 
-    <div id="push-notification"
-      class="absolute top-10 left-1/2 transform -translate-x-1/2 w-[90%] bg-gray-800/95 backdrop-blur-xl border border-gray-700 rounded-2xl p-3 shadow-2xl z-[100] flex items-center gap-3 hidden">
-      <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white shrink-0">
-        <i data-lucide="message-square-warning" style="width: 20px; height: 20px;"></i>
-      </div>
-      <div class="flex-1 overflow-hidden">
-        <div class="flex justify-between items-center mb-0.5">
-          <span id="push-title" class="text-white font-bold text-[13px]">K哥</span>
-          <span class="text-gray-400 text-[10px]">現在</span>
-        </div>
-        <p id="push-desc" class="text-gray-300 text-[12px] truncate">有新訊息</p>
-      </div>
-    </div>
+      <!-- ═══════════ 遊玩介紹 ═══════════ -->
+      <section id="guide-view" class="view">
+        <div class="scroll-area">
+          <header class="guide-hero fade-in">
+            <span class="ver-chip">v19</span>
+            <div class="hero-badge"><i data-ic="shield-check"></i></div>
+            <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
+            <h1 class="hero-title">午夜委託</h1>
+            <p class="hero-sub">一通深夜來電，一場防詐試煉</p>
+          </header>
 
-    <div id="guide-view"
-      class="absolute inset-0 z-[70] flex flex-col bg-[#09090b] text-white overflow-y-auto no-scrollbar">
-      <div class="px-6 pt-14 pb-7 flex flex-col min-h-full">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-2">
-            <div class="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center">
-              <i data-lucide="shield-check" class="text-emerald-300" style="width:20px;height:20px;"></i>
+          <div class="card intro-card">
+            <p>你將扮演一名高二學生，剛結束電競社練習，死黨阿杰突然打來求救。這次的詐騙不是陌生簡訊，而是從班群、限時動態、短影音、遊戲帳號交易和同學推薦，一步步滲進你的日常生活。</p>
+          </div>
+
+          <div class="goal-grid">
+            <div class="goal-chip goal-sky">
+              <i data-ic="eye"></i><span>辨識警訊</span>
             </div>
-            <div>
-              <p class="text-[10px] text-emerald-300 font-black tracking-[0.22em] uppercase">MISSION BRIEF</p>
-              <h1 class="text-xl font-black tracking-wide">遊玩介紹</h1>
+            <div class="goal-chip goal-amber">
+              <i data-ic="folder"></i><span>保留證據</span>
+            </div>
+            <div class="goal-chip goal-emerald">
+              <i data-ic="phone"></i><span>查證求助</span>
             </div>
           </div>
-          <span class="text-[10px] text-white/45 font-mono">0706_v18</span>
-        </div>
 
-        <div class="rounded-2xl border border-white/10 bg-white/[0.06] p-4 mb-4">
-          <p class="text-[13px] leading-relaxed text-gray-200">
-            你將扮演一名高二學生，剛結束電競社練習，好友阿杰突然打來求救。這次詐騙不是陌生簡訊，而是從班群、限動、短影音、遊戲帳號交易和同儕推薦慢慢滲進你的日常。
-          </p>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2 mb-4">
-          <div class="rounded-xl border border-sky-400/20 bg-sky-400/10 p-3">
-            <i data-lucide="eye" class="text-sky-300 mb-2" style="width:17px;height:17px;"></i>
-            <p class="text-[11px] font-bold text-white">辨識警訊</p>
-          </div>
-          <div class="rounded-xl border border-amber-400/20 bg-amber-400/10 p-3">
-            <i data-lucide="folder-search" class="text-amber-300 mb-2" style="width:17px;height:17px;"></i>
-            <p class="text-[11px] font-bold text-white">保留證據</p>
-          </div>
-          <div class="rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-3">
-            <i data-lucide="phone-call" class="text-emerald-300 mb-2" style="width:17px;height:17px;"></i>
-            <p class="text-[11px] font-bold text-white">查證求助</p>
-          </div>
-        </div>
-
-        <div class="space-y-3 mb-4">
-          <div class="rounded-2xl border border-white/10 bg-black/25 p-4">
-            <div class="flex items-center gap-2 mb-2">
-              <i data-lucide="target" class="text-rose-300" style="width:16px;height:16px;"></i>
-              <h2 class="text-[12px] font-black tracking-[0.18em] text-gray-200">遊戲目標</h2>
-            </div>
-            <ul class="space-y-1.5 text-[12px] leading-relaxed text-gray-300">
-              <li>辨識班群截圖、限動背書、短影音留言與學長推薦背後的風險。</li>
-              <li>避免交出遊戲帳密、驗證碼、帳戶、提款卡、證件、手機或不明現金。</li>
-              <li>在同儕壓力與高報酬誘惑下，練習停手、查證，走向較安全的結局。</li>
+          <div class="card">
+            <h2><i data-ic="target"></i>遊戲目標</h2>
+            <ul class="guide-list">
+              <li>看穿班群截圖、限時動態背書、短影音留言與學長推薦背後的風險。</li>
+              <li>守住遊戲帳號密碼、驗證碼、銀行帳戶、提款卡、證件、手機與不明現金。</li>
+              <li>在同儕壓力與高報酬誘惑下，練習停下來、查證，走向較安全的結局。</li>
             </ul>
           </div>
 
-          <div class="rounded-2xl border border-white/10 bg-black/25 p-4">
-            <div class="flex items-center gap-2 mb-2">
-              <i data-lucide="gamepad-2" class="text-violet-300" style="width:16px;height:16px;"></i>
-              <h2 class="text-[12px] font-black tracking-[0.18em] text-gray-200">操作方式</h2>
-            </div>
-            <ol class="space-y-1.5 text-[12px] leading-relaxed text-gray-300 list-decimal list-inside">
-              <li>按下開始後，滑動接聽阿杰來電。</li>
-              <li>在聊天下方選擇回覆；每個選項會影響信任、貪念、恐懼與風險。</li>
-              <li>出現壓力操作時，長按按鈕完成冷靜或停損動作。</li>
-              <li>看到可疑情境時，優先選擇查證、求助或停止流程。</li>
+          <div class="card">
+            <h2><i data-ic="gamepad"></i>操作方式</h2>
+            <ol class="guide-list numbered">
+              <li>按下「開始遊玩」後，滑動接聽阿杰的來電。</li>
+              <li>在對話下方選擇你的回覆，每個選擇都會影響後續劇情。</li>
+              <li>出現紅色壓力關卡時，依照提示長按按鈕，完成冷靜或停損動作。</li>
+              <li>覺得情況可疑時，隨時可以按右上角「165」向反詐騙專線查證。</li>
             </ol>
           </div>
+
+          <div class="card">
+            <h2><i data-ic="shield-alert"></i>防詐3C 口訣</h2>
+            <div class="c3-row">
+              <span class="c3-key">冷靜</span>
+              <p>不要照對方的節奏走，先停下來想一想。</p>
+            </div>
+            <div class="c3-row">
+              <span class="c3-key">查證</span>
+              <p>用官方網站、官方App或可信任的管道確認訊息真假。</p>
+            </div>
+            <div class="c3-row">
+              <span class="c3-key">求助</span>
+              <p>找家人、老師、警察，或撥打165反詐騙諮詢專線。</p>
+            </div>
+          </div>
         </div>
 
-        <div class="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 mb-5">
-          <div class="flex items-center gap-2 mb-2">
-            <i data-lucide="badge-alert" class="text-emerald-300" style="width:16px;height:16px;"></i>
-            <h2 class="text-[12px] font-black tracking-[0.18em] text-emerald-200">防詐3C</h2>
-          </div>
-          <p class="text-[12px] leading-relaxed text-gray-200">
-            冷靜：不要照對方節奏走。查證：用官方或可信任管道確認。求助：找家人、老師、警方或165。
+        <div class="guide-footer">
+          <button class="btn-primary" onclick="startGame()">
+            <i data-ic="play"></i>開始遊玩
+          </button>
+          <p class="research-note">
+            研究用途：本遊戲匿名記錄遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；不收集姓名、電話或任何可以直接辨識身分的資料。
           </p>
         </div>
+      </section>
 
-        <div class="sticky bottom-0 -mx-6 mt-auto px-6 pt-3 pb-4 bg-gradient-to-t from-[#09090b] via-[#09090b]/95 to-transparent">
-          <button onclick="startGame()"
-            class="w-full bg-emerald-500 hover:bg-emerald-400 text-black py-4 rounded-2xl font-black tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-[0_18px_40px_rgba(16,185,129,0.28)]">
-            <i data-lucide="play" style="width:18px;height:18px;"></i>
-            開始遊玩
-          </button>
-          <p class="text-[10px] text-center text-white/40 leading-relaxed mt-3">
-            研究用途：本遊戲匿名記錄路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；不收集姓名、電話或可直接識別身分的資料。
-          </p>
+      <!-- ═══════════ 鎖定畫面 ═══════════ -->
+      <section id="menu-view" class="view hidden">
+        <div class="lock-clock">
+          <i data-ic="lock"></i>
+          <div id="lockscreen-time">21:47</div>
+          <div id="lockscreen-date">星期一，7月6日</div>
         </div>
-      </div>
-    </div>
 
-    <div id="menu-view"
-      class="absolute inset-0 z-50 hidden flex flex-col items-center justify-between text-white transition-opacity duration-1000 overflow-hidden bg-slate-900">
-
-      <div class="relative z-[3] flex flex-col items-center gap-1.5 mt-16 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-        <i data-lucide="lock" class="text-white/70 mb-1" style="width:18px;height:18px;"></i>
-        <div id="lockscreen-time" class="text-[72px] font-extralight tracking-[0.04em] leading-none"></div>
-        <div id="lockscreen-date" class="text-[15px] font-medium text-white/80 tracking-wider mt-1"></div>
-      </div>
-
-      <div class="relative z-[3] w-full flex flex-col items-center gap-3 px-4 mt-4" id="lock-notif-area">
-        <div class="notif-banner" style="animation-delay:.4s">
-          <div class="w-9 h-9 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-            <i data-lucide="phone-incoming" style="width:17px;height:17px;color:white;"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex justify-between items-center">
-              <span class="text-white font-bold text-[13px]">電話</span>
-              <span class="text-white/45 text-[11px]">剛剛</span>
+        <div class="notif-banner">
+          <div class="notif-icon"><i data-ic="phone"></i></div>
+          <div class="notif-body">
+            <div class="notif-row">
+              <strong>電話</strong>
+              <time>現在</time>
             </div>
-            <p class="text-white/75 text-[12px] truncate mt-0.5">阿杰 · 來電中</p>
+            <p>阿杰 · 來電中</p>
           </div>
         </div>
-      </div>
 
-      <div class="relative z-[3] w-full flex flex-col items-center gap-3 pb-8">
-        <div class="flex justify-between w-full px-10">
-          <div class="w-11 h-11 bg-white/15 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10">
-            <i data-lucide="flashlight" style="width:18px;height:18px;color:rgba(255,255,255,0.85)"></i>
+        <div class="lock-bottom">
+          <div class="lock-quick">
+            <div class="quick-btn"><i data-ic="zap"></i></div>
+            <div class="quick-btn"><i data-ic="camera"></i></div>
           </div>
-          <div class="w-11 h-11 bg-white/15 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10">
-            <i data-lucide="camera" style="width:18px;height:18px;color:rgba(255,255,255,0.85)"></i>
+          <div id="swipe-hint">
+            <i data-ic="chevron-up"></i>
+            <span>向上滑動解鎖</span>
           </div>
+          <div class="home-bar"></div>
         </div>
-        <div id="swipe-hint" class="swipe-anim">
-          <i data-lucide="chevron-up" style="width:22px;height:22px;color:rgba(255,255,255,0.6)"></i>
-          <span class="text-white/55 text-[12px] tracking-[0.2em]">向上滑動解鎖</span>
-        </div>
-        <div class="w-28 h-1 bg-white/40 rounded-full mt-1"></div>
-      </div>
-    </div>
+      </section>
 
-
-    <div id="playing-view" class="absolute inset-0 flex flex-col z-10 hidden">
-      <div id="chat-header"
-        class="w-full h-[85px] pt-6 bg-[#121215]/95 backdrop-blur-xl border-b border-white/5 flex items-center px-4 justify-between z-40 transition-colors duration-500">
-        <div class="flex items-center gap-3">
-          <button class="text-blue-500 hover:text-blue-400 font-medium text-[15px] flex items-center">
-            <i data-lucide="chevron-left" style="width: 22px; height: 22px; margin-right: -4px;"></i> 聊天
-          </button>
-          <div class="flex items-center gap-2.5">
-            <div id="header-avatar"
-              class="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center text-gray-300 overflow-hidden shadow-inner">
-            </div>
-            <div class="flex flex-col">
-              <span id="header-name" class="text-white font-bold text-[15px] tracking-wide">載入中...</span>
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-5 text-blue-500">
-          <i data-lucide="phone" style="width: 20px; height: 20px;"></i>
-          <i data-lucide="video" style="width: 20px; height: 20px;"></i>
-        </div>
-      </div>
-      <div id="chat-history" class="flex-1 no-scrollbar overflow-y-auto p-4 flex flex-col z-20 relative scroll-smooth">
-        <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>
-      </div>
-
-      <div id="options-area"
-        class="absolute bottom-0 w-full bg-[#18181b]/95 backdrop-blur-xl border-t border-white/10 z-50 transform translate-y-full transition-transform duration-500 ease-out pb-safe rounded-t-2xl md:rounded-b-[2.5rem]">
-        <div id="timer-container" class="w-full h-1 bg-gray-800 overflow-hidden hidden">
-          <div id="timer-bar-fill"
-            class="h-full bg-red-500 transition-all duration-75 ease-linear shadow-[0_0_15px_rgba(239,68,68,1)]"
-            style="width: 100%;"></div>
+      <!-- ═══════════ 來電畫面 ═══════════ -->
+      <section id="call-view" class="view hidden">
+        <div class="call-top">
+          <p class="call-kicker">行動電話 · 來電</p>
+          <h2 class="call-name">阿杰</h2>
+          <p id="call-subtitle-text" class="call-status pulse">來電中…</p>
         </div>
 
-        <div class="p-4 pt-3 pb-6 md:pb-8">
-          <div id="qte-alert"
-            class="hidden flex items-center gap-1.5 text-red-400 text-[11px] font-bold tracking-widest uppercase mb-3 justify-center animate-pulse">
-            <i data-lucide="clock" style="width: 12px; height: 12px;"></i> 請立即回覆
-          </div>
+        <div class="call-avatar-wrap">
+          <div class="call-ring"></div>
+          <div class="call-ring"></div>
+          <div class="call-ring"></div>
+          <div class="avatar av-jie xl">杰</div>
+        </div>
 
-          <div id="learning-tip" class="hidden mb-3 rounded-xl border px-3 py-2 text-[12px] leading-relaxed"></div>
-
-          <div id="qte-challenge">
-            <div class="flex items-center justify-between mb-2">
-              <span id="qte-title" class="text-red-300 text-[11px] font-black tracking-[0.18em] uppercase">壓力操作</span>
-              <span id="qte-subtitle" class="text-gray-500 text-[10px]">防詐3C：冷靜、查證、求助</span>
-            </div>
-            <button id="qte-action-btn" type="button" class="qte-action-btn">
-              <i id="qte-action-icon" data-lucide="shield-alert" style="width:16px;height:16px"></i>
-              <span id="qte-action-label">長按冷靜</span>
+        <div class="call-actions">
+          <div id="answer-slider" class="call-slider" aria-label="滑動接聽">
+            <div id="answer-slider-fill" class="call-slider-fill"></div>
+            <div id="answer-slider-label" class="call-slider-label">滑動接聽</div>
+            <button id="answer-slider-thumb" type="button" class="call-slider-thumb" aria-label="滑動接聽">
+              <i data-ic="phone"></i>
             </button>
-            <div class="qte-progress"><div id="qte-progress-fill"></div></div>
-          </div>
-
-          <div id="options-container" class="flex flex-col gap-2"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="ending-view"
-      class="absolute inset-0 bg-[#09090b] z-50 no-scrollbar overflow-y-auto hidden flex flex-col pb-12">
-      <div id="ending-header"
-        class="sticky top-0 bg-red-950/90 backdrop-blur-xl border-b border-red-900/50 p-4 pt-12 md:pt-10 flex items-center justify-center gap-2 z-10 shadow-lg">
-        <i id="ending-header-icon" data-lucide="triangle-alert" class="text-red-500 animate-pulse" style="width: 18px; height: 18px;"></i>
-        <span id="ending-header-label" class="text-red-400 font-mono font-bold tracking-widest text-xs">SIMULATION_TERMINATED</span>
-      </div>
-
-      <div class="p-5 flex flex-col gap-4 animate-fade-in mt-2">
-        <h1 id="ending-title"
-          class="text-2xl font-black leading-snug tracking-wide text-white drop-shadow-md border-l-4 pl-3 border-red-500 mb-2">
-        </h1>
-
-        <div class="bg-gray-900/60 p-4 rounded-2xl border border-white/5">
-          <h3 class="text-gray-400 text-[10px] font-bold mb-2 tracking-[0.2em]">FILE // 紀錄</h3>
-          <p id="ending-content" class="text-gray-200 text-[13px] leading-relaxed"></p>
-        </div>
-
-        <div class="bg-red-950/20 p-4 rounded-2xl border border-red-900/30">
-          <h3 class="text-red-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="scan-face" style="width: 14px; height: 14px;"></i> 心理防禦評估
-          </h3>
-          <p id="ending-analysis" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
-        </div>
-
-        <div id="score-container" class="bg-emerald-950/20 p-4 rounded-2xl border border-emerald-900/30 hidden">
-          <h3 class="text-emerald-400 text-[11px] font-bold mb-3 tracking-wider">決策評分</h3>
-          <div class="grid grid-cols-2 gap-3 mb-4 text-[12px]">
-            <div class="bg-black/20 rounded-xl p-3">
-              <div class="text-gray-400 mb-1">防詐分數</div>
-              <div id="ending-score" class="text-white text-xl font-black">0</div>
-            </div>
-            <div class="bg-black/20 rounded-xl p-3">
-              <div class="text-gray-400 mb-1">評等</div>
-              <div id="ending-rank" class="text-white text-xl font-black">B</div>
-            </div>
           </div>
         </div>
+      </section>
 
-        <div id="near-miss-container" class="bg-sky-950/20 p-4 rounded-2xl border border-sky-900/30 hidden">
-          <h3 class="text-sky-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="crosshair" style="width: 14px; height: 14px;"></i> 你差一點掉進去的點
-          </h3>
-          <p id="near-miss-text" class="text-gray-300 text-[13px] leading-relaxed"></p>
+      <!-- ═══════════ 聊天畫面 ═══════════ -->
+      <section id="playing-view" class="view hidden">
+        <header id="chat-header">
+          <button class="hdr-back" aria-label="返回聊天列表">
+            <i data-ic="chevron-left"></i>聊天
+          </button>
+          <div class="hdr-id">
+            <div id="header-avatar" class="avatar av-jie">杰</div>
+            <div class="hdr-meta">
+              <span id="header-name">載入中…</span>
+              <span id="header-sub">行動電話</span>
+            </div>
+          </div>
+          <div class="hdr-actions">
+            <button id="btn-165" class="btn-165" aria-label="撥打165反詐騙專線查證">165 查證</button>
+          </div>
+        </header>
+
+        <div id="chat-history">
+          <div id="scroll-anchor"></div>
         </div>
 
-        <div id="trap-tags-container" class="bg-fuchsia-950/20 p-4 rounded-2xl border border-fuchsia-900/30 hidden">
-          <h3 class="text-fuchsia-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="tags" style="width: 14px; height: 14px;"></i> 命中的風險標籤
-          </h3>
-          <div id="trap-tags" class="flex flex-wrap gap-2 text-[12px]"></div>
+        <div id="options-area" class="sheet-hidden">
+          <div id="timer-container" class="hidden">
+            <div id="timer-bar-fill" style="width:100%"></div>
+          </div>
+          <div class="sheet-inner">
+            <div id="qte-alert" class="hidden pulse">
+              <i data-ic="clock"></i>請立即回覆
+            </div>
+
+            <div id="qte-challenge" class="hidden">
+              <div class="qte-head">
+                <span id="qte-title">壓力操作</span>
+                <span id="qte-subtitle">防詐3C：冷靜、查證、求助</span>
+              </div>
+              <button id="qte-action-btn" type="button">
+                <span id="qte-action-icon"></span>
+                <span id="qte-action-label">長按冷靜</span>
+              </button>
+              <div class="qte-progress"><div id="qte-progress-fill"></div></div>
+            </div>
+
+            <div id="options-container"></div>
+          </div>
         </div>
+      </section>
 
-        <div id="path-replay-container" class="bg-cyan-950/20 p-4 rounded-2xl border border-cyan-900/30 hidden">
-          <h3 class="text-cyan-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="route" style="width: 14px; height: 14px;"></i> 遊玩路徑回放
-          </h3>
-          <div id="path-replay" class="space-y-2 text-[12px] leading-relaxed"></div>
-        </div>
+      <!-- ═══════════ 結局畫面 ═══════════ -->
+      <section id="ending-view" class="view hidden">
+        <div class="scroll-area">
+          <header class="end-hero">
+            <div class="end-badge"><span id="end-icon"></span></div>
+            <p class="end-label" id="end-label">模擬結束</p>
+            <h1 id="ending-title"></h1>
+          </header>
 
-        <div id="advice-container" class="bg-yellow-950/20 p-4 rounded-2xl border border-yellow-900/30 hidden">
-          <h3 class="text-yellow-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> 風險點與處理
-          </h3>
-          <p id="ending-advice" class="text-gray-300 text-[13px] leading-relaxed whitespace-pre-line"></p>
-        </div>
+          <div class="card" id="score-container">
+            <div class="score-card">
+              <div class="score-main">
+                <p class="score-label">防詐分數</p>
+                <div class="score-num"><span id="ending-score">0</span><small>/ 100</small></div>
+              </div>
+              <div class="rank-ring">
+                <span id="ending-rank">B</span>
+                <span class="rank-cap">評等</span>
+              </div>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-item">
+                <div class="stat-top"><span>警覺</span><span id="stat-awareness-val">0</span></div>
+                <div class="stat-bar bar-awareness"><i id="stat-awareness-bar"></i></div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-top"><span>信任</span><span id="stat-trust-val">0</span></div>
+                <div class="stat-bar bar-trust"><i id="stat-trust-bar"></i></div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-top"><span>貪念</span><span id="stat-greed-val">0</span></div>
+                <div class="stat-bar bar-greed"><i id="stat-greed-bar"></i></div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-top"><span>恐懼</span><span id="stat-fear-val">0</span></div>
+                <div class="stat-bar bar-fear"><i id="stat-fear-bar"></i></div>
+              </div>
+              <div class="risk-chip-row">
+                <span>整體風險</span>
+                <span id="end-risk">低</span>
+              </div>
+            </div>
+          </div>
 
-        <div class="bg-blue-950/20 p-4 rounded-2xl border border-blue-900/30">
-          <h3 class="text-blue-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="badge-info" style="width: 14px; height: 14px;"></i> 官方查證工具
-          </h3>
-          <p class="text-gray-300 text-[13px] leading-relaxed">
-            遇到可疑電話、簡訊、交易連結、帳戶或門號要求，先套用防詐3C：冷靜、查證、求助。可撥打165反詐騙諮詢專線，或自行輸入網址進入
-            <a class="text-blue-300 underline" href="https://165.npa.gov.tw" target="_blank" rel="noopener">165全民防騙網</a>
-            查詢；涉及匯款、帳戶或提款時，改聯絡銀行官方客服或直接到派出所處理。
-          </p>
-        </div>
+          <div class="card">
+            <h2><i data-ic="file-text"></i>事件紀錄</h2>
+            <p id="ending-content" class="end-body"></p>
+          </div>
 
-        <div class="bg-slate-900/70 p-4 rounded-2xl border border-white/10">
-          <h3 class="text-slate-300 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i> 資料與風險說明
-          </h3>
-          <p class="text-gray-400 text-[12px] leading-relaxed">
-            本研究工具會匿名記錄遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；使用者代碼僅用於區分同一裝置的遊玩紀錄。遊戲中的法律文字是情境化風險提示，不作個案法律判斷；實際事件請向家長、教師、銀行、警方或165確認。
-          </p>
-        </div>
+          <div class="card">
+            <h2><i data-ic="activity"></i>心理防禦評估</h2>
+            <p id="ending-analysis" class="end-body"></p>
+          </div>
 
-        <div id="mistake-container" class="bg-orange-950/20 p-4 rounded-2xl border border-orange-900/30 hidden">
-          <h3 class="text-orange-400 text-[11px] font-bold mb-2 flex items-center gap-1.5 tracking-wider">
-            <i data-lucide="siren" style="width: 14px; height: 14px;"></i> 關鍵失誤回顧
-          </h3>
-          <div id="ending-mistakes" class="text-gray-300 text-[12px] leading-relaxed space-y-2"></div>
-        </div>
+          <div class="card hidden" id="near-miss-container">
+            <h2><i data-ic="crosshair"></i>差點中招的關鍵</h2>
+            <p id="near-miss-text" class="end-body"></p>
+          </div>
 
-        <button onclick="location.reload()"
-          class="mt-4 w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white py-3.5 rounded-xl font-bold transition-all tracking-widest flex items-center justify-center gap-2 active:scale-95 text-sm">
-          <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i> 重新模擬
-        </button>
+          <div class="card hidden" id="trap-tags-container">
+            <h2><i data-ic="tag"></i>這一局遇到的詐騙手法</h2>
+            <div id="trap-tags"></div>
+          </div>
 
-      </div>
-    </div>
+          <div class="card hidden" id="mistake-container">
+            <h2><i data-ic="siren"></i>關鍵失誤回顧</h2>
+            <div id="ending-mistakes"></div>
+          </div>
 
-    <div id="call-view"
-      class="absolute inset-0 z-[60] flex flex-col items-center justify-between bg-gradient-to-b from-black/55 via-black/70 to-black/85 backdrop-blur-[6px] px-6 pt-16 pb-14 hidden">
-      <div class="flex flex-col items-center gap-3 mt-6">
-        <p class="text-gray-500 text-xs tracking-[0.3em] uppercase">行動電話 · 來電</p>
-        <h2 class="text-white text-4xl font-bold tracking-wide">阿杰</h2>
-        <p id="call-subtitle-text" class="text-green-400 text-sm tracking-widest animate-pulse font-medium">來電中...</p>
-      </div>
+          <div class="card hidden" id="advice-container">
+            <h2><i data-ic="alert-triangle"></i>風險點與處理方式</h2>
+            <p id="ending-advice" class="end-body"></p>
+          </div>
 
-      <div class="relative flex items-center justify-center" style="width:140px;height:140px;">
-        <div class="call-ring"></div>
-        <div class="call-ring"></div>
-        <div class="call-ring"></div>
-        <div class="w-28 h-28 rounded-full bg-blue-600 flex items-center justify-center relative z-10 border-[3px] border-white/25 shadow-2xl">
-          <i data-lucide="user" class="text-white w-14 h-14"></i>
-        </div>
-      </div>
+          <div class="card hidden" id="path-replay-container">
+            <h2><i data-ic="route"></i>決策路徑回顧</h2>
+            <div id="path-replay"></div>
+          </div>
 
-      <div class="w-full max-w-[320px]">
-        <div class="mb-3 rounded-2xl border border-white/10 bg-black/25 px-3 py-2 text-[11px] leading-relaxed text-white/65">
-          研究告知：本遊戲匿名記錄遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時，用於整體統計分析；不收集姓名、電話或可直接識別身分的資料。
-        </div>
-        <div id="answer-slider" class="call-slider" aria-label="滑動接聽">
-          <div id="answer-slider-fill" class="call-slider-fill"></div>
-          <div id="answer-slider-label" class="call-slider-label">滑動接聽</div>
-          <button id="answer-slider-thumb" type="button" class="call-slider-thumb" aria-label="滑動接聽">
-            <i data-lucide="phone" style="width:26px;height:26px;color:white"></i>
+          <div class="card">
+            <h2><i data-ic="info"></i>官方查證工具</h2>
+            <p class="end-body">遇到可疑電話、簡訊、交易連結、帳戶或門號要求，先套用防詐3C：冷靜、查證、求助。可以撥打165反詐騙諮詢專線，或自己輸入網址進入 <a href="https://165.npa.gov.tw" target="_blank" rel="noopener">165全民防騙網</a> 查詢；涉及匯款、帳戶或提款時，請改聯絡銀行官方客服，或直接到派出所處理。</p>
+          </div>
+
+          <div class="card">
+            <h2><i data-ic="file-text"></i>資料與風險說明</h2>
+            <p class="end-body" style="font-size:12px;color:var(--faint);">本研究工具會匿名記錄遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；使用者代碼僅用來區分同一裝置的遊玩紀錄。遊戲中的法律文字屬於情境化風險提示，不作個案法律判斷；實際遇到類似事件，請向家長、教師、銀行、警方或165確認。</p>
+          </div>
+
+          <button class="btn-restart" onclick="location.reload()">
+            <i data-ic="rotate-ccw"></i>再玩一次
           </button>
         </div>
-      </div>
-    </div>
+      </section>
 
+      <!-- ═══════════ 165 查證確認 ═══════════ -->
+      <div id="confirm-165" class="overlay hidden">
+        <div class="modal">
+          <div class="modal-icon"><i data-ic="phone"></i></div>
+          <h3>撥打 165 反詐騙專線？</h3>
+          <p>165 是警政署的反詐騙諮詢專線。你會把目前的狀況告訴專線人員，停止現在的流程並保留對話紀錄。</p>
+          <div class="modal-actions">
+            <button class="modal-cancel" id="modal-cancel-btn">再想想</button>
+            <button class="modal-confirm" id="modal-confirm-btn">撥打查證</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
+  <script>
+    /* ============================================================
+       圖示庫（內嵌 SVG，無外部依賴）
+    ============================================================ */
+    const ICONS = {
+      'shield-check': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
+      'shield-alert': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="15" x2="12.01" y2="15"/>',
+      'eye': '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+      'folder': '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+      'phone': '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+      'target': '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+      'gamepad': '<rect x="2" y="6.5" width="20" height="11" rx="5.5"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="5" y1="12" x2="9" y2="12"/><line x1="15.5" y1="10.8" x2="15.51" y2="10.8"/><line x1="17.8" y1="13.2" x2="17.81" y2="13.2"/>',
+      'play': '<polygon points="6 3 20 12 6 21 6 3"/>',
+      'lock': '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      'zap': '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+      'camera': '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+      'chevron-up': '<polyline points="18 15 12 9 6 15"/>',
+      'chevron-left': '<polyline points="15 18 9 12 15 6"/>',
+      'clock': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+      'message-alert': '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="11"/><line x1="12" y1="14" x2="12.01" y2="14"/>',
+      'file-text': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+      'activity': '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+      'crosshair': '<circle cx="12" cy="12" r="9"/><line x1="21" y1="12" x2="17" y2="12"/><line x1="7" y1="12" x2="3" y2="12"/><line x1="12" y1="7" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="17"/>',
+      'tag': '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+      'siren': '<path d="M7 18v-6a5 5 0 0 1 10 0v6"/><rect x="5" y="18" width="14" height="3.5" rx="1"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="4.5" y1="4.5" x2="6" y2="6"/><line x1="19.5" y1="4.5" x2="18" y2="6"/>',
+      'alert-triangle': '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+      'alert-circle': '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+      'route': '<circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M8.2 16.8 15.8 7.2"/>',
+      'info': '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+      'rotate-ccw': '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+      'award': '<circle cx="12" cy="8" r="6"/><path d="M15.5 13 17 22l-5-3-5 3 1.5-9"/>',
+      'check': '<polyline points="20 6 9 17 4 12"/>',
+      'x': '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+      'ban': '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>',
+      'id-card': '<rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10.5" r="2.2"/><path d="M4.6 17.5c.6-1.9 1.9-2.9 3.4-2.9s2.8 1 3.4 2.9"/><line x1="14" y1="9" x2="19" y2="9"/><line x1="14" y1="13" x2="19" y2="13"/>',
+      'file-x': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9.5" y1="12.5" x2="14.5" y2="17.5"/><line x1="14.5" y1="12.5" x2="9.5" y2="17.5"/>',
+      'audio': '<line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/>',
+      'user': '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+    };
+
+    const ICON_ALIASES = {
+      'file-x-2': 'file-x',
+      'audio-lines': 'audio',
+      'skull': 'user',
+      'triangle-alert': 'alert-triangle'
+    };
+
+    function iconSVG(name, cls = 'ic') {
+      const key = ICONS[name] ? name : (ICON_ALIASES[name] || 'info');
+      const paths = ICONS[key] || ICONS['info'];
+      return `<svg class="${cls}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${paths}</svg>`;
+    }
+
+    function renderIcons(scope = document) {
+      scope.querySelectorAll('[data-ic]').forEach(el => {
+        const name = el.getAttribute('data-ic');
+        const extra = (el.getAttribute('class') || '').trim();
+        el.outerHTML = iconSVG(name, extra ? `ic ${extra}` : 'ic');
+      });
+    }
+  </script>
   <script>
     const SCENE_IMAGES = {
       STREET_NIGHT: '#1e293b',
@@ -706,14 +1397,6 @@
         bg: SCENE_IMAGES.STREET_NIGHT,
         speaker: '系統',
         text: '電競社練習剛結束，你背著書包走出校門，班群還在刷今晚比賽精華。手機突然狂震起來，是死黨阿杰的來電。',
-        options: []
-      },
-
-      S0_IGNORE: {
-        bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '系統',
-        effect: 'shake',
-        text: '你按下了拒接。才走沒兩步，手機又狂震起來，這傢伙不接電話不會罷休的。',
         options: []
       },
 
@@ -1692,15 +2375,6 @@
     };
 
     const ENDINGS = {
-      EARLY_EXIT_IGNORE: {
-        title: '結局：與我無關的夜晚',
-        content: '你堅持不接後續電話，也沒有碰任何可疑任務。一個月後，聽說阿杰因為涉嫌洗錢被警方約談，帳戶也被暫停使用...',
-        analysis: '【防禦力 S 級】\n你在開端拒絕人情施壓，沒有讓朋友的焦慮變成自己的決定。保持警覺、把界線說清楚，是保護自己的基本做法。',
-        legal: '【法律風險低】\n你沒有參與可疑任務，也沒有交付帳戶、證件或款項。',
-        advice: '【警訊】當朋友提出「代收不明大筆現金」的異常要求時。\n【自救】果斷拒絕，並與長輩討論或向警方、165尋求專業建議。',
-        psychTrap: '情感勒索'
-      },
-
       SAFE_EXIT_DROP: {
         title: '結局：暗巷中的直覺',
         content: '在暗巷中面對可疑的黑帽男，你把現金留在原地，立刻離開現場。',
@@ -1846,6 +2520,9 @@
       }
     };
 
+    /* ============================================================
+       研究記錄設定（欄位與 v18 完全一致，Google Sheet 不需調整）
+    ============================================================ */
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycby39S9dN4lQQ1_voJlX5Qh_xt0wn5cZF9e6GSLrCuOsokuuDIVybo6bO33p2ukebitXSQ/exec';
 
     const INITIAL_GAME_STATE = {
@@ -1862,7 +2539,11 @@
       qteTimeoutCount: 0
     };
 
-    let gameState = structuredClone(INITIAL_GAME_STATE);
+    const cloneState = obj => (typeof structuredClone === 'function'
+      ? structuredClone(obj)
+      : JSON.parse(JSON.stringify(obj)));
+
+    let gameState = cloneState(INITIAL_GAME_STATE);
     let selectedOptionHistory = [];
 
     let currentMinutesOffset = 0;
@@ -1874,7 +2555,6 @@
     let qteActionAnimationId;
     let gameStartTime = null;
     let vibrationInterval = null;
-    let callDeclineCount = 0;
     let playerPath = [];
     let introNarration = '';
     let callSliderState = {
@@ -1887,20 +2567,50 @@
       accepted: false
     };
 
-    lucide.createIcons();
+    /* ============================================================
+       音效引擎（Web Audio 合成，無音檔）
+    ============================================================ */
+    window.__gameUserInteracted = false;
+    window.addEventListener('pointerdown', () => {
+      window.__gameUserInteracted = true;
+      getAC()?.resume?.();
+    }, { once: true });
 
-    // preloadImages removed for solid color demo
-
-    function resetGameState() {
-      gameState = structuredClone(INITIAL_GAME_STATE);
-      selectedOptionHistory = [];
+    let _ac = null;
+    function getAC() {
+      if (!_ac) { try { _ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+      return _ac;
+    }
+    function playTone(freq, type = 'sine', duration = 0.15, vol = 0.18, delay = 0) {
+      const ac = getAC(); if (!ac) return;
       try {
-        knowledgeItems = [];
-        const list = document.getElementById('kp-list');
-        if (list) list.innerHTML = '<div class="px-4 py-8 text-gray-600 text-[12px] text-center">進入遊戲後自動累積...</div>';
-        const badge = document.getElementById('kb-badge');
-        if (badge) badge.style.display = 'none';
-      } catch(e) {}
+        const g = ac.createGain();
+        g.gain.setValueAtTime(vol, ac.currentTime + delay);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + delay + duration);
+        const o = ac.createOscillator();
+        o.type = type; o.frequency.value = freq;
+        o.connect(g); g.connect(ac.destination);
+        o.start(ac.currentTime + delay); o.stop(ac.currentTime + delay + duration);
+      } catch (e) {}
+    }
+    function playSound(type) {
+      if (!window.__gameUserInteracted) return;
+      switch (type) {
+        case 'message': playTone(880, 'sine', .08, .11); break;
+        case 'click':   playTone(440, 'sine', .05, .08); break;
+        case 'danger':  playTone(220, 'sawtooth', .25, .13); playTone(180, 'sawtooth', .25, .09, .1); break;
+        case 'success': playTone(660, 'sine', .12, .13); playTone(880, 'sine', .12, .11, .1); break;
+        case 'warn':    playTone(330, 'square', .18, .09); break;
+        case 'ringtone': [0, .4, .8, 1.2, 1.6].forEach(d => { playTone(880, 'sine', .18, .15, d); playTone(660, 'sine', .18, .11, d + .09); }); break;
+      }
+    }
+
+    /* ============================================================
+       狀態運算
+    ============================================================ */
+    function resetGameState() {
+      gameState = cloneState(INITIAL_GAME_STATE);
+      selectedOptionHistory = [];
     }
 
     function clamp(value, min = -10, max = 10) {
@@ -1926,7 +2636,6 @@
         gameState[key] = clamp(gameState[key] + delta);
       }
       deriveRisk();
-      updateStatusChips();
       applyPressureUI();
     }
 
@@ -1934,9 +2643,30 @@
       if (!label || gameState.collectedEvidence.includes(label)) return;
       gameState.collectedEvidence.push(label);
       gameState.evidenceCount = gameState.collectedEvidence.length;
-      updateStatusChips();
     }
 
+    function meetsRequiredState(requiredState = {}) {
+      return Object.entries(requiredState).every(([key, rule]) => {
+        const value = gameState[key] ?? 0;
+        if (typeof rule === 'number') return value >= rule;
+        if (typeof rule !== 'object' || rule === null) return true;
+        if (rule.min !== undefined && value < rule.min) return false;
+        if (rule.max !== undefined && value > rule.max) return false;
+        return true;
+      });
+    }
+
+    function getVisibleOptions(node) {
+      return (node.options || []).filter(opt => {
+        if (opt.hidden) return false;
+        if (opt.requiredState && !meetsRequiredState(opt.requiredState)) return false;
+        return true;
+      });
+    }
+
+    /* ============================================================
+       165 官方查證
+    ============================================================ */
     function getOfficialAdviceForNode(nodeId = currentNodeId) {
       const adviceMap = {
         S1C: {
@@ -2002,7 +2732,7 @@
       const advice = getOfficialAdviceForNode();
       handleOptionSelect({
         next: advice.next,
-        text: '採用165或官方建議，停止流程並保留紀錄',
+        text: '我先打165反詐騙專線，把狀況問清楚。',
         effects: {},
         tags: ['used_official_check'],
         hint: '你讓165或外部官方管道介入判斷，成功切斷對方的節奏。',
@@ -2011,33 +2741,17 @@
       });
     }
 
-    function renderRiskLevel() {
-      const value = gameState.risk;
-      if (value >= 7) return { label: '極高', color: '#ef4444' };
-      if (value >= 4) return { label: '高', color: '#fb7185' };
-      if (value >= 1) return { label: '中', color: '#fbbf24' };
-      return { label: '低', color: '#34d399' };
+    function open165Modal() {
+      if (isTransitioning) return;
+      document.getElementById('confirm-165').classList.remove('hidden');
+    }
+    function close165Modal() {
+      document.getElementById('confirm-165').classList.add('hidden');
     }
 
-    function meetsRequiredState(requiredState = {}) {
-      return Object.entries(requiredState).every(([key, rule]) => {
-        const value = gameState[key] ?? 0;
-        if (typeof rule === 'number') return value >= rule;
-        if (typeof rule !== 'object' || rule === null) return true;
-        if (rule.min !== undefined && value < rule.min) return false;
-        if (rule.max !== undefined && value > rule.max) return false;
-        return true;
-      });
-    }
-
-    function getVisibleOptions(node) {
-      return (node.options || []).filter(opt => {
-        if (opt.hidden) return false;
-        if (opt.requiredState && !meetsRequiredState(opt.requiredState)) return false;
-        return true;
-      });
-    }
-
+    /* ============================================================
+       時間與畫面切換
+    ============================================================ */
     function getCurrentTime() {
       const now = new Date(gameStartTime || Date.now());
       now.setMinutes(now.getMinutes() + currentMinutesOffset);
@@ -2049,23 +2763,32 @@
       return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    function setTextIfExists(id, value) {
-      const el = document.getElementById(id);
-      if (el) el.innerText = value;
-    }
+    const ALL_VIEWS = ['guide-view', 'menu-view', 'call-view', 'playing-view', 'ending-view'];
 
     function setView(viewId) {
-      document.getElementById('guide-view')?.classList.add('hidden');
-      document.getElementById('menu-view').classList.add('hidden');
-      document.getElementById('playing-view').classList.add('hidden');
-      document.getElementById('ending-view').classList.add('hidden');
-      document.getElementById('call-view').classList.add('hidden');
-
+      ALL_VIEWS.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+      close165Modal();
       const view = document.getElementById(viewId);
       if (!view) return;
       view.classList.remove('hidden');
-      if (viewId === 'menu-view') view.classList.remove('opacity-0');
-      lucide.createIcons();
+      if (viewId === 'menu-view') view.style.opacity = '';
+    }
+
+    /* 場景背景（顏色 → 漸層） */
+    function sceneGradient(color) {
+      const map = {
+        '#0f172a': 'linear-gradient(180deg,#15233f 0%,#0c1626 55%,#060a13 100%)',
+        '#1e293b': 'linear-gradient(180deg,#243147 0%,#161f30 55%,#0b111b 100%)',
+        '#334155': 'linear-gradient(180deg,#3d4c64 0%,#293548 55%,#151c28 100%)',
+        '#171717': 'linear-gradient(180deg,#1d1d21 0%,#111114 60%,#08080a 100%)',
+        '#18181b': 'linear-gradient(180deg,#1a1c22 0%,#111319 60%,#0a0b10 100%)',
+        '#312e81': 'linear-gradient(180deg,#34317c 0%,#232059 55%,#121030 100%)'
+      };
+      return map[color] || color;
+    }
+
+    function setSceneBackground(color) {
+      document.getElementById('scene-bg').style.background = sceneGradient(color || '#18181b');
     }
 
     function configureOpeningScene() {
@@ -2079,26 +2802,20 @@
         : '剛下過雨的台北街頭。電競社練習剛結束，你背著書包走出校門，手機卻狂震起來。是死黨阿杰的來電。';
 
       introNarration = isDaytime
-        ? '放學後的校門口，社團群還在刷比賽精華。你的手機突然劇烈震動...'
-        : '剛下過雨的校門口，社團群還在刷比賽精華。你的手機突然劇烈震動...';
+        ? '放學後的校門口，社團群還在刷比賽精華。你的手機突然劇烈震動…'
+        : '剛下過雨的校門口，社團群還在刷比賽精華。你的手機突然劇烈震動…';
 
-      document.getElementById('scene-bg').style.backgroundColor = SCENE_IMAGES.STREET_NIGHT;
-      document.getElementById('scene-bg').style.backgroundImage = 'none';
-      document.getElementById('menu-view').style.backgroundColor = SCENE_IMAGES.STREET_NIGHT;
-      document.getElementById('menu-view').style.backgroundImage = 'none';
+      setSceneBackground(SCENE_IMAGES.STREET_NIGHT);
+      document.getElementById('menu-view').style.background = sceneGradient(SCENE_IMAGES.STREET_NIGHT);
     }
 
     function prepareChatView() {
       document.getElementById('chat-history').innerHTML = `
-        <div class="text-center w-full my-4 text-[11px] text-gray-500 font-bold tracking-widest">
-          今天 ${getRealTime()}
-        </div>
-        <div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>`;
+        <div class="time-divider">今天 ${getRealTime()}</div>
+        <div id="scroll-anchor"></div>`;
       document.getElementById('options-container').innerHTML = '';
-      document.getElementById('options-area').classList.add('translate-y-full');
-      document.getElementById('learning-tip').classList.add('hidden');
+      document.getElementById('options-area').classList.add('sheet-hidden');
       stopTimer();
-      updateStatusChips();
     }
 
     function showGameGuide() {
@@ -2113,17 +2830,22 @@
       currentSpeaker = '';
       currentNodeId = '';
       isTransitioning = false;
-      callDeclineCount = 0;
       playerPath = ['START'];
       resetGameState();
 
       stopRingtone();
       resetActionChallenge();
       configureOpeningScene();
-      document.getElementById('menu-view').classList.remove('opacity-0');
-      document.getElementById('menu-view').style.display = '';
-      document.getElementById('menu-view').style.transform = '';
-      showIncomingCall();
+
+      const mv = document.getElementById('menu-view');
+      mv.style.display = '';
+      mv.style.transform = '';
+      mv.style.opacity = '';
+      mv.style.transition = '';
+
+      updateLockscreenClock();
+      setView('menu-view');
+      setTimeout(() => showIncomingCall(), 1600);
     }
 
     function scrollToBottom() {
@@ -2133,19 +2855,32 @@
       }, 50);
     }
 
+    /* ============================================================
+       推播與聊天標頭
+    ============================================================ */
     function showPushNotification(name, text) {
       const notif = document.getElementById('push-notification');
       document.getElementById('push-title').innerText = name;
-      document.getElementById('push-desc').innerText = text.substring(0, 18) + (text.length > 18 ? '...' : '');
+      document.getElementById('push-desc').innerText = text.substring(0, 18) + (text.length > 18 ? '…' : '');
 
       notif.classList.remove('hidden');
       notif.classList.remove('notify-anim');
       void notif.offsetWidth;
       notif.classList.add('notify-anim');
 
-      setTimeout(() => {
-        notif.classList.add('hidden');
-      }, 4000);
+      setTimeout(() => notif.classList.add('hidden'), 4000);
+    }
+
+    function getSpeakerSpec(speakerStr = '') {
+      if (speakerStr.includes('阿杰')) return { cls: 'av-jie', ch: '杰', sub: '同班好友', danger: false };
+      if (speakerStr.includes('K哥')) return { cls: 'av-k', ch: 'K', sub: '未知帳號', danger: true };
+      if (speakerStr.includes('黑帽')) return { cls: 'av-k', ch: '？', sub: '未知號碼', danger: true };
+      return { cls: 'av-sys', ch: '系', sub: '系統訊息', danger: false };
+    }
+
+    function avatarHTML(speakerStr, small = false) {
+      const spec = getSpeakerSpec(speakerStr);
+      return `<div class="avatar ${spec.cls}${small ? ' sm' : ''}">${spec.ch}</div>`;
     }
 
     function updateChatHeader(speakerStr) {
@@ -2157,169 +2892,155 @@
       }
       currentSpeaker = baseName;
 
-      const nameEl = document.getElementById('header-name');
+      const spec = getSpeakerSpec(speakerStr);
+      document.getElementById('header-name').innerText = baseName;
+
+      const subEl = document.getElementById('header-sub');
+      subEl.innerText = spec.sub;
+      subEl.classList.toggle('sub-danger', spec.danger);
+
       const avatarEl = document.getElementById('header-avatar');
-      nameEl.innerText = baseName;
-
-      if (speakerStr.includes('阿杰')) {
-        avatarEl.innerHTML = '<div class="w-full h-full bg-blue-600 flex items-center justify-center"><i data-lucide="user" class="text-white w-5 h-5"></i></div>';
-      } else if (speakerStr.includes('K哥') || speakerStr.includes('黑帽')) {
-        avatarEl.innerHTML = '<i data-lucide="skull" style="width:18px; color:#ef4444;"></i>';
-      } else {
-        avatarEl.innerHTML = '<i data-lucide="user"></i>';
-      }
-
-      lucide.createIcons();
+      avatarEl.className = `avatar ${spec.cls}`;
+      avatarEl.innerText = spec.ch;
     }
 
+    /* ============================================================
+       訊息呈現
+    ============================================================ */
     function showTypingIndicator(speaker) {
       return new Promise(resolve => {
-        if (speaker === '系統') {
-          resolve();
-          return;
-        }
+        if (speaker === '系統') { resolve(); return; }
 
         const bubbleId = 'typing-' + Date.now();
-        const avatar = speaker.includes('阿杰')
-          ? `<div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center shrink-0"><i data-lucide="user" class="text-white w-4 h-4"></i></div>`
-          : `<div class="w-7 h-7 bg-gray-700 rounded-full flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-gray-400"></i></div>`;
-
         const layout = `
-          <div id="${bubbleId}" class="flex items-end gap-2 w-full animate-fade-in my-1.5 pl-2 pr-12">
-            ${avatar}
-            <div class="bg-[#27272a] px-4 py-3 rounded-2xl rounded-bl-sm border border-white/5 shadow-sm">
-              <div class="flex items-center gap-1.5 h-3">
-                <span class="typing-dot"></span>
-                <span class="typing-dot"></span>
-                <span class="typing-dot"></span>
-              </div>
-            </div>
+          <div id="${bubbleId}" class="msg-row in fade-in">
+            ${avatarHTML(speaker, true)}
+            <div class="typing-bubble"><i></i><i></i><i></i></div>
           </div>`;
 
         document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', layout);
-        lucide.createIcons();
         scrollToBottom();
 
         setTimeout(() => {
-          const el = document.getElementById(bubbleId);
-          if (el) el.remove();
+          document.getElementById(bubbleId)?.remove();
           resolve();
         }, 1500 + Math.random() * 500);
       });
     }
 
+    function voiceMessageHTML(text) {
+      let bars = '';
+      for (let i = 0; i < 15; i++) {
+        bars += `<i style="height:${Math.round(4 + Math.random() * 12)}px"></i>`;
+      }
+      const dur = Math.floor(Math.random() * 15 + 5).toString().padStart(2, '0');
+      return `
+        <div class="voice-msg">
+          <span class="voice-play">${iconSVG('play')}</span>
+          <span class="voice-bars">${bars}</span>
+          <span class="voice-dur">0:${dur}</span>
+        </div>
+        <p class="voice-text">「${text}」</p>`;
+    }
+
     function appendBubble(speaker, text, type, isRealWorld = false) {
       const timeStr = getCurrentTime();
-      const bubbleId = 'msg-' + Date.now();
+      const bubbleId = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+      const spec = getSpeakerSpec(speaker);
       let html = '';
 
       let contentHTML = text.replace(/\n/g, '<br>');
-
-      if (speaker.includes('(語音)')) {
-        contentHTML = `
-          <div class="flex items-center gap-3 w-48">
-            <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <i data-lucide="play" class="w-4 h-4 text-white ml-0.5"></i>
-            </button>
-            <div class="flex-1 h-3 flex items-center gap-0.5 opacity-70">
-              <div class="w-1 bg-white h-full rounded-full animate-pulse"></div>
-              <div class="w-1 bg-white h-1/2 rounded-full"></div>
-              <div class="w-1 bg-white h-3/4 rounded-full animate-pulse" style="animation-delay: 0.1s"></div>
-              <div class="w-1 bg-white h-1/3 rounded-full"></div>
-              <div class="w-1 bg-white h-full rounded-full"></div>
-              <div class="w-1 bg-white h-2/3 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-              <div class="w-1 bg-white h-1/2 rounded-full"></div>
-            </div>
-            <span class="text-[11px] font-mono">0:${Math.floor(Math.random() * 15 + 5).toString().padStart(2, '0')}</span>
-          </div>
-          <p class="text-[11px] text-gray-400 mt-2 border-t border-white/10 pt-1.5 italic">「${text}」</p>
-        `;
-      }
+      if (speaker.includes('(語音)')) contentHTML = voiceMessageHTML(text);
 
       if (isRealWorld) {
         html = `
-          <div class="flex justify-center w-full my-6 animate-fade-in z-50">
-            <div class="bg-black/80 text-white text-[15px] px-5 py-4 rounded-xl border border-white/10 backdrop-blur-md w-[90%] shadow-2xl leading-relaxed">
-              <span class="text-gray-400 text-[11px] font-bold mb-2 block tracking-wider">${speaker}</span>
-              ${contentHTML}
+          <div class="scene-row msg-pop">
+            <div class="scene-card">
+              <span class="scene-kicker">現場 · ${speaker}</span>
+              <p>${contentHTML}</p>
             </div>
           </div>`;
       } else if (type === 'outgoing') {
         html = `
-          <div class="flex items-end justify-end gap-1.5 w-full my-1.5 pl-12 pr-2 msg-pop">
-            <div class="flex flex-col items-end gap-0.5">
-              <div class="bg-blue-500 text-white px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow-sm text-[15px] leading-relaxed">
-                ${contentHTML}
-              </div>
-              <div class="flex items-center gap-1 text-[9px] text-gray-500 pr-1">
-                <span id="${bubbleId}-read" class="opacity-0 transition-opacity duration-300">已讀</span>
+          <div class="msg-row out msg-pop">
+            <div class="out-wrap">
+              <div class="bubble out">${contentHTML}</div>
+              <div class="out-meta">
+                <span id="${bubbleId}-read" class="read-mark">已讀</span>
                 <span>${timeStr}</span>
               </div>
             </div>
           </div>`;
       } else if (speaker === '系統') {
         html = `
-          <div class="flex justify-center w-full my-4 animate-fade-in">
-            <div class="bg-gray-800/80 text-gray-300 text-[12px] px-4 py-2 rounded-lg border border-gray-700 backdrop-blur-md max-w-[85%] text-center leading-relaxed">
-              ${contentHTML}
-            </div>
+          <div class="sys-row fade-in">
+            <div class="sys-msg">${contentHTML}</div>
           </div>`;
       } else {
-        const avatar = speaker.includes('阿杰')
-          ? `<div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center shrink-0"><i data-lucide="user" class="text-white w-4 h-4"></i></div>`
-          : `<div class="w-7 h-7 bg-gray-700 rounded-full flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-gray-400"></i></div>`;
-
+        const dangerCls = spec.danger ? ' bubble-k' : '';
         html = `
-          <div data-speaker="${speaker}" class="flex items-end gap-2 w-full my-1.5 pl-2 pr-12 msg-pop">
-            ${avatar}
-            <div data-bubble-content class="bg-[#27272a] text-white px-3.5 py-2.5 rounded-2xl rounded-bl-sm border border-white/5 shadow-sm text-[15px] leading-relaxed">
-              ${contentHTML}
-            </div>
-            <span class="text-[9px] text-gray-500 mb-1">${timeStr}</span>
+          <div class="msg-row in msg-pop" data-speaker="${speaker}">
+            ${avatarHTML(speaker, true)}
+            <div class="bubble in${dangerCls}">${contentHTML}</div>
+            <span class="msg-time">${timeStr}</span>
           </div>`;
       }
 
       document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', html);
-      lucide.createIcons();
       scrollToBottom();
+
+      if (type === 'incoming' && !isRealWorld && speaker !== '系統') {
+        playSound(spec.danger ? 'danger' : 'message');
+      }
 
       if (type === 'outgoing') {
         setTimeout(() => {
           const readEl = document.getElementById(`${bubbleId}-read`);
-          if (readEl) readEl.classList.remove('opacity-0');
+          if (readEl) readEl.style.opacity = '1';
         }, 800 + Math.random() * 500);
       }
     }
 
-    function showInlineLearningTip(text, type = 'warning') {
-      // 警訊功能已移除
+    /* 即時教學回饋卡（對應論文之「即時回饋」設計原則） */
+    const TIP_STYLES = {
+      warning:  { cls: 'tip-warning', icon: 'shield-alert', label: '防詐提示' },
+      danger:   { cls: 'tip-danger',  icon: 'siren',        label: '風險警示' },
+      success:  { cls: 'tip-success', icon: 'shield-check', label: '安全行動' },
+      info:     { cls: 'tip-info',    icon: 'info',         label: '小提醒' },
+      evidence: { cls: 'tip-info',    icon: 'folder',       label: '證據保留' }
+    };
+
+    function appendTipCard(text, type = 'warning', secondText = '') {
+      if (!text) return;
+      const style = TIP_STYLES[type] || TIP_STYLES.warning;
+      const html = `
+        <div class="tip ${style.cls} msg-pop">
+          <div class="tip-head">${iconSVG(style.icon)}<span>${style.label}</span></div>
+          <p>${text}</p>
+          ${secondText ? `<p>${secondText}</p>` : ''}
+        </div>`;
+      document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', html);
+      scrollToBottom();
+      if (type === 'danger') playSound('warn');
     }
 
-    function updateStatusChips() {
-      // 狀態數值已移除
+    function showInlineLearningTip(text, type = 'warning') {
+      appendTipCard(text, type);
     }
 
     function applyPressureUI() {
-      const frame = document.getElementById('phone-frame');
       const optionsArea = document.getElementById('options-area');
-
-      frame.classList.remove('pressure-red');
-      frame.classList.remove('risk-hot');
-      optionsArea.classList.remove('border-red-500/20');
-
-      if (gameState.fear >= 4 || gameState.risk >= 4) {
-        optionsArea.classList.add('border-red-500/20');
-      }
+      optionsArea.classList.toggle('pressure', gameState.fear >= 4 || gameState.risk >= 4);
     }
 
+    /* ============================================================
+       限時壓力（計時器）
+    ============================================================ */
     function handleTimeout(timeoutNext) {
       gameState.qteTimeoutCount += 1;
       applyEffects({ fear: 2, awareness: -1 });
 
-      showInlineLearningTip(
-        '你因為壓力而沒有及時判斷，恐懼上升、警覺下降。',
-        'danger'
-      );
+      appendTipCard('你因為壓力而沒有及時判斷，恐懼上升、警覺下降。', 'danger');
 
       handleOptionSelect({
         next: timeoutNext,
@@ -2335,10 +3056,10 @@
       const bar = document.getElementById('timer-bar-fill');
       const container = document.getElementById('timer-container');
       const alertBox = document.getElementById('qte-alert');
+      const frame = document.getElementById('phone-frame');
 
       container.classList.remove('hidden');
       alertBox.classList.remove('hidden');
-      alertBox.classList.add('flex');
 
       qteTimeoutNext = timeoutNext;
       const start = Date.now();
@@ -2349,19 +3070,12 @@
         const remaining = Math.max(0, end - now);
         const percentage = (remaining / (duration * 1000)) * 100;
         bar.style.width = percentage + '%';
-
-        const phoneFrame = document.getElementById('phone-frame');
-        if (remaining < duration * 1000 * 0.35) {
-          phoneFrame.classList.add('ring-2', 'ring-red-500/40');
-        } else {
-          phoneFrame.classList.remove('ring-2', 'ring-red-500/40');
-        }
+        frame.classList.toggle('ring-danger', remaining < duration * 1000 * 0.35);
 
         if (remaining > 0) {
           qteAnimationId = requestAnimationFrame(tick);
         } else {
           stopTimer();
-          phoneFrame.classList.remove('ring-2', 'ring-red-500/40');
           handleTimeout(qteTimeoutNext);
         }
       }
@@ -2373,18 +3087,20 @@
       cancelAnimationFrame(qteAnimationId);
       document.getElementById('timer-container').classList.add('hidden');
       document.getElementById('qte-alert').classList.add('hidden');
-      document.getElementById('qte-alert').classList.remove('flex');
       document.getElementById('timer-bar-fill').style.width = '100%';
-      document.getElementById('phone-frame').classList.remove('ring-2', 'ring-red-500/40');
+      document.getElementById('phone-frame').classList.remove('ring-danger');
       resetActionChallenge();
     }
 
+    /* ============================================================
+       壓力操作（長按停損）
+    ============================================================ */
     function resetActionChallenge() {
       cancelAnimationFrame(qteActionAnimationId);
       const panel = document.getElementById('qte-challenge');
       const fill = document.getElementById('qte-progress-fill');
       const btn = document.getElementById('qte-action-btn');
-      if (panel) panel.classList.remove('show');
+      if (panel) panel.classList.add('hidden');
       if (fill) fill.style.width = '0%';
       if (btn) {
         btn.onpointerdown = null;
@@ -2407,7 +3123,7 @@
       const title = document.getElementById('qte-title');
       const subtitle = document.getElementById('qte-subtitle');
       const label = document.getElementById('qte-action-label');
-      const icon = document.getElementById('qte-action-icon');
+      const iconSlot = document.getElementById('qte-action-icon');
       const fill = document.getElementById('qte-progress-fill');
       const btn = document.getElementById('qte-action-btn');
       if (!panel || !btn) return;
@@ -2415,15 +3131,15 @@
       title.textContent = challenge.title || '壓力操作';
       subtitle.textContent = challenge.subtitle || '長按完成冷靜判斷';
       label.textContent = challenge.label || '長按冷靜';
-      icon.setAttribute('data-lucide', challenge.icon);
+      iconSlot.innerHTML = iconSVG(challenge.icon);
       fill.style.width = '0%';
-      panel.classList.add('show');
-      lucide.createIcons();
+      panel.classList.remove('hidden');
 
       let startedAt = 0;
       let completed = false;
       const cancelHold = () => {
         if (completed) return;
+        startedAt = 0;
         cancelAnimationFrame(qteActionAnimationId);
         fill.style.width = '0%';
       };
@@ -2433,7 +3149,6 @@
         fill.style.width = `${Math.round(progress * 100)}%`;
         if (progress >= 1) {
           completed = true;
-          if (challenge.evidence) collectEvidence(challenge.evidence);
           handleOptionSelect({
             next: challenge.completeNext,
             text: challenge.completeText,
@@ -2441,6 +3156,7 @@
             tags: ['qte_completed'],
             hint: challenge.hint || '你在壓力下完成停損動作。',
             postTip: challenge.postTip || '',
+            evidence: challenge.evidence || '',
             actionType: 'qte'
           });
           return;
@@ -2450,7 +3166,7 @@
 
       btn.onpointerdown = event => {
         if (isTransitioning) return;
-        btn.setPointerCapture?.(event.pointerId);
+        try { btn.setPointerCapture(event.pointerId); } catch (e) {}
         startedAt = Date.now();
         tick();
       };
@@ -2459,6 +3175,9 @@
       btn.onpointercancel = cancelHold;
     }
 
+    /* ============================================================
+       節點渲染與選項處理
+    ============================================================ */
     async function renderNode(nodeId) {
       stopTimer();
       resetActionChallenge();
@@ -2470,61 +3189,60 @@
         return;
       }
 
-      const bgEl = document.getElementById('scene-bg');
-      bgEl.style.backgroundColor = node.bg || '#18181b';
-      bgEl.style.backgroundImage = 'none';
+      setSceneBackground(node.bg);
 
       if (node.effect === 'shake') {
         const phone = document.getElementById('phone-frame');
         phone.classList.remove('animate-shake');
         void phone.offsetWidth;
         phone.classList.add('animate-shake');
+        if (navigator.vibrate && window.__gameUserInteracted) navigator.vibrate([60, 40, 60]);
       }
 
       updateChatHeader(node.speaker);
       currentMinutesOffset += Math.floor(Math.random() * 3);
 
+      const chatHeader = document.getElementById('chat-header');
       if (node.isRealWorld) {
-        document.getElementById('chat-header').classList.add('hidden');
+        chatHeader.classList.add('hidden');
         const lastNode = STORY[selectedOptionHistory[selectedOptionHistory.length - 1]?.from];
         if (!lastNode?.isRealWorld) {
-          document.getElementById('scroll-anchor').parentNode.innerHTML = '<div id="scroll-anchor" class="h-[320px] shrink-0 w-full"></div>';
+          document.getElementById('chat-history').innerHTML = '<div id="scroll-anchor"></div>';
         }
       } else {
-        document.getElementById('chat-header').classList.remove('hidden');
+        chatHeader.classList.remove('hidden');
       }
 
-      await showTypingIndicator(node.speaker);
+      if (!node.isRealWorld) {
+        await showTypingIndicator(node.speaker);
+      }
       appendBubble(node.speaker, node.text, 'incoming', node.isRealWorld);
 
       if (node.instantTip) {
-        showInlineLearningTip(node.instantTip, 'warning');
+        setTimeout(() => appendTipCard(node.instantTip, 'warning'), 350);
       }
 
       const optionsArea = document.getElementById('options-area');
       const optionsContainer = document.getElementById('options-container');
       optionsContainer.innerHTML = '';
 
-      const visibleOptions = getVisibleOptions(node);
-
-      visibleOptions.forEach(opt => {
+      getVisibleOptions(node).forEach(opt => {
         const btn = document.createElement('button');
-        btn.className = 'w-full bg-[#27272a] hover:bg-[#3f3f46] text-white border border-white/5 p-3.5 rounded-xl text-[14.5px] font-medium tracking-wide transition-colors text-center active:scale-[0.98] shadow-sm select-none';
+        btn.className = 'opt-btn';
         btn.innerText = opt.text;
-
         btn.onclick = () => handleOptionSelect(opt);
         optionsContainer.appendChild(btn);
       });
 
       renderActionChallenge(node);
       applyPressureUI();
-      optionsArea.classList.remove('translate-y-full');
+      optionsArea.classList.remove('sheet-hidden');
       scrollToBottom();
 
       if (node.timeLimit) {
         const duration = gameState.fear >= 5 ? Math.max(5, node.timeLimit - 3) : node.timeLimit;
         if (gameState.fear >= 5) {
-          showInlineLearningTip('恐懼過高，留給你判斷的時間變短了。', 'danger');
+          appendTipCard('恐懼過高，留給你判斷的時間變短了。', 'danger');
         }
         startTimer(duration, node.timeoutNext);
       }
@@ -2536,6 +3254,8 @@
       if (isTransitioning) return;
       isTransitioning = true;
       stopTimer();
+      playSound('click');
+      if (navigator.vibrate && window.__gameUserInteracted) navigator.vibrate(12);
 
       const option = typeof optionOrNextId === 'string'
         ? { next: optionOrNextId, text: optionText, effects: {} }
@@ -2580,30 +3300,36 @@
         evidence: option.evidence || ''
       });
 
-      const optionsArea = document.getElementById('options-area');
-      optionsArea.classList.add('translate-y-full');
+      document.getElementById('options-area').classList.add('sheet-hidden');
 
       if (option.text) {
         appendBubble('我', option.text, 'outgoing');
       }
 
+      if (option.evidence) {
+        setTimeout(() => appendTipCard(`已保留證據：${option.evidence}`, 'evidence'), 400);
+      }
+
       if (option.hint) {
         setTimeout(() => {
-          showInlineLearningTip(option.hint, option.isMistake ? 'danger' : 'warning');
-        }, 500);
+          appendTipCard(option.hint, option.isMistake ? 'danger' : 'success');
+        }, 650);
       }
 
       if (option.postTip) {
         setTimeout(() => {
-          showInlineLearningTip(option.postTip, option.isMistake ? 'danger' : 'success');
-        }, option.hint ? 1200 : 500);
+          appendTipCard(option.postTip, 'info');
+        }, option.hint ? 1250 : 650);
       }
 
       setTimeout(() => {
         renderNode(option.next);
-      }, 1800);
+      }, 1900);
     }
 
+    /* ============================================================
+       來電畫面與滑動接聽
+    ============================================================ */
     function getCallSliderMetrics() {
       const slider = document.getElementById('answer-slider');
       const thumb = document.getElementById('answer-slider-thumb');
@@ -2621,7 +3347,7 @@
       fill.style.transition = animate ? 'width 0.22s ease' : 'none';
 
       thumb.style.transform = `translateX(${x}px)`;
-      fill.style.width = `${60 + x}px`;
+      fill.style.width = `${54 + x}px`;
       label.style.opacity = `${Math.max(0, 1 - x / (maxX || 1))}`;
 
       callSliderState.currentX = x;
@@ -2665,7 +3391,7 @@
         callSliderState.startX = event.clientX;
         callSliderState.startOffset = callSliderState.currentX;
         callSliderState.moved = false;
-        thumb.setPointerCapture(event.pointerId);
+        try { thumb.setPointerCapture(event.pointerId); } catch (e) {}
       });
 
       thumb.addEventListener('pointermove', (event) => {
@@ -2702,14 +3428,10 @@
       }, 320);
     }
 
-    function showIncomingCall(isRetry = false) {
+    function showIncomingCall() {
       setView('call-view');
-
-      const subtitle = document.getElementById('call-subtitle-text');
-      if (subtitle) subtitle.textContent = isRetry ? '奪命連環Call...' : '來電中...';
-
+      playSound('ringtone');
       resetCallSlider(false);
-      lucide.createIcons();
 
       if (navigator.vibrate && window.__gameUserInteracted) {
         const pattern = [700, 300, 700, 300, 700, 1500];
@@ -2728,33 +3450,15 @@
 
     function acceptCall() {
       stopRingtone();
-      callDeclineCount = 0;
       if (navigator.vibrate && window.__gameUserInteracted) navigator.vibrate(50);
       enterChatFromCall();
     }
 
-    function declineCall() {
-      stopRingtone();
-      resetCallSlider(false);
-      const callView = document.getElementById('call-view');
-      callView.classList.add('hidden');
-      callDeclineCount++;
-
-      if (callDeclineCount === 1) {
-        document.getElementById('menu-view').classList.remove('opacity-0');
-        setView('menu-view');
-        setTimeout(() => {
-          showIncomingCall(true);
-        }, 2200);
-      } else {
-        playerPath.push('EARLY_EXIT_IGNORE');
-        document.getElementById('menu-view').classList.remove('opacity-0');
-        renderEnding('EARLY_EXIT_IGNORE');
-      }
-    }
-
+    /* ============================================================
+       結算與結局
+    ============================================================ */
     function calculateFinalScore(endingId) {
-      const safeEnding = endingId.startsWith('SAFE_') || endingId === 'EARLY_EXIT_IGNORE';
+      const safeEnding = endingId.startsWith('SAFE_');
 
       let score =
         50 +
@@ -2797,11 +3501,11 @@
 
       gameState.mistakes.slice(0, 5).forEach((item, index) => {
         const div = document.createElement('div');
-        div.className = 'bg-black/20 rounded-lg p-3';
+        div.className = 'mistake-item';
         div.innerHTML = `
-          <div class="text-orange-300 font-bold mb-1">失誤 ${index + 1}</div>
-          <div class="text-gray-200 mb-1">${item.text || '逾時未回應'}</div>
-          <div class="text-gray-400">${item.hint || '你在壓力下做出了高風險決策。'}</div>
+          <div class="m-title">失誤 ${index + 1}</div>
+          <div class="m-text">${item.text || '逾時未回應'}</div>
+          <div class="m-hint">${item.hint || '你在壓力下做出了高風險決策。'}</div>
         `;
         root.appendChild(div);
       });
@@ -2855,7 +3559,6 @@
       container.classList.remove('hidden');
       tags.slice(0, 10).forEach(label => {
         const tag = document.createElement('span');
-        tag.className = 'bg-black/25 border border-fuchsia-400/20 text-fuchsia-100 rounded-full px-3 py-1';
         tag.textContent = label;
         root.appendChild(tag);
       });
@@ -2877,27 +3580,28 @@
         ? [...history.slice(0, 3), { skipped: history.length - 11 }, ...history.slice(-8)]
         : history;
 
-      compactHistory.forEach((item, index) => {
-        const row = document.createElement('div');
+      let stepNo = 0;
+      compactHistory.forEach(item => {
         if (item.skipped) {
-          row.className = 'text-gray-500 text-center py-1';
-          row.textContent = `略過中間 ${item.skipped} 個決策`;
+          const row = document.createElement('div');
+          row.className = 'path-skip';
+          row.textContent = `⋯ 略過中間 ${item.skipped} 個決策 ⋯`;
           root.appendChild(row);
+          stepNo += item.skipped;
           return;
         }
 
-        row.className = 'bg-black/20 rounded-lg p-3 border border-white/5';
+        stepNo += 1;
+        const isSafe = !item.isMistake &&
+          (item.actionType === 'verifyOfficial' || item.actionType === 'qte' || !!item.evidence);
 
-        const meta = document.createElement('div');
-        meta.className = 'text-cyan-300 font-bold mb-1';
-        meta.textContent = `#${index + 1} ${item.from} -> ${item.to}`;
-
-        const choice = document.createElement('div');
-        choice.className = 'text-gray-200';
-        choice.textContent = item.text;
-
-        row.appendChild(meta);
-        row.appendChild(choice);
+        const row = document.createElement('div');
+        row.className = 'path-step' + (item.isMistake ? ' is-mistake' : isSafe ? ' is-safe' : '');
+        row.innerHTML = `
+          <span class="step-no">${stepNo}</span>
+          <p>${item.text}</p>
+          ${item.isMistake ? '<span class="path-flag">失誤</span>' : isSafe ? '<span class="path-flag">安全</span>' : ''}
+        `;
         root.appendChild(row);
       });
     }
@@ -2910,11 +3614,11 @@
 
       let message = '';
       if (lastMistake) {
-        message = `最接近掉進陷阱的是「${lastMistake.text}」。${lastMistake.hint || '這一步讓你更接近高風險流程。'}`;
-      } else if (endingId.startsWith('SAFE_') || endingId === 'EARLY_EXIT_IGNORE') {
-        message = '你這輪沒有明顯踩中高風險選項。關鍵是你沒有把判斷權交給阿杰或 K哥。';
+        message = `最接近掉進陷阱的一步是「${lastMistake.text}」。${lastMistake.hint || '這一步讓你更接近高風險流程。'}`;
+      } else if (endingId.startsWith('SAFE_')) {
+        message = '你這一輪沒有明顯踩中高風險選項。關鍵是你沒有把判斷權交給阿杰或K哥。';
       } else if (finalChoice) {
-        message = `真正失控點是「${finalChoice.text}」。這一步讓流程從懷疑轉成實際涉入。`;
+        message = `真正失控的一步是「${finalChoice.text}」。這一步讓事情從懷疑變成實際涉入。`;
       }
 
       if (!message) {
@@ -2926,8 +3630,55 @@
       container.classList.remove('hidden');
     }
 
+    function classifyEndingTheme(endingId) {
+      if (endingId.startsWith('SAFE_EXIT_LATE')) {
+        return { theme: 'end-neutral', label: '驚險脫身', icon: 'alert-circle', sound: 'warn' };
+      }
+      if (endingId.startsWith('SAFE_') || endingId === 'EARLY_EXIT_IGNORE') {
+        return { theme: 'end-safe', label: '安全結局', icon: 'shield-check', sound: 'success' };
+      }
+      return { theme: 'end-bad', label: '高風險結局', icon: 'alert-triangle', sound: 'danger' };
+    }
+
+    function riskLevelSpec(value) {
+      if (value >= 7) return { label: '極高', color: '#f43f5e' };
+      if (value >= 4) return { label: '高', color: '#fb7185' };
+      if (value >= 1) return { label: '中', color: '#fbbf24' };
+      return { label: '低', color: '#34d399' };
+    }
+
+    function renderEndingStats() {
+      const stats = [
+        ['awareness', gameState.awareness],
+        ['trust', gameState.trust],
+        ['greed', gameState.greed],
+        ['fear', gameState.fear]
+      ];
+      stats.forEach(([key, value]) => {
+        const valEl = document.getElementById(`stat-${key}-val`);
+        const barEl = document.getElementById(`stat-${key}-bar`);
+        if (valEl) valEl.textContent = value > 0 ? `+${value}` : `${value}`;
+        if (barEl) barEl.style.width = `${Math.round((Math.max(0, Math.min(10, value)) / 10) * 100)}%`;
+      });
+
+      const risk = riskLevelSpec(gameState.risk);
+      const riskEl = document.getElementById('end-risk');
+      riskEl.textContent = risk.label;
+      riskEl.style.color = risk.color;
+      riskEl.style.borderColor = risk.color + '66';
+      riskEl.style.background = risk.color + '1a';
+    }
+
     function renderEnding(endingId) {
       const ending = ENDINGS[endingId];
+      const themeSpec = classifyEndingTheme(endingId);
+
+      const view = document.getElementById('ending-view');
+      view.classList.remove('end-safe', 'end-neutral', 'end-bad');
+      view.classList.add(themeSpec.theme);
+
+      document.getElementById('end-icon').innerHTML = iconSVG(themeSpec.icon);
+      document.getElementById('end-label').innerText = themeSpec.label;
       document.getElementById('ending-title').innerText = ending.title;
       document.getElementById('ending-content').innerText = ending.content;
       document.getElementById('ending-analysis').innerText = ending.analysis;
@@ -2940,14 +3691,9 @@
       }
 
       const { score, rank } = calculateFinalScore(endingId);
-      const scoreContainer = document.getElementById('score-container');
-      scoreContainer.classList.remove('hidden');
       document.getElementById('ending-score').innerText = score;
       document.getElementById('ending-rank').innerText = rank;
-      setTextIfExists('ending-awareness-val', gameState.awareness);
-      setTextIfExists('ending-fear-val', gameState.fear);
-      setTextIfExists('ending-greed-val', gameState.greed);
-      setTextIfExists('ending-trust-val', gameState.trust);
+      renderEndingStats();
 
       renderMistakes();
       renderTrapTags();
@@ -2996,7 +3742,8 @@
 
       setTimeout(() => {
         setView('ending-view');
-        lucide.createIcons();
+        document.querySelector('#ending-view .scroll-area').scrollTop = 0;
+        playSound(themeSpec.sound);
       }, 1000);
     }
 
@@ -3009,6 +3756,9 @@
       return uid;
     }
 
+    /* ============================================================
+       鎖定畫面
+    ============================================================ */
     function updateLockscreenClock() {
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, '0');
@@ -3021,144 +3771,55 @@
       document.getElementById('lockscreen-date').textContent = `${weekdays[now.getDay()]}，${month}月${day}日`;
     }
 
-  </script>
-  <script>
+    function initSwipeLockscreen() {
+      const mv = document.getElementById('menu-view');
+      if (!mv) return;
+      let startY = 0, dragging = false;
+
+      function unlock() {
+        mv.style.transition = 'transform .45s ease, opacity .35s ease';
+        mv.style.transform = 'translateY(-100%)';
+        mv.style.opacity = '0';
+        setTimeout(() => { mv.style.display = 'none'; }, 450);
+      }
+      function onStart(e) {
+        const t = e.touches?.[0] || e;
+        startY = t.clientY; dragging = true;
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        const t = e.touches?.[0] || e;
+        if (startY - t.clientY > 60) { dragging = false; unlock(); }
+      }
+      function onEnd() { dragging = false; }
+
+      mv.addEventListener('touchstart', onStart, { passive: true });
+      mv.addEventListener('touchmove', onMove, { passive: true });
+      mv.addEventListener('touchend', onEnd);
+      mv.addEventListener('mousedown', onStart);
+      mv.addEventListener('mousemove', onMove);
+      mv.addEventListener('mouseup', onEnd);
+
+      mv.querySelector('#swipe-hint')?.addEventListener('click', unlock);
+    }
+
     /* ============================================================
-       NEW SYSTEMS: Sound · Rain · SwipeLock · HUD · Knowledge · Ending
+       初始化
     ============================================================ */
-
-    // ── WEB AUDIO SOUND ENGINE ──
-    window.__gameUserInteracted = false;
-    window.addEventListener('pointerdown', () => {
-      window.__gameUserInteracted = true;
-      getAC()?.resume?.();
-    }, { once: true });
-
-    let _ac = null;
-    function getAC(){ if(!_ac){ try{ _ac = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} } return _ac; }
-    function playTone(freq, type='sine', duration=0.15, vol=0.18, delay=0){
-      const ac = getAC(); if(!ac) return;
-      try{
-        const g = ac.createGain(); g.gain.setValueAtTime(vol, ac.currentTime+delay); g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+delay+duration);
-        const o = ac.createOscillator(); o.type = type; o.frequency.value = freq;
-        o.connect(g); g.connect(ac.destination); o.start(ac.currentTime+delay); o.stop(ac.currentTime+delay+duration);
-      } catch(e){}
-    }
-    function playSound(type){
-      if(!window.__gameUserInteracted) return;
-      switch(type){
-        case 'message': playTone(880,'sine',.08,.12); break;
-        case 'click':   playTone(440,'sine',.05,.09); break;
-        case 'danger':  playTone(220,'sawtooth',.25,.15); playTone(180,'sawtooth',.25,.1,.1); break;
-        case 'success': playTone(660,'sine',.12,.14); playTone(880,'sine',.12,.12,.1); break;
-        case 'warn':    playTone(330,'square',.18,.1); break;
-        case 'ringtone': [0,.4,.8,1.2,1.6].forEach(d=>{ playTone(880,'sine',.18,.16,d); playTone(660,'sine',.18,.12,d+.09); }); break;
-      }
-    }
-
-    // ── RAIN CANVAS ──
-    function initRainCanvas(){
-      const canvas = document.getElementById('rain-canvas'); if(!canvas) return;
-      const ctx = canvas.getContext('2d');
-      let drops = [];
-      function resize(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; drops = Array.from({length:60},()=>({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:Math.random()*18+8, s:Math.random()*2+1, op:Math.random()*.5+.15 })); }
-      resize(); window.addEventListener('resize', resize);
-      function frame(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        drops.forEach(d=>{ ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d.x+d.l*.15,d.y+d.l); ctx.strokeStyle=`rgba(160,200,255,${d.op})`; ctx.lineWidth=.8; ctx.stroke(); d.y+=d.s*2.2; d.x+=d.s*.15; if(d.y>canvas.height){ d.y=-20; d.x=Math.random()*canvas.width; } });
-        requestAnimationFrame(frame);
-      }
-      frame();
-    }
-
-    // ── SWIPE-UP LOCKSCREEN ──
-    function initSwipeLockscreen(){
-      const mv = document.getElementById('menu-view'); if(!mv) return;
-      let startY=0, dragging=false;
-      function onStart(e){ const t = e.touches?.[0]||e; startY=t.clientY; dragging=true; }
-      function onMove(e){
-        if(!dragging) return;
-        const t = e.touches?.[0]||e; const dy = startY - t.clientY;
-        if(dy>60){ dragging=false; mv.style.transform='translateY(-100%)'; mv.style.opacity='0'; mv.style.transition='transform .45s ease, opacity .35s ease'; setTimeout(()=>{ mv.style.display='none'; },450); }
-      }
-      function onEnd(){ dragging=false; }
-      mv.addEventListener('touchstart', onStart, {passive:true});
-      mv.addEventListener('touchmove',  onMove,  {passive:true});
-      mv.addEventListener('touchend',   onEnd);
-      mv.addEventListener('mousedown',  onStart);
-      mv.addEventListener('mousemove',  onMove);
-      mv.addEventListener('mouseup',    onEnd);
-      // click on swipe-hint area only (avoid accidental unlock)
-      const swipeHint = mv.querySelector('#swipe-hint');
-      if(swipeHint) swipeHint.addEventListener('click', ()=>{ mv.style.transform='translateY(-100%)'; mv.style.opacity='0'; mv.style.transition='transform .45s ease, opacity .35s ease'; setTimeout(()=>{ mv.style.display='none'; },450); });
-    }
-
-    // ── ENDING THEME COLORS ──
-    const _origRenderEnding = renderEnding;
-    renderEnding = function(endingId){
-      _origRenderEnding(endingId);
-      const ev = document.getElementById('ending-view');
-      const hdr = document.getElementById('ending-header');
-      const lbl = document.getElementById('ending-header-label');
-      const ico = document.getElementById('ending-header-icon');
-      ev.classList.remove('end-safe','end-neutral','end-bad');
-      if(endingId.startsWith('SAFE_')||endingId==='EARLY_EXIT_IGNORE'){
-        ev.classList.add('end-safe');
-        if(lbl) lbl.textContent='MISSION_CLEAR';
-        if(ico){ ico.setAttribute('data-lucide','shield-check'); ico.className='text-emerald-400'; }
-        playSound('success');
-      } else if(endingId.startsWith('BAD_')){
-        ev.classList.remove('end-safe','end-neutral');
-        if(lbl) lbl.textContent='CASE_FILE_CLOSED';
-        playSound('danger');
-      } else {
-        ev.classList.add('end-neutral');
-        if(lbl) lbl.textContent='SIMULATION_ENDED';
-        if(ico){ ico.setAttribute('data-lucide','alert-circle'); ico.className='text-yellow-400'; }
-      }
-      lucide.createIcons();
-    };
-
-    // ── K哥 BUBBLE DANGER STYLE ──
-    const _origAppendBubble = appendBubble;
-    appendBubble = function(speaker, text, type){
-      _origAppendBubble(speaker, text, type);
-      if(type!=='incoming') return;
-      // Apply danger style to K哥 / 黑帽男 bubbles
-      if(speaker.includes('K哥')||speaker.includes('黑帽')){
-        const allBubbles = document.querySelectorAll('#chat-history [data-speaker]');
-        if(allBubbles.length>0){
-          const last = allBubbles[allBubbles.length-1];
-          const bc = last.querySelector('[data-bubble-content]');
-          if(bc){ bc.classList.add('bubble-k'); }
-        }
-        playSound('danger');
-      } else if(speaker!=='系統'){
-        playSound('message');
-      }
-    };
-
-    // ── SOUND ON OPTION CLICK ──
-    const _origHandleOpt = handleOptionSelect;
-    handleOptionSelect = function(optionOrNextId, optionText=null){
-      playSound('click');
-      _origHandleOpt(optionOrNextId, optionText);
-    };
-
-    // ── SOUND ON INCOMING CALL ──
-    const _origShowCall = showIncomingCall;
-    showIncomingCall = function(isRetry=false){
-      playSound('ringtone');
-      _origShowCall(isRetry);
-    };
-
     (function init() {
       updateLockscreenClock();
       setInterval(updateLockscreenClock, 30000);
-      lucide.createIcons();
+      renderIcons();
       bindCallSlider();
       initSwipeLockscreen();
-      initRainCanvas();
+
+      document.getElementById('btn-165').addEventListener('click', open165Modal);
+      document.getElementById('modal-cancel-btn').addEventListener('click', close165Modal);
+      document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+        close165Modal();
+        useOfficialAdvice();
+      });
+
       showGameGuide();
     })();
   </script>
