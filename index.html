@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託</title>
+  <title>午夜委託 v21｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v20 — 設計系統（單檔自足，無外部資源）
+       午夜委託 v21 — 設計系統（單檔自足，無外部資源）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -155,6 +155,7 @@
     }
 
     #guide-view   { z-index: 70; background: #0b0e14; }
+    #scenario-view { z-index: 70; background: #0b0e14; }
     #menu-view    { z-index: 50; }
     #call-view    { z-index: 60; }
     #playing-view { z-index: 10; }
@@ -407,6 +408,63 @@
       color: var(--faint);
       text-align: center;
       margin-top: 10px;
+    }
+
+    /* ============================================================
+       情境選擇（scenario-view）
+    ============================================================ */
+    #scenario-view .scroll-area {
+      padding: calc(var(--notch) + var(--safe-top) + 28px) 20px calc(var(--safe-bottom) + 24px);
+    }
+    .scenario-title { text-align: center; margin-bottom: 18px; }
+    .scenario-title h2 {
+      font-size: 26px; font-weight: 900; letter-spacing: 0.08em;
+      margin-top: 10px;
+    }
+    .scenario-title p {
+      font-size: 13px; line-height: 1.75; color: var(--dim);
+      margin-top: 8px;
+    }
+    .scenario-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .scenario-card {
+      width: 100%;
+      text-align: left;
+      border-radius: 16px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .scenario-card:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(52, 211, 153, 0.38);
+    }
+    .scenario-card:active { transform: scale(0.985); }
+    .scenario-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.24);
+    }
+    .scenario-icon .ic { width: 22px; height: 22px; }
+    .scenario-card h3 {
+      font-size: 15px; font-weight: 900; letter-spacing: 0.04em;
+      margin-bottom: 5px;
+    }
+    .scenario-card p { font-size: 12.5px; line-height: 1.7; color: #c6cdd9; }
+    .scenario-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .scenario-tags span {
+      font-size: 10.5px; color: var(--faint);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(0, 0, 0, 0.18);
     }
 
     /* ============================================================
@@ -1021,7 +1079,7 @@
       <section id="guide-view" class="view">
         <div class="scroll-area">
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v20</span>
+            <span class="ver-chip">v21</span>
             <div class="hero-badge"><i data-ic="shield-check"></i></div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
@@ -1056,7 +1114,7 @@
           <div class="card">
             <h2><i data-ic="gamepad"></i>操作方式</h2>
             <ol class="guide-list numbered">
-              <li>按下「開始遊玩」後，滑動接聽阿杰的來電。</li>
+              <li>選擇詐騙情境後，滑動接聽阿杰的來電。</li>
               <li>在對話下方選擇你的回覆，每個選擇都會影響後續劇情。</li>
               <li>出現紅色壓力關卡時，依照提示長按按鈕，完成冷靜或停損動作。</li>
               <li>覺得情況可疑時，隨時可以按右上角「165」向反詐騙專線查證。</li>
@@ -1081,12 +1139,31 @@
         </div>
 
         <div class="guide-footer">
-          <button class="btn-primary" onclick="startGame()">
-            <i data-ic="play"></i>開始遊玩
+          <button class="btn-primary" onclick="showScenarioSelect()">
+            <i data-ic="play"></i>選擇情境
           </button>
           <p class="research-note">
-            研究用途：本遊戲匿名記錄遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；不收集姓名、電話或任何可以直接辨識身分的資料。
+            研究用途：本遊戲匿名記錄情境類型 scenarioType、遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；不收集姓名、電話或任何可以直接辨識身分的資料。
           </p>
+        </div>
+      </section>
+
+      <!-- ═══════════ 情境選擇 ═══════════ -->
+      <section id="scenario-view" class="view hidden">
+        <div class="scroll-area">
+          <header class="guide-hero fade-in">
+            <span class="ver-chip">v21</span>
+            <div class="hero-badge"><i data-ic="target"></i></div>
+            <p class="hero-kicker">選擇主線情境</p>
+            <h1 class="hero-title">今晚你要拆哪一局？</h1>
+            <p class="hero-sub">每次完成一條主線都會形成一筆匿名研究紀錄</p>
+          </header>
+
+          <div class="card intro-card">
+            <p>四條主線對應不同詐騙入口。請選一個你想挑戰的情境，接起阿杰的來電後，遊戲會直接進入該類型的關鍵決策。</p>
+          </div>
+
+          <div class="scenario-grid" id="scenario-list"></div>
         </div>
       </section>
 
@@ -1282,11 +1359,11 @@
 
           <div class="card">
             <h2><i data-ic="file-text"></i>資料與風險說明</h2>
-            <p class="end-body" style="font-size:12px;color:var(--faint);">本研究工具會匿名記錄遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；使用者代碼僅用來區分同一裝置的遊玩紀錄。遊戲中的法律文字屬於情境化風險提示，不作個案法律判斷；實際遇到類似事件，請向家長、教師、銀行、警方或165確認。</p>
+            <p class="end-body" style="font-size:12px;color:var(--faint);">本研究工具會匿名記錄情境類型 scenarioType、遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；使用者代碼僅用來區分同一裝置的遊玩紀錄。遊戲中的法律文字屬於情境化風險提示，不作個案法律判斷；實際遇到類似事件，請向家長、教師、銀行、警方或165確認。</p>
           </div>
 
-          <button class="btn-restart" onclick="location.reload()">
-            <i data-ic="rotate-ccw"></i>再玩一次
+          <button class="btn-restart" onclick="returnToScenarioSelect()">
+            <i data-ic="target"></i>挑戰其他情境
           </button>
         </div>
       </section>
@@ -1399,6 +1476,88 @@
         speaker: '系統',
         text: '電競社練習剛結束，你背著書包走出校門，班群還在刷今晚比賽精華。手機突然狂震起來，是死黨阿杰的來電。',
         options: []
+      },
+
+      SCN_PHISHING_START: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: '阿杰 (LINE)',
+        instantTip: '本局聚焦釣魚連結與帳號盜用。核心判斷是：入口是不是自己找到的官方管道。',
+        text: '阿杰說買家催他今晚完成平台驗證，並傳來一個看起來很像官方活動站的交易連結。你要先判斷：這個入口能不能信。',
+        options: [
+          opt('把連結打開看看頁面是真是假。', 'S_PHISHING_LINK', {
+            effects: { trust: 1, risk: 1 },
+            hint: '只要入口由對方提供，就要先當成高風險處理。'
+          }),
+          opt('我不點連結，先用官方入口查。', 'S_PHISHING_LINK', {
+            effects: { awareness: 2 },
+            evidence: '拒絕直接點擊交易連結',
+            actionType: 'evidence'
+          })
+        ]
+      },
+
+      SCN_ACCOUNT_START: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: '阿杰 (語音)',
+        instantTip: '本局聚焦人頭帳戶與提款卡。核心判斷是：帳戶、提款卡、存摺與密碼都不能交給別人使用。',
+        text: '阿杰說有一個「短期帳戶驗證」可以幫他解套，對方只要借用銀行帳戶確認身分，還說只是朋友間幫忙，不會真的出事。',
+        options: [
+          opt('連你都在借？那流程到底是什麼。', 'S_RENT_ACCOUNT_AJIE', {
+            effects: { trust: 1, awareness: -1 },
+            isMistake: true,
+            hint: '熟人也可能把你帶進不明金流；帳戶不是可以借用的工具。'
+          }),
+          opt('帳戶聽起來太敏感，先問清楚但不交資料。', 'S_RENT_ACCOUNT_HALF_STEP', {
+            effects: { awareness: 2 },
+            evidence: '拒絕直接交付帳戶資料',
+            actionType: 'evidence'
+          }),
+          opt('帳戶不能借，這局我直接停下來。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, trust: -1 }
+          })
+        ]
+      },
+
+      SCN_SIM_START: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: '阿杰 (語音)',
+        instantTip: '本局聚焦辦門號換現金。核心判斷是：合約、門號、手機與月租費會回到本人身上。',
+        text: '阿杰說只要用你的名字辦一支手機，現場把手機交給對方就能拿現金，月租也有人會幫忙繳。店面是真的，但條件聽起來很趕。',
+        options: [
+          opt('有店面和合約，我先去聽方案。', 'S_SIM_CARD_STORE', {
+            effects: { trust: 1, awareness: -1 },
+            isMistake: true,
+            hint: '真實店面不代表交易目的安全；合約責任仍登記在你名下。'
+          }),
+          opt('先問清楚是不是我本人要背合約。', 'S_SIM_CARD_QUESTION', {
+            effects: { awareness: 2 },
+            evidence: '確認門號合約責任',
+            actionType: 'evidence'
+          }),
+          opt('要用我的名字辦門號就不碰。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, trust: -1 }
+          })
+        ]
+      },
+
+      SCN_CASH_MULE_START: {
+        bg: SCENE_IMAGES.STREET_NIGHT,
+        speaker: '阿杰 (語音)',
+        instantTip: '本局聚焦現金代收與車手招募。核心判斷是：不明現金、不明匯款與高報酬跑腿都可能是詐騙金流。',
+        text: '阿杰說買家臨時改成現金處理，只要你幫忙到路邊收一包錢，就能拿跑腿費。後面還有人說可以介紹日領工作。',
+        options: [
+          opt('路邊面交拿現金？聽起來超怪。', 'S1E_CASH', {
+            effects: { awareness: 1 }
+          }),
+          opt('跑腿費很高，我想先聽聽。', 'S1E_CASH', {
+            effects: { greed: 2, awareness: -1 },
+            isMistake: true,
+            hint: '高報酬和低門檻常用來讓人忽略不明金流。'
+          }),
+          opt('不明現金不能碰，我先停下來。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, greed: -1 }
+          })
+        ]
       },
 
       S1: {
@@ -2521,8 +2680,43 @@
       }
     };
 
+    const SCENARIOS = {
+      phishing_link: {
+        title: '釣魚連結與帳號盜用',
+        shortTitle: '釣魚連結',
+        icon: 'message-alert',
+        startNode: 'SCN_PHISHING_START',
+        summary: '辨識仿冒交易平台、短網址、帳號密碼與簡訊驗證碼陷阱。',
+        tags: ['仿冒平台', '帳號密碼', '驗證碼']
+      },
+      account_rental: {
+        title: '人頭帳戶與提款卡',
+        shortTitle: '人頭帳戶',
+        icon: 'id-card',
+        startNode: 'SCN_ACCOUNT_START',
+        summary: '判斷租借帳戶、提款卡、存摺與身分資料要求的金流風險。',
+        tags: ['帳戶借用', '提款卡', '證件資料']
+      },
+      sim_card: {
+        title: '辦門號換現金',
+        shortTitle: '辦門號',
+        icon: 'phone',
+        startNode: 'SCN_SIM_START',
+        summary: '看懂手機、門號、合約月租與現金誘惑背後的責任。',
+        tags: ['手機合約', '月租費', '現場壓力']
+      },
+      cash_mule: {
+        title: '現金代收與車手招募',
+        shortTitle: '車手招募',
+        icon: 'siren',
+        startNode: 'SCN_CASH_MULE_START',
+        summary: '拆解高報酬跑腿、不明現金、提款與恐嚇服從流程。',
+        tags: ['代收現金', '高薪誘惑', '提款風險']
+      }
+    };
+
     /* ============================================================
-       研究記錄設定（欄位與 v18 完全一致，Google Sheet 不需調整）
+       研究記錄設定（v21 新增 scenarioType 欄位）
     ============================================================ */
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycby39S9dN4lQQ1_voJlX5Qh_xt0wn5cZF9e6GSLrCuOsokuuDIVybo6bO33p2ukebitXSQ/exec';
 
@@ -2546,6 +2740,8 @@
 
     let gameState = cloneState(INITIAL_GAME_STATE);
     let selectedOptionHistory = [];
+    let selectedScenarioType = '';
+    let selectedScenario = null;
 
     let currentMinutesOffset = 0;
     let currentSpeaker = '';
@@ -2763,7 +2959,7 @@
       return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    const ALL_VIEWS = ['guide-view', 'menu-view', 'call-view', 'playing-view', 'ending-view'];
+    const ALL_VIEWS = ['guide-view', 'scenario-view', 'menu-view', 'call-view', 'playing-view', 'ending-view'];
 
     function setView(viewId) {
       ALL_VIEWS.forEach(id => document.getElementById(id)?.classList.add('hidden'));
@@ -2824,13 +3020,68 @@
       setView('guide-view');
     }
 
-    function startGame() {
+    function renderScenarioList() {
+      const root = document.getElementById('scenario-list');
+      root.innerHTML = '';
+
+      Object.entries(SCENARIOS).forEach(([scenarioType, scenario]) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'scenario-card';
+        button.dataset.scenarioType = scenarioType;
+        button.innerHTML = `
+          <div class="scenario-icon">${iconSVG(scenario.icon)}</div>
+          <div>
+            <h3>${scenario.title}</h3>
+            <p>${scenario.summary}</p>
+            <div class="scenario-tags">
+              ${scenario.tags.map(tag => `<span>${tag}</span>`).join('')}
+            </div>
+          </div>`;
+        button.addEventListener('click', () => startGame(scenarioType));
+        root.appendChild(button);
+      });
+    }
+
+    function showScenarioSelect() {
+      stopRingtone();
+      stopTimer();
+      resetActionChallenge();
+      configureOpeningScene();
+      renderScenarioList();
+      setView('scenario-view');
+      document.querySelector('#scenario-view .scroll-area').scrollTop = 0;
+    }
+
+    function returnToScenarioSelect() {
+      gameStartTime = null;
+      currentMinutesOffset = 0;
+      currentSpeaker = '';
+      currentNodeId = '';
+      isTransitioning = false;
+      playerPath = [];
+      selectedScenarioType = '';
+      selectedScenario = null;
+      resetGameState();
+      prepareChatView();
+      showScenarioSelect();
+    }
+
+    function startGame(scenarioType) {
+      const scenario = SCENARIOS[scenarioType];
+      if (!scenario || !STORY[scenario.startNode]) {
+        showScenarioSelect();
+        return;
+      }
+
+      selectedScenarioType = scenarioType;
+      selectedScenario = scenario;
       gameStartTime = Date.now();
       currentMinutesOffset = 0;
       currentSpeaker = '';
       currentNodeId = '';
       isTransitioning = false;
-      playerPath = ['START'];
+      playerPath = [scenarioType, scenario.startNode];
       resetGameState();
 
       stopRingtone();
@@ -3408,7 +3659,7 @@
         setView('playing-view');
         prepareChatView();
         appendBubble('系統', introNarration, 'incoming');
-        setTimeout(() => renderNode('S1'), 1200);
+        setTimeout(() => renderNode(selectedScenario?.startNode || 'S1'), 1200);
       }, 320);
     }
 
@@ -3689,6 +3940,7 @@
         const rankMatch = ending.analysis.match(/【(?:防禦力\s?)?(.*?)(?:\s?級)?】/);
         const defenseRank = rankMatch ? rankMatch[1].trim() : rank;
         const researchPayload = {
+          scenarioType: selectedScenarioType,
           endingId,
           endingTitle: ending.title,
           defenseRank,
