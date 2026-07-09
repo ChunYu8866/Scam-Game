@@ -4,15 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託</title>
+  <title>午夜委託 v20｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
   <meta property="og:type" content="website" />
+  <link rel="icon" href="data:," />
 
   <style>
     /* ============================================================
-       午夜委託 v19 — 設計系統（單檔自足，無外部資源）
+       午夜委託 v20 — 設計系統（單檔自足，無外部資源）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -1020,7 +1021,7 @@
       <section id="guide-view" class="view">
         <div class="scroll-area">
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v19</span>
+            <span class="ver-chip">v20</span>
             <div class="hero-badge"><i data-ic="shield-check"></i></div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
@@ -2563,7 +2564,6 @@
       startX: 0,
       startOffset: 0,
       currentX: 0,
-      moved: false,
       accepted: false
     };
 
@@ -3360,7 +3360,6 @@
       callSliderState.startX = 0;
       callSliderState.startOffset = 0;
       callSliderState.currentX = 0;
-      callSliderState.moved = false;
       callSliderState.accepted = false;
       updateCallSlider(0, animate);
     }
@@ -3390,13 +3389,11 @@
         callSliderState.pointerId = event.pointerId;
         callSliderState.startX = event.clientX;
         callSliderState.startOffset = callSliderState.currentX;
-        callSliderState.moved = false;
         try { thumb.setPointerCapture(event.pointerId); } catch (e) {}
       });
 
       thumb.addEventListener('pointermove', (event) => {
         if (!callSliderState.dragging || event.pointerId !== callSliderState.pointerId) return;
-        if (Math.abs(event.clientX - callSliderState.startX) > 8) callSliderState.moved = true;
         const nextX = callSliderState.startOffset + (event.clientX - callSliderState.startX);
         updateCallSlider(nextX);
       });
@@ -3404,19 +3401,6 @@
       thumb.addEventListener('pointerup', endDrag);
       thumb.addEventListener('pointercancel', endDrag);
       thumb.addEventListener('lostpointercapture', endDrag);
-      thumb.addEventListener('click', () => {
-        if (callSliderState.accepted || callSliderState.moved) return;
-        callSliderState.accepted = true;
-        updateCallSlider(getCallSliderMetrics().maxX, true);
-        acceptCall();
-      });
-      thumb.addEventListener('keydown', (event) => {
-        if (!['Enter', ' '].includes(event.key) || callSliderState.accepted) return;
-        event.preventDefault();
-        callSliderState.accepted = true;
-        updateCallSlider(getCallSliderMetrics().maxX, true);
-        acceptCall();
-      });
     }
 
     function enterChatFromCall() {
