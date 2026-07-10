@@ -156,7 +156,6 @@
 
     #guide-view   { z-index: 70; background: #0b0e14; }
     #scenario-view { z-index: 70; background: #0b0e14; }
-    #menu-view    { z-index: 50; }
     #call-view    { z-index: 60; }
     #playing-view { z-index: 10; }
     #ending-view  { z-index: 80; background: #0b0e14; }
@@ -210,11 +209,6 @@
     @keyframes ring-expand {
       0%   { transform: scale(1);   opacity: 0.45; }
       100% { transform: scale(2.1); opacity: 0; }
-    }
-
-    @keyframes swipe-bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -466,65 +460,6 @@
       padding: 3px 8px;
       background: rgba(0, 0, 0, 0.18);
     }
-
-    /* ============================================================
-       鎖定畫面（menu-view）
-    ============================================================ */
-    #menu-view {
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(var(--notch) + var(--safe-top) + 44px) 18px calc(var(--safe-bottom) + 24px);
-      transition: opacity 0.9s ease;
-      background: #0f172a;
-    }
-    .lock-clock { text-align: center; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7); }
-    .lock-clock .ic { font-size: 17px; color: rgba(255, 255, 255, 0.65); margin-bottom: 8px; }
-    #lockscreen-time {
-      font-size: 74px; font-weight: 200; letter-spacing: 0.03em; line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-    #lockscreen-date { font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.82); margin-top: 10px; letter-spacing: 0.06em; }
-
-    .notif-banner {
-      background: rgba(26, 29, 38, 0.85);
-      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      border-radius: 18px;
-      padding: 11px 14px;
-      display: flex; align-items: center; gap: 11px;
-      width: min(100%, 340px);
-    }
-    .notif-icon {
-      width: 36px; height: 36px; border-radius: 11px;
-      background: linear-gradient(135deg, #22c55e, #15803d);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 16px; flex-shrink: 0;
-    }
-    .notif-body { flex: 1; min-width: 0; }
-    .notif-row { display: flex; justify-content: space-between; align-items: baseline; }
-    .notif-row strong { font-size: 13px; }
-    .notif-row time { font-size: 11px; color: rgba(255, 255, 255, 0.45); }
-    .notif-body p { font-size: 12px; color: rgba(255, 255, 255, 0.72); margin-top: 2px; }
-
-    .lock-bottom { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .lock-quick { width: 100%; display: flex; justify-content: space-between; padding: 0 26px; }
-    .quick-btn {
-      width: 46px; height: 46px; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255, 255, 255, 0.85); font-size: 18px;
-    }
-    #swipe-hint {
-      display: flex; flex-direction: column; align-items: center; gap: 7px;
-      color: rgba(255, 255, 255, 0.6);
-      animation: swipe-bounce 2.2s ease-in-out infinite;
-      cursor: pointer;
-    }
-    #swipe-hint .ic { font-size: 22px; }
-    #swipe-hint span { font-size: 12px; letter-spacing: 0.2em; }
-    .home-bar { width: 116px; height: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.4); }
 
     /* ============================================================
        來電畫面（call-view）
@@ -1167,38 +1102,6 @@
         </div>
       </section>
 
-      <!-- ═══════════ 鎖定畫面 ═══════════ -->
-      <section id="menu-view" class="view hidden">
-        <div class="lock-clock">
-          <i data-ic="lock"></i>
-          <div id="lockscreen-time">21:47</div>
-          <div id="lockscreen-date">星期一，7月6日</div>
-        </div>
-
-        <div class="notif-banner">
-          <div class="notif-icon"><i data-ic="phone"></i></div>
-          <div class="notif-body">
-            <div class="notif-row">
-              <strong>電話</strong>
-              <time>現在</time>
-            </div>
-            <p>阿杰 · 來電中</p>
-          </div>
-        </div>
-
-        <div class="lock-bottom">
-          <div class="lock-quick">
-            <div class="quick-btn"><i data-ic="zap"></i></div>
-            <div class="quick-btn"><i data-ic="camera"></i></div>
-          </div>
-          <div id="swipe-hint">
-            <i data-ic="chevron-up"></i>
-            <span>向上滑動解鎖</span>
-          </div>
-          <div class="home-bar"></div>
-        </div>
-      </section>
-
       <!-- ═══════════ 來電畫面 ═══════════ -->
       <section id="call-view" class="view hidden">
         <div class="call-top">
@@ -1471,128 +1374,27 @@
     }
 
     const STORY = {
-      START: {
-        bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '系統',
-        text: '電競社練習剛結束，你背著書包走出校門，班群還在刷今晚比賽精華。手機突然狂震起來，是死黨阿杰的來電。',
-        options: []
-      },
+
+      /* ────────────── 主線一：釣魚連結與帳號盜用 ────────────── */
 
       SCN_PHISHING_START: {
-        bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
-        instantTip: '本局聚焦釣魚連結與帳號盜用。核心判斷是：入口是不是自己找到的官方管道。',
-        text: '阿杰說買家催他今晚完成平台驗證，並傳來一個看起來很像官方活動站的交易連結。你要先判斷：這個入口能不能信。',
-        options: [
-          opt('把連結打開看看頁面是真是假。', 'S_PHISHING_LINK', {
-            effects: { trust: 1, risk: 1 },
-            hint: '只要入口由對方提供，就要先當成高風險處理。'
-          }),
-          opt('我不點連結，先用官方入口查。', 'S_PHISHING_LINK', {
-            effects: { awareness: 2 },
-            evidence: '拒絕直接點擊交易連結',
-            actionType: 'evidence'
-          })
-        ]
-      },
-
-      SCN_ACCOUNT_START: {
-        bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
-        instantTip: '本局聚焦人頭帳戶與提款卡。核心判斷是：帳戶、提款卡、存摺與密碼都不能交給別人使用。',
-        text: '阿杰說有一個「短期帳戶驗證」可以幫他解套，對方只要借用銀行帳戶確認身分，還說只是朋友間幫忙，不會真的出事。',
-        options: [
-          opt('連你都在借？那流程到底是什麼。', 'S_RENT_ACCOUNT_AJIE', {
-            effects: { trust: 1, awareness: -1 },
-            isMistake: true,
-            hint: '熟人也可能把你帶進不明金流；帳戶不是可以借用的工具。'
-          }),
-          opt('帳戶聽起來太敏感，先問清楚但不交資料。', 'S_RENT_ACCOUNT_HALF_STEP', {
-            effects: { awareness: 2 },
-            evidence: '拒絕直接交付帳戶資料',
-            actionType: 'evidence'
-          }),
-          opt('帳戶不能借，這局我直接停下來。', 'SAFE_EXIT_BLOCK1', {
-            effects: { awareness: 4, trust: -1 }
-          })
-        ]
-      },
-
-      SCN_SIM_START: {
-        bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
-        instantTip: '本局聚焦辦門號換現金。核心判斷是：合約、門號、手機與月租費會回到本人身上。',
-        text: '阿杰說只要用你的名字辦一支手機，現場把手機交給對方就能拿現金，月租也有人會幫忙繳。店面是真的，但條件聽起來很趕。',
-        options: [
-          opt('有店面和合約，我先去聽方案。', 'S_SIM_CARD_STORE', {
-            effects: { trust: 1, awareness: -1 },
-            isMistake: true,
-            hint: '真實店面不代表交易目的安全；合約責任仍登記在你名下。'
-          }),
-          opt('先問清楚是不是我本人要背合約。', 'S_SIM_CARD_QUESTION', {
-            effects: { awareness: 2 },
-            evidence: '確認門號合約責任',
-            actionType: 'evidence'
-          }),
-          opt('要用我的名字辦門號就不碰。', 'SAFE_EXIT_BLOCK1', {
-            effects: { awareness: 4, trust: -1 }
-          })
-        ]
-      },
-
-      SCN_CASH_MULE_START: {
         bg: SCENE_IMAGES.STREET_NIGHT,
         speaker: '阿杰 (語音)',
-        instantTip: '本局聚焦現金代收與車手招募。核心判斷是：不明現金、不明匯款與高報酬跑腿都可能是詐騙金流。',
-        text: '阿杰說買家臨時改成現金處理，只要你幫忙到路邊收一包錢，就能拿跑腿費。後面還有人說可以介紹日領工作。',
+        instantTip: '警訊：高價收購＋限時完成＋要你代替操作，是遊戲帳號詐騙的典型開場。',
+        text: '欸接了接了！救我一命！我那個電競帳號連限定造型，真的有人開三萬收！可是買家說今晚十一點前要做完「平台驗證」，逾時單子就作廢。我手機剩 8% 快關機了，驗證連結我傳給你，你幫我先用你的手機弄！',
         options: [
-          opt('路邊面交拿現金？聽起來超怪。', 'S1E_CASH', {
+          opt('三萬？先講是哪個平台，我查得到才算數。', 'S_CLASS_GROUP_PRESSURE', {
             effects: { awareness: 1 }
           }),
-          opt('跑腿費很高，我想先聽聽。', 'S1E_CASH', {
-            effects: { greed: 2, awareness: -1 },
-            isMistake: true,
-            hint: '高報酬和低門檻常用來讓人忽略不明金流。'
-          }),
-          opt('不明現金不能碰，我先停下來。', 'SAFE_EXIT_BLOCK1', {
-            effects: { awareness: 4, greed: -1 }
-          })
-        ]
-      },
-
-      S1: {
-        bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '阿杰 (語音)',
-        instantTip: '熟人關係不等於低風險。高中生日常中的班群、社團與好友請託，也可能被詐騙話術利用。',
-        text: '欸你終於接了！拜託先不要掛，我真的快炸了。這件事如果被社團群知道，我明天不用去學校了。',
-        options: [
-          opt('冷靜，你先講清楚發生什麼事。', 'S1B', {
-            effects: { trust: 1 },
-            hint: '你願意聽朋友說明，但仍需要保持查證意識。'
-          }),
-          opt('先說重點，不要用情緒逼我答應。', 'S1B', {
-            effects: { awareness: 1 }
-          })
-        ]
-      },
-
-      S1B: {
-        bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '阿杰 (語音)',
-        instantTip: '警訊：遊戲資產高價收購、限時完成、社群背書，是青少年常見的詐騙入口。',
-        text: '我那個電競帳號和限定造型終於有人收了，對方出三萬！他說今晚十一點前要完成平台驗證，不然訂單取消。社團小群還有人說這平台很穩，我現在真的不能錯過。',
-        options: [
-          opt('三萬太誇張了，哪個平台？', 'S_CLASS_GROUP_PRESSURE', {
-            effects: { awareness: 1 }
-          }),
-          opt('社團小群誰說穩？先把截圖傳來。', 'S_CLASS_GROUP_PRESSURE', {
-            effects: { awareness: 1, trust: -1 }
-          }),
-          opt('把交易平台網址傳來，我先確認是不是官方。', 'S_PHISHING_LINK', {
+          opt('連結先傳來，但我只看，絕對不登入。', 'S_PHISHING_LINK', {
             effects: { awareness: 1 },
-            evidence: '要求交易平台網址',
+            evidence: '保留買家提供的驗證連結',
             actionType: 'evidence',
-            postTip: '查證不是點對方給的連結，而是自己從官方管道進入。'
+            postTip: '對方給的連結可以當「證物」，但不能當「入口」。'
+          }),
+          opt('十一點前？倒數計時就是不想讓你想清楚。', 'S_CLASS_GROUP_PRESSURE', {
+            effects: { awareness: 2, trust: -1 },
+            hint: '你抓到了「時間壓迫」這面紅旗，先別讓節奏被對方帶走。'
           })
         ]
       },
@@ -1600,23 +1402,23 @@
       S_CLASS_GROUP_PRESSURE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
-        instantTip: '警訊：班群、社團群、限動截圖與學長推薦都只是「社會認同」，不能取代官方查證。',
-        text: '阿杰傳來社團小群截圖：學長貼了收益圖、有人說「昨天剛出金」、限動還有一排火焰表情。接著他補一句：「你看，不是只有我信，大家都說可以。」',
+        instantTip: '警訊：截圖、限動、學長掛保證都是「別人說」，不是「查證過」。',
+        text: '阿杰連丟三張截圖：社團小群裡學長貼著「昨天剛出金」的入帳畫面、下面接一整排火焰表情，還有人發限動寫「這平台屌打其他家」。他補一句：「大家都在用欸，你不要害我錯過這單。」',
         options: [
-          opt('既然社團的人都說可以，先照流程看。', 'S1C', {
+          opt('學長都出金了，應該是真的吧，我看一下流程。', 'S_PHISHING_LINK', {
             effects: { trust: 2, awareness: -2, greed: 1 },
             isMistake: true,
-            hint: '你把群體背書誤認成安全證明，這是高中生很容易踩到的同儕壓力。'
+            hint: '你把群組的熱度當成了安全證明——這正是社會認同陷阱。'
           }),
-          opt('截圖和限動都可能造假，我先不碰。', 'SAFE_EXIT_BLOCK1', {
+          opt('入帳畫面五分鐘就能修圖修出來，我不看這個。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4, trust: -1 },
-            hint: '你把社群熱度和事實證據分開判斷，成功切斷同儕壓力。'
+            hint: '你把「熱度」和「證據」分開判斷，同儕壓力對你失效了。'
           }),
-          opt('我要自己找官方入口，不點任何人傳的連結。', 'S_PHISHING_LINK', {
+          opt('我自己去官方商店搜這個平台，不走你們給的連結。', 'S_PHISHING_LINK', {
             effects: { awareness: 2 },
             evidence: '社團群交易平台截圖',
             actionType: 'evidence',
-            postTip: '社群截圖只能當線索，不能當證明；查證要自己從官方入口開始。'
+            postTip: '查證的起點，永遠是自己找到的官方入口。'
           })
         ]
       },
@@ -1624,105 +1426,82 @@
       S_PHISHING_LINK: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
-        instantTip: '警訊：短網址、仿冒交易平台、社群登入、簡訊驗證碼與倒數壓力，是常見釣魚連結流程。',
-        text: '阿杰傳來一個「電競交易平台」連結，頁面做得像官方活動站，還放了短影音推薦牆。登入頁要求你用遊戲帳號、社群小帳和手機簡訊驗證碼綁定，右上角倒數只剩 08:59。',
+        instantTip: '警訊：仿冒平台＋要求帳密與驗證碼＋畫面倒數，是釣魚頁面的標準三件套。',
+        text: '連結打開，是一個「電競帳號交易中心」：官方風的藍色介面、跑馬燈客服、還有一面短影音實測牆。頁面要你綁定遊戲帳密和社群小帳，再輸入手機簡訊驗證碼「完成保證金驗證」。右上角紅色倒數跳著：08:59、08:58……',
         options: [
-          opt('頁面看起來很真，我先登入幫他確認。', 'BAD_ENDING_PHISHING', {
-            effects: { trust: 1, awareness: -3, risk: 5 },
+          opt('介面做得這麼完整，應該是真的，我先登入。', 'S_PHISHING_OTP', {
+            effects: { trust: 1, awareness: -3, risk: 3 },
             isMistake: true,
-            hint: '一旦把帳密、社群帳號或驗證碼輸入仿冒頁面，帳號與個資就可能被對方接管。',
+            hint: '介面精緻只代表對方花了成本，不代表它是官方。',
             educationalType: '釣魚連結'
           }),
-          opt('不點連結，我自己搜尋官方平台再查訂單。', 'SAFE_EXIT_PHISHING', {
+          opt('我去應用程式商店下載官方版本，用訂單編號查。', 'SAFE_EXIT_PHISHING', {
             effects: { awareness: 4, trust: -1 },
-            hint: '你把「對方提供的入口」改成「自己找到的官方入口」，切斷了釣魚頁面的控制。'
+            hint: '你把「對方給的入口」換成「自己找的入口」，釣魚頁面立刻失效。'
           }),
-          opt('我先撥165或到165全民防騙網查這個網址。', 'SAFE_EXIT_PHISHING', {
+          opt('先撥165，或上165全民防騙網查這個網址。', 'SAFE_EXIT_PHISHING', {
             effects: { awareness: 5, fear: -1 },
             evidence: '165查證可疑交易連結',
             actionType: 'verifyOfficial',
-            hint: '你使用165官方管道查證，符合防詐3C：冷靜、查證、求助。'
+            hint: '你用官方管道查證，完整做到防詐3C：冷靜、查證、求助。'
           })
         ]
       },
 
-      S1C: {
-        bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '阿杰 (語音)',
-        text: '我這次段考爆掉，又偷用我媽卡買耳機被抓到，手機快被收走。明天畢旅尾款和手機分期都要繳，我朋友說可以處理一些「學生也能做的小任務」換現金，你幫我頂一下好不好？',
-        options: [
-          opt('什麼小事？', 'S1D', {
-            effects: { awareness: -1, trust: 1 }
-          }),
-          opt('我沒辦法幫你，這種事我怕會出問題。', 'S1C_SOFT_REFUSE', {
-            effects: { awareness: 1, trust: -1 }
-          })
-        ]
-      },
-
-      S1C_SOFT_REFUSE: {
+      S_PHISHING_OTP: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
-        text: '我知道你會怕，對不起一直煩你。你不用現在答應，我只是傳給你看流程、限動截圖和學長推薦文，你幫我判斷一下就好。今天真的只有你會接我電話。',
+        speaker: '系統',
+        timeLimit: 10,
+        timeoutNext: 'BAD_ENDING_PHISHING',
+        challenge: {
+          title: '驗證碼防線',
+          subtitle: '長按 1.6 秒，關閉頁面並停止輸入',
+          label: '長按關閉頁面',
+          icon: 'ban',
+          holdMs: 1600,
+          completeText: '不輸入驗證碼。關掉頁面，立刻改密碼。',
+          completeNext: 'SAFE_EXIT_PHISHING',
+          completeEffects: { awareness: 4, risk: -2 },
+          evidence: '仿冒頁面要求簡訊驗證碼的截圖',
+          hint: '驗證碼是帳號的最後一道門，你守住了。',
+          postTip: '任何頁面、任何人開口要簡訊驗證碼，都可以直接當成詐騙處理。'
+        },
+        instantTip: '超高危險紅旗：簡訊驗證碼等於帳號鑰匙，正牌客服絕不會開口要。',
+        text: '你輸入帳密的下一秒，手機跳出簡訊：【驗證碼 481253，切勿提供他人】。同時頁面彈出紅色視窗：「系統偵測異地登入！請於 60 秒內輸入簡訊驗證碼完成保護，逾時帳號將被凍結。」',
         options: [
-          opt('好啦，你先說，真的只是聽。', 'S1D', {
-            effects: { trust: 2, awareness: -1 },
+          opt('帳號要被凍結了！快，輸入481253。', 'BAD_ENDING_PHISHING', {
+            effects: { fear: 2, awareness: -3, risk: 5 },
             isMistake: true,
-            hint: '「只是聽一下」常常是讓你重新回到局裡的第一步。'
+            hint: '「凍結」是嚇你的話術；輸入驗證碼才是真正把帳號交出去。',
+            educationalType: '釣魚連結'
           }),
-          opt('你先把對方資料傳來，我看完再決定。', 'S1D_PROOF', {
-            effects: { trust: 1, awareness: -1 },
-            isMistake: true,
-            hint: '假截圖、假評價、假合約常被用來製造安全感。'
-          }),
-          opt('我不接這種急事，到這裡就好。', 'SAFE_EXIT_BLOCK1', {
-            effects: { awareness: 3, trust: -2 }
+          opt('簡訊都寫了「切勿提供他人」，這頁面就是來騙碼的。', 'SAFE_EXIT_PHISHING', {
+            effects: { awareness: 5, fear: -1 },
+            evidence: '保留仿冒頁面與驗證碼簡訊畫面',
+            actionType: 'evidence',
+            hint: '你聽懂了簡訊裡官方的提醒，而不是畫面上的恐嚇。'
           })
         ]
       },
 
-      S1D: {
-        bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '阿杰 (語音)',
-        text: '他們給我三個選項：借提款卡給網拍工作室對帳、去電信行辦學生方案拿新手機、或幫忙面交遊戲帳號款。每個都能先拿五千到一萬，說很多高中生都在做。你幫我用你的名字弄一個好不好？',
-        options: [
-          opt('如果只是對帳，我先問清楚流程。', 'S_RENT_ACCOUNT_AJIE', {
-            effects: { trust: 1, awareness: -1 },
-            isMistake: true,
-            hint: '對方會把敏感行為拆成「先問流程」這種低壓步驟。'
-          }),
-          opt('辦門號換手機聽起來比較單純，我先看合約。', 'S_SIM_CARD_STORE', {
-            effects: { greed: 1, trust: 1, awareness: -1 },
-            isMistake: true,
-            hint: '「先看合約」進到現場後，很容易被催促直接簽名。'
-          }),
-          opt('我可以先幫你看，但不保證會做。', 'S1D_PROOF', {
-            effects: { trust: 1, awareness: -1 },
-            isMistake: true,
-            hint: '保留餘地不等於安全，對方會利用這個空間繼續推進。'
-          }),
-          opt('聽起來都不太對勁，我不幫。', 'S1C_SOFT_REFUSE', {
-            effects: { awareness: 1, trust: -1 }
-          })
-        ]
-      },
+      /* ────────────── 主線二：人頭帳戶與提款卡 ────────────── */
 
-      S1D_PROOF: {
+      SCN_ACCOUNT_START: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
-        text: '阿杰連續傳來四張圖：工作室匯款紀錄、社團小群好評、匿名限動截圖、還有「辦完立刻拿現金」的學生方案合約。截圖上每個人都說沒事，他又補一句：「你看，真的不是只有我。」',
+        speaker: '阿杰 (語音)',
+        instantTip: '警訊：「租帳戶」「掛帳戶」「學生帳戶乾淨」都是人頭帳戶招募的話術。',
+        text: '兄弟，我出事了……我欠學長三千五，他今天開始在社團小群點名。他說有個網拍工作室缺「掛帳戶」的人，一本存摺月租兩萬，學生的帳戶最乾淨。我的已經借出去了，他們說再找到一個人，今晚就先撥五千幫我還債……',
         options: [
-          opt('看起來真的有人做過，我先試提款卡那個。', 'S_RENT_ACCOUNT_HALF_STEP', {
-            effects: { trust: 2, greed: 1, awareness: -2 },
+          opt('等等，帳戶是要怎麼「租」？你先講清楚。', 'S_RENT_ACCOUNT_AJIE', {
+            effects: { trust: 1, awareness: -1 },
             isMistake: true,
-            hint: '「很多人都做過」是社會認同陷阱，不能代表合法或安全。'
+            hint: '追問流程看起來謹慎，但你已經站進對方的話術裡了。'
           }),
-          opt('有店面、有合約，我先去電信行聽方案。', 'S_SIM_CARD_STORE', {
-            effects: { trust: 2, greed: 1, awareness: -2 },
-            isMistake: true,
-            hint: '店面與合約只能證明交易存在，不能證明用途安全。'
+          opt('你把存摺給別人了？！那本帳戶現在在跑什麼錢你知道嗎？', 'S_RENT_ACCOUNT_AJIE', {
+            effects: { awareness: 2 },
+            hint: '先追金流去向，這是正確的直覺。'
           }),
-          opt('截圖可以造假，我不靠這個判斷。', 'SAFE_EXIT_BLOCK1', {
+          opt('帳戶借出去就是人頭帳戶。我不會給，你也快去銀行止付。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, trust: -1 }
           })
         ]
@@ -1731,36 +1510,110 @@
       S_RENT_ACCOUNT_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (語音)',
-        text: '安啦！那只是他們網拍避稅跟結算點數用的，我也有借他們兩本，每個月準時收到兩萬塊，穩的啦。你就幫我這一次嘛！',
+        instantTip: '警訊：把帳戶說成「放著收租」，是在掩蓋不明金流會流經你名下的事實。',
+        text: '就放著收租金而已啊！工作室說他們做網拍要「分流貨款」，怕被課稅。我上個月真的收到兩萬，還請社團喝過飲料你忘了？他們現在就缺一本，你那個開了都沒在用的戶頭剛剛好嘛！',
         options: [
-          opt('連你都在借...好吧，那我要怎麼做？', 'BAD_ENDING_RENT_ACCOUNT', {
-            effects: { trust: 2, greed: 2, risk: 6 },
+          opt('好啦，反正那個戶頭我也沒在用……要給他們什麼？', 'S_RENT_ACCOUNT_HALF_STEP', {
+            effects: { trust: 2, greed: 2, awareness: -2 },
             isMistake: true,
-            hint: '你因為信任朋友而交出了最關鍵的金融工具。'
+            hint: '「沒在用的帳戶」一旦進了不明金流，責任還是掛在你名下。'
           }),
-          opt('感覺不太踏實，出事我會背黑鍋。', 'S1E_CASH', {
-            effects: { awareness: 3 }
+          opt('「分流貨款」加「避稅」，這兩個詞湊在一起就是洗錢。', 'S_RENT_ACCOUNT_PRESSURE', {
+            effects: { awareness: 2, trust: -1 },
+            hint: '你聽出了包裝底下的本質，接下來對方會加壓。'
+          }),
+          opt('不用再講了。帳戶、提款卡、密碼，一樣都不會給。', 'SAFE_EXIT_BLOCK2', {
+            effects: { awareness: 4, trust: -1 }
           })
         ]
       },
 
       S_RENT_ACCOUNT_HALF_STEP: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
-        text: '對方說不用你一開始就寄卡，先拍存摺封面、提款卡背面末四碼，讓系統確認是不是本人帳戶。阿杰補一句：「這樣最安全，等你確認有錢入帳再決定要不要交卡。」',
+        speaker: 'K哥 (LINE)',
+        instantTip: '警訊：先要「低敏感」資料、先給小錢測試，是人頭帳戶詐騙的標準暖身。',
+        text: '阿杰把你拉進一個三人小群，「財務-Ken」秒回：「新朋友你好 👋 我們有保障流程：不用先寄卡，先拍存摺封面＋提款卡背面末四碼，系統確認是本人帳戶。明天測試入帳一筆，你看到錢再決定要不要正式合作。」',
         options: [
-          opt('只是末四碼跟封面，先拍給他確認。', 'BAD_ENDING_RENT_ACCOUNT', {
+          opt('只是封面跟末四碼，又不是密碼……拍給他好了。', 'BAD_ENDING_RENT_ACCOUNT', {
             effects: { trust: 2, greed: 1, awareness: -2, risk: 5 },
             isMistake: true,
-            hint: '詐騙流程會先要低敏感資料，等你投入後再要求更關鍵的卡片、密碼或驗證碼。'
+            hint: '資料是一層一層要的：今天末四碼，明天卡片，後天密碼。',
+            educationalType: '人頭帳戶'
           }),
-          opt('他開始要帳戶資料，我就停下來。', 'SAFE_EXIT_BLOCK1', {
+          opt('開始要我的存摺跟卡了，就到這裡為止。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, trust: -1 }
           }),
-          opt('那我不要碰帳戶，改幫阿杰拿現金就好。', 'S1E_CASH', {
-            effects: { trust: 1, awareness: -1 },
+          opt('你們工作室統編多少？我先查公司登記，再問165。', 'S_RENT_ACCOUNT_PRESSURE', {
+            effects: { awareness: 2 },
+            evidence: '要求工作室提供統編與公司資料',
+            actionType: 'evidence',
+            postTip: '正派公司禁得起查；查不到、不給查，本身就是答案。'
+          })
+        ]
+      },
+
+      S_RENT_ACCOUNT_PRESSURE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: 'K哥 (LINE)',
+        effect: 'shake',
+        timeLimit: 12,
+        timeoutNext: 'S_RENT_ACCOUNT_HALF_STEP',
+        challenge: {
+          title: '封鎖前先留證',
+          subtitle: '長按 1.6 秒，截圖對話並封鎖',
+          label: '長按截圖＋封鎖',
+          icon: 'folder',
+          holdMs: 1600,
+          completeText: '把對話截圖存好，封鎖這個帳號，帶著紀錄去問165。',
+          completeNext: 'SAFE_EXIT_BLOCK2',
+          completeEffects: { awareness: 4, fear: -1, risk: -2 },
+          evidence: '工作室施壓對話截圖',
+          hint: '你把對方的壓力變成了自己的證據。',
+          postTip: '先保留對話再封鎖——之後不管是報案還是幫朋友求助，都用得上。'
+        },
+        instantTip: '警訊：拿朋友的債務當籌碼逼你交帳戶，是情感綁架＋時間壓迫的組合技。',
+        text: '群裡跳出一個新頭像「K哥」：「小朋友，阿杰欠的三千五今晚要結。你那本帳戶點個頭，他的債我直接抹掉，你每個月再收兩萬。不點頭的話——他的事就得用他的方式處理了。給你兩分鐘。」',
+        options: [
+          opt('不要動阿杰！……帳戶給你們就是了。', 'BAD_ENDING_RENT_ACCOUNT', {
+            effects: { fear: 3, trust: 1, awareness: -2, risk: 5 },
             isMistake: true,
-            hint: '從一個陷阱跳到另一個看似比較安全的任務，仍然是被牽著走。'
+            hint: '對方把朋友當人質，讓你在恐懼裡交出金融身分。',
+            educationalType: '人頭帳戶'
+          }),
+          opt('拿還債威脅同學？我現在就告訴老師和阿杰的爸媽。', 'SAFE_EXIT_BLOCK2', {
+            effects: { awareness: 4, fear: 1 },
+            evidence: 'K哥威脅訊息截圖',
+            actionType: 'evidence',
+            hint: '把大人拉進來，是拆掉「兩分鐘倒數」最快的方法。'
+          }),
+          opt('我先撥165，問清楚「租帳戶」到底會發生什麼事。', 'SAFE_EXIT_BLOCK2', {
+            effects: { awareness: 5, fear: -1 },
+            evidence: '165查證租借帳戶風險',
+            actionType: 'verifyOfficial'
+          })
+        ]
+      },
+
+      /* ────────────── 主線三：辦門號換現金 ────────────── */
+
+      SCN_SIM_START: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: '阿杰 (語音)',
+        instantTip: '警訊：辦門號、領手機、轉交第三人——合約與帳單只認你的名字。',
+        text: '拜託幫我這一次！車站前那間通訊行在跑「學生專案」：用你的名字辦一個門號，現場領新手機，直接轉賣給他們配合的人，你當場拿五千現金！月租他們每個月會匯給你去繳。跆拳社已經有人辦了三門，昨天還發限動炫耀新球鞋！',
+        options: [
+          opt('等一下。手機賣掉、門號留著，那月租到底算誰的？', 'S_SIM_CARD_QUESTION', {
+            effects: { awareness: 2 },
+            evidence: '質疑門號合約責任歸屬',
+            actionType: 'evidence'
+          }),
+          opt('五千現領？……我陪你去現場看看，看完再說。', 'S_SIM_CARD_STORE', {
+            effects: { trust: 1, greed: 1, awareness: -1 },
+            isMistake: true,
+            hint: '「先去看看」到了現場，常常就變成「都來了就簽」。'
+          }),
+          opt('合約掛我的名字就是我的債。這忙我幫不了。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, trust: -1 }
           })
         ]
       },
@@ -1768,93 +1621,86 @@
       S_SIM_CARD_QUESTION: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (語音)',
-        text: '月租費他們每個月會匯給你去繳啦！他們只要那支新手機去賣，門號還是在你手上。學生方案比較好過，店員也不會問太多。你怕什麼？社團裡有人都辦三門了。',
+        instantTip: '警訊：回答不了「錢從哪來、責任誰扛」的方案，就不是方案，是話術。',
+        text: '唉唷，月租他們會匯給你啊，匯到你戶頭你再去繳，等於沒花錢！手機他們拿去賣，門號留著你打電動綁驗證多方便。學生方案審核超鬆，店員都馬知道，不會多問啦。跆拳社那個學長辦三門也活得好好的啊！',
         options: [
-          opt('原來是這樣...好吧，我明天去辦', 'BAD_ENDING_SIM_CARD', {
+          opt('聽起來好像真的不虧……好，我明天去辦。', 'BAD_ENDING_SIM_CARD', {
             effects: { greed: 2, trust: 1, risk: 5 },
             isMistake: true,
-            hint: '輕信話術，你將背負沉重的電信違約金與月租費。'
+            hint: '「等於沒花錢」的前提是對方永遠守信用——詐騙不會。',
+            educationalType: '辦門號換現金'
           }),
-          opt('我覺得不可靠，風險太高了。', 'S1E_CASH', {
-            effects: { awareness: 2 }
+          opt('匯款會停，合約不會停。這題我不用算第二次。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, trust: -1 },
+            hint: '你看穿了不對稱：好處是暫時的，兩年合約責任是你的。'
+          }),
+          opt('我直接打電信客服，問這種「學生專案」存不存在。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 5 },
+            evidence: '向電信官方客服查證方案真偽',
+            actionType: 'verifyOfficial',
+            hint: '官方客服一句話，就能戳破整套話術。'
           })
         ]
       },
 
       S_SIM_CARD_STORE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
+        speaker: '系統',
         timeLimit: 10,
         timeoutNext: 'BAD_ENDING_SIM_CARD',
         challenge: {
           title: '簽約前停手',
-          subtitle: '長按 1.6 秒，把手從簽名欄移開',
-          label: '長按取消簽名',
+          subtitle: '長按 1.6 秒，把手從簽名板移開',
+          label: '長按放下筆',
           icon: 'file-x-2',
           holdMs: 1600,
-          completeText: '我先不簽，合約帶回去看。',
+          completeText: '把筆放下：「不好意思，合約我要帶回家看過再說。」',
           completeNext: 'SAFE_EXIT_BLOCK1',
           completeEffects: { awareness: 4, fear: -1, risk: -2 },
-          hint: '能在最後一刻停下來，比勉強自己把流程做完重要。',
-          postTip: '辦門號、領手機、交給第三人，任何一步用你的名字完成，都可能讓責任回到你身上。'
+          hint: '在最後一刻停下來，比硬著頭皮走完流程重要得多。',
+          postTip: '辦門號、領手機、轉交他人——任何一步用你的名字完成，責任都會回到你身上。'
         },
-        text: '你穿著制服走進電信行，櫃檯已經把學生方案、手機和簽名板放好。阿杰傳訊：「他們在店門口等你，簽一門就先給五千。」旁邊的人催你：「資料都打好了，簽名就好，等一下還有下一個學生。」',
+        instantTip: '警訊：資料預先填好、筆直接遞來、門口有人等——整個現場都在替「快簽」加速。',
+        text: '通訊行冷氣很強。櫃檯上早就擺好「學生優惠專案」、一支未拆封的手機和簽名板，店員笑著把筆遞過來：「同學，資料都幫你打好了，簽名就好。」門口一個黑外套男子靠著機車滑手機。阿杰傳訊：「簽完出來，五千馬上到手 💰」',
         options: [
-          opt('都到現場了，先簽一門幫阿杰過關。', 'BAD_ENDING_SIM_CARD', {
+          opt('都走進來了……簽吧，五千先落袋。', 'BAD_ENDING_SIM_CARD', {
             effects: { trust: 2, greed: 2, awareness: -2, risk: 6 },
             isMistake: true,
-            hint: '現場壓力會讓人想「都來了就完成」，這是沉沒成本陷阱。'
+            hint: '「都來了就簽完」是沉沒成本陷阱，現場的每個細節都在推你。'
           }),
-          opt('我只拿方案資料，不簽約。', 'SAFE_EXIT_BLOCK1', {
+          opt('我只拿方案DM，今天不簽任何東西。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4, trust: -1 }
           }),
-          opt('我先打給阿杰確認是不是只辦一門。', 'S_SIM_CARD_QUESTION', {
+          opt('先打給阿杰：「你確定他們每個月真的會匯月租？」', 'S_SIM_CARD_QUESTION', {
             effects: { trust: 1, awareness: -1 },
             isMistake: true,
-            hint: '再回頭問同一個壓力來源，通常只會得到更完整的說服話術。'
+            hint: '把疑慮丟回給壓力來源本人，只會換到更完整的話術。'
           })
         ]
       },
 
-      S1E_CASH: {
+      /* ────────────── 主線四：現金代收與車手招募 ────────────── */
+
+      SCN_CASH_MULE_START: {
         bg: SCENE_IMAGES.STREET_NIGHT,
         speaker: '阿杰 (語音)',
-        text: '好好好，那些你不做就算了。那至少幫我跑一趟面交吧。買家說遊戲帳號和限定造型只收現金，地點在中山站二號出口，跑腿費兩千你直接從裡面扣。拜託，今天沒有收到錢我真的完蛋。',
+        instantTip: '警訊：路邊現金交收＋高額跑腿費＋今晚一定要完成，三面紅旗同時亮起。',
+        text: '欸你終於接了！我帳號賣掉了，三萬！但買家說他們工作室「只走現金」，晚上九點半在中山站二號出口交收。我被我媽禁足出不了門，你幫我跑一趟，跑腿費兩千直接從裡面抽！今晚收不到錢，我畢旅尾款就開天窗了，拜託！',
         options: [
-          opt('路邊面交拿現金？聽起來超怪...', 'S2_DOUBT', {
+          opt('賣個遊戲帳號，為什麼會變成路邊收現金？超怪。', 'S2_DOUBT', {
             effects: { awareness: 2, trust: -1 }
           }),
-          opt('跑腿費兩千？成交！', 'S2_GREED', {
+          opt('兩千跑腿費？！好，地點傳來。', 'S2_GREED', {
             effects: { greed: 2, awareness: -1 }
           }),
-          opt('我明天還要模考，很累想回家了。', 'S2_REFUSE', {
+          opt('我明天模考欸……真的很想回家睡。', 'S2_REFUSE', {
             effects: { awareness: 1, trust: -1 }
           }),
-          opt('好啦好啦，把地址傳給我。', 'S2_HELP', {
+          opt('唉，誰叫你是我兄弟。傳地址吧。', 'S2_HELP', {
             effects: { trust: 2, awareness: -1 }
-          })
-        ]
-      },
-
-      S2_REFUSE: {
-        bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
-        instantTip: '警訊：對方把問題升級成「現在不幫就出大事」，是在提高你的心理負債。',
-        text: '拜託啦！你是我最後一個希望了。這三萬我要拿去補畢旅尾款和手機分期，明天沒繳我媽一定把手機收走！我給你兩千當車馬費，算我求你！',
-        options: [
-          opt('唉好啦，下不為例。', 'S3', {
-            effects: { trust: 2, greed: 1, awareness: -1 },
-            isMistake: true,
-            hint: '你被人情與補償混合說服了。',
-            educationalType: '情感勒索'
           }),
-          opt('不行，這件事太怪，我不幫。', 'SAFE_EXIT_BLOCK1', {
-            effects: { awareness: 3, trust: -1 }
-          }),
-          opt('我先打給你媽媽確認，必要時撥165。', 'SAFE_EXIT_BLOCK1', {
-            effects: { awareness: 4, trust: -2 },
-            requiredState: { awareness: { min: 1 } },
-            hint: '多一層交叉驗證，可以降低被熟人話術帶走的風險；165是可疑詐騙的查證管道之一。'
+          opt('來路不明的現金我不碰。你自己想別的辦法。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, greed: -1 }
           })
         ]
       },
@@ -1862,24 +1708,24 @@
       S2_DOUBT: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (語音)',
-        instantTip: '警訊：對方用「工作室」「代儲」「大家都這樣」來包裝不合理行為。',
-        text: '你想太多了啦！買家是專門做代儲的工作室，他們常常這樣現金交易。我帳號早就移轉過去了，不拿錢我虧死。大不了分你兩千當辛苦費！',
+        instantTip: '警訊：用「工作室」「代儲」「他們都嘛這樣」包裝不合理流程，是合理化話術。',
+        text: '你想太多了啦！買家是專門做代儲的工作室，現金交易是他們的日常好嗎。我帳號都已經移轉過去了，現在收不到錢我直接虧三萬！你只是幫我「拿」一下東西，又不是叫你做壞事。兩千當你的辛苦費！',
         options: [
-          opt('好吧，只幫這一次喔。', 'S3', {
+          opt('……好吧，就這一次，下次自己想辦法。', 'S3', {
             effects: { trust: 2, greed: 1, awareness: -1 },
             isMistake: true,
-            hint: '「只做一次」是常見的自我合理化。',
+            hint: '「只做一次」是自我合理化的起手式。',
             educationalType: '合理化包裝'
           }),
-          opt('不合理，我先離開這件事。', 'SAFE_EXIT_BLOCK1', {
+          opt('正常的交易不會怕留紀錄。我退出。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 3, trust: -2 }
           }),
-          opt('你把交易畫面截圖傳來，我再用165或官方平台查。', 'S_CASH_FAKE_VERIFY', {
+          opt('把成交畫面截圖傳來，我拿去165或官方平台查。', 'S_CASH_FAKE_VERIFY', {
             effects: { awareness: 1, trust: 1 },
             requiredState: { awareness: { min: 2 } },
             evidence: '要求阿杰提供交易畫面截圖並準備165查證',
             actionType: 'evidence',
-            hint: '要求資料只是第一步，接下來要用165、官方平台或可信任大人做獨立驗證。'
+            hint: '要到資料只是第一步，重點是接下來的獨立驗證。'
           })
         ]
       },
@@ -1889,19 +1735,20 @@
         speaker: '阿杰 (LINE)',
         timeLimit: 12,
         timeoutNext: 'S3',
-        text: '阿杰傳來一張裁切過的交易截圖：買家暱稱、成交金額、匯款倒數都看得到，下面還有「今天晚上 23:40 前未交付視同棄單」的紅字。阿杰說：「你看吧，真的快來不及了。」',
+        instantTip: '警訊：被裁切過的截圖，想給你看什麼、不想給你看什麼，都是對方決定的。',
+        text: '截圖傳來了——買家暱稱「收帳號-阿豪」、成交金額 NT$30,000，還有一行紅字：「23:40 前未交付視同棄單，保證金沒收」。但畫面四邊都被裁掉，看不出是哪個平台。阿杰在後面狂催：「看到沒！真的快來不及了啦！」',
         options: [
-          opt('截圖看起來是真的，我先去拿錢。', 'S3', {
+          opt('金額和時間都對得上，應該是真的。我出門了。', 'S3', {
             effects: { trust: 2, greed: 1, awareness: -2 },
             isMistake: true,
-            hint: '可被裁切的截圖不能證明交易真實，尤其不能證明你要做的行為安全。'
+            hint: '截圖「內容真實」與「行為安全」是兩回事，何況它還被裁過。'
           }),
-          opt('我只到現場確認，不答應其他事。', 'S3', {
+          opt('我先到現場看狀況，錢不一定收。', 'S3', {
             effects: { trust: 1, awareness: -1, fear: 1 },
             isMistake: true,
-            hint: '「只去看看」會讓你進入對方可控的場景，後續壓力會更大。'
+            hint: '一旦走進對方選好的場地，主導權就換人了。'
           }),
-          opt('截圖不能獨立驗證，我停止。', 'SAFE_EXIT_BLOCK1', {
+          opt('四邊裁掉的截圖沒辦法驗證。我不去。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4, trust: -2 }
           })
         ]
@@ -1910,16 +1757,16 @@
       S2_GREED: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (語音)',
-        instantTip: '高報酬會讓大腦優先計算收益，而不是評估風險。',
-        text: '沒問題！我就知道兄弟最挺我。你幫我拿錢，先抽兩千起來當車馬費，剩下的再轉帳給我就好！',
+        instantTip: '警訊：高報酬會讓大腦先算收益、後算風險——順序一反，判斷就歪了。',
+        text: '爽啦我就知道你最可靠！錢拿到先抽兩千，剩下轉我戶頭就好。地點傳你了——中山站二號出口旁邊那條巷子，九點半。對方戴黑色鴨舌帽，他不問名字，只核對你的手機末三碼。',
         options: [
-          opt('兩千？成交！約在哪？', 'S3', {
+          opt('核對手機末三碼？搞得跟諜報片一樣……算了，兩千欸，出發。', 'S3', {
             effects: { greed: 3, awareness: -2, trust: 1 },
             isMistake: true,
-            hint: '高額車馬費正在重塑你的判斷基準。',
+            hint: '你其實注意到了異常，只是讓報酬把直覺壓了下去。',
             educationalType: '高薪誘惑'
           }),
-          opt('等等，這種現金代收本來就很怪。', 'SAFE_EXIT_BLOCK1', {
+          opt('等等，正常買家不會用這種接頭方式。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 2, greed: -1 }
           })
         ]
@@ -1928,16 +1775,40 @@
       S2_HELP: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (語音)',
-        text: '太感謝了！我就知道你最挺我。你到了之後拿到錢，先抽一千起來當車馬費，剩下的匯到我戶頭。我把位置傳給你！',
+        instantTip: '警訊：交收前先立「規矩」，代表對方在避免留下紀錄。',
+        text: '嗚嗚你真的是我親兄弟！九點半，中山站二號出口旁的巷子，對方戴黑帽。拿到錢先抽一千，剩下匯我戶頭。啊對了，他們有交代：交收的時候不要講話、不要拍照，這是他們的「規矩」。',
         options: [
-          opt('好，我出發了。', 'S3', {
-            effects: { trust: 2, greed: 1, awareness: -1 },
+          opt('不講話、不拍照……規矩真多。好，到了跟你說。', 'S3', {
+            effects: { trust: 2, awareness: -1 },
             isMistake: true,
-            hint: '你已經進入「先做再說」模式，風險顯著升高。'
+            hint: '你開始配合對方的「規矩」，這就是被流程馴化的第一步。'
           }),
-          opt('等等，我先確認一下這整件事。', 'SAFE_EXIT_BLOCK1', {
+          opt('等等，為什麼交個錢還要立規矩？我再想想。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 2, trust: -1 },
             requiredState: { awareness: { min: 1 } }
+          })
+        ]
+      },
+
+      S2_REFUSE: {
+        bg: SCENE_IMAGES.PHONE_SCREEN,
+        speaker: '阿杰 (語音)',
+        instantTip: '警訊：把後果講得越嚴重、時限壓得越緊，越是在墊高你的心理負債。',
+        text: '拜託拜託！你是我最後能求的人了！這三萬要補畢旅尾款跟手機分期，明天沒繳我媽真的會把我手機丟進水裡！兩千當你車馬費，算我跪著求你，十點前一定讓你回家！',
+        options: [
+          opt('唉……好啦好啦，下不為例喔。', 'S3', {
+            effects: { trust: 2, greed: 1, awareness: -1 },
+            isMistake: true,
+            hint: '你被「人情＋補償」的組合說服了。',
+            educationalType: '情感勒索'
+          }),
+          opt('不行。這整件事從頭到尾都不對勁。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 3, trust: -1 }
+          }),
+          opt('我先打給你媽對一下狀況，需要的話直接撥165。', 'SAFE_EXIT_BLOCK1', {
+            effects: { awareness: 4, trust: -2 },
+            requiredState: { awareness: { min: 1 } },
+            hint: '交叉驗證是拆穿熟人話術最快的方法；165也永遠是選項。'
           })
         ]
       },
@@ -1946,35 +1817,35 @@
         bg: SCENE_IMAGES.ALLEY,
         speaker: '系統',
         isRealWorld: true,
-        instantTip: '警訊：不透明地點、快速交付、對象不願多談，都是高風險徵兆。',
-        text: '你穿著制服來到中山站二號出口旁的窄巷。補習班下課的人潮剛散，路燈忽明忽暗。一個戴黑色鴨舌帽的男人快步走來，低頭看了一眼你手機末三碼，把厚重牛皮紙袋塞進你懷裡，轉身就走，全程不到十秒。',
+        instantTip: '警訊：不透明的地點、十秒完成的交付、全程不說話——都是高風險徵兆。',
+        text: '九點二十八分，中山站二號出口旁的窄巷。補習班的人潮剛散，半拉的捲門透出慘白的燈光。一個戴黑色鴨舌帽的男人從陰影裡走出來，低頭掃了一眼你的手機末三碼，把一個厚得不自然的牛皮紙袋塞進你懷裡——然後轉身就走。前後不到十秒，他一個字都沒說。',
         options: [
-          opt('這太詭異了，當場打開信封點清現金', 'S3_CHECK', {
+          opt('等等！當場拆開紙袋，把錢點清楚。', 'S3_CHECK', {
             effects: { awareness: 1, fear: 1 }
           }),
-          opt('緊張地把錢收進包包，趕快閃人', 'S4', {
+          opt('心跳快到不行……先把袋子塞進書包再說。', 'S4', {
             effects: { fear: 2, awareness: -1 },
             isMistake: true,
-            hint: '你選擇把可疑現金帶離現場，風險開始實質化。'
+            hint: '你把可疑現金帶離了現場，風險從這一刻開始實質化。'
           }),
-          opt('欸等一下！你真的是買遊戲帳號的人嗎？', 'S3_ASK', {
+          opt('喂！你到底是不是收帳號的人？', 'S3_ASK', {
             effects: { awareness: 1, fear: 1 }
           }),
-          opt('偷偷用手機拍下男人的背影再離開', 'S3_PHOTO', {
+          opt('假裝滑手機，偷拍他的背影。', 'S3_PHOTO', {
             effects: { awareness: 1 },
             evidence: '黑帽男背影與現場位置照片',
             actionType: 'evidence',
-            postTip: '照片或位置紀錄不是讓你繼續涉入，而是用來求助與報案。'
+            postTip: '拍照或記錄位置，是為了之後求助與報案，不是為了繼續參與。'
           }),
-          opt('覺得毛骨悚然，把錢丟在原地直接跑走', 'SAFE_EXIT_DROP', {
+          opt('這不對勁。紙袋放回原地，掉頭就走。', 'SAFE_EXIT_DROP', {
             effects: { awareness: 3, fear: 1 }
           }),
-          opt('立刻向可信任大人或165確認這是否異常', 'SAFE_EXIT_DROP', {
+          opt('先走到亮處，打給可信任的大人或165確認。', 'SAFE_EXIT_DROP', {
             effects: { awareness: 4 },
             requiredState: { awareness: { min: 2 } },
             evidence: '165或可信任大人查證紀錄',
             actionType: 'verifyOfficial',
-            hint: '你在風險落地前就切斷流程，這符合防詐3C的查證與求助。'
+            hint: '你在風險落地之前就切斷流程，正是防詐3C的查證與求助。'
           })
         ]
       },
@@ -1984,15 +1855,15 @@
         speaker: '黑帽男',
         isRealWorld: true,
         effect: 'shake',
-        instantTip: '恐嚇與不讓你檢查，是阻止你冷靜驗證。',
-        text: '男人猛然回頭，惡狠狠地瞪你一眼。「看什麼看？這附近有雷，數字不會錯啦！」他壓低帽沿湊近你的臉：「快滾，別在這裡磨蹭。」',
+        instantTip: '警訊：不准你清點、不准你確認，就是不准你冷靜。',
+        text: '男人猛地回頭，帽沿下的眼神狠得像刀：「數什麼數？這附近有『雷』，錢不會少。」他往前逼近一步，壓低聲音：「拿了就走，不要讓我說第二次。」',
         options: [
-          opt('心臟狂跳，但還是把錢帶走去匯給阿杰', 'S4', {
+          opt('手在抖……但還是把錢收好，準備匯給阿杰。', 'S4', {
             effects: { fear: 2, awareness: -1 },
             isMistake: true,
-            hint: '你被威嚇後選擇服從，而不是退出。'
+            hint: '被威嚇之後選擇照做，等於讓恐懼替你做了決定。'
           }),
-          opt('這反應太不對勁，我放下現金離開', 'SAFE_EXIT_DROP', {
+          opt('不讓我點錢就是有鬼。錢放下，人離開。', 'SAFE_EXIT_DROP', {
             effects: { awareness: 2, fear: 1 }
           })
         ]
@@ -2003,15 +1874,15 @@
         speaker: '黑帽男',
         isRealWorld: true,
         effect: 'shake',
-        instantTip: '警訊：對方不回答核心問題，只要求你照做。',
-        text: '男人冷笑了一聲，嚼著檳榔的嘴角微微上揚：「小屁孩問那麼多幹嘛？拿錢辦事就對了，不該問的別問。識相點。」',
+        instantTip: '警訊：迴避所有核心問題、只要求你照做，代表你只是流程裡的一顆棋。',
+        text: '男人嚼著檳榔冷笑一聲：「學生仔，問那麼多要幹嘛？拿錢、辦事、閉嘴，三件事而已。」他拍了拍你的肩膀，力道重得像警告：「識相一點。」',
         options: [
-          opt('有點害怕，但還是把錢帶走去匯給阿杰', 'S4', {
+          opt('肩膀好痛……算了，把錢帶走就沒事了。', 'S4', {
             effects: { fear: 2, awareness: -1 },
             isMistake: true,
-            hint: '恐懼讓你停下判斷，這正是對方的目的。'
+            hint: '恐懼一旦接管，判斷就停了——這正是對方要的效果。'
           }),
-          opt('直接離開，不碰這筆錢', 'SAFE_EXIT_DROP', {
+          opt('這不是交易，是控制。我直接走人。', 'SAFE_EXIT_DROP', {
             effects: { awareness: 2 }
           })
         ]
@@ -2021,12 +1892,12 @@
         bg: SCENE_IMAGES.ALLEY,
         speaker: '系統',
         isRealWorld: true,
-        text: '你假裝看手機，偷偷拍了一張男人的背影。照片裡只看到模糊的黑色外套和鴨舌帽。',
+        text: '你假裝在回訊息，斜舉手機偷拍了一張。照片裡只有模糊的黑色外套、鴨舌帽，和半個消失在巷口的背影。',
         options: [
-          opt('把照片傳給阿杰', 'S3_PHOTO_REPLY', {
+          opt('把照片傳給阿杰：「這人到底是誰？」', 'S3_PHOTO_REPLY', {
             effects: { awareness: 1 }
           }),
-          opt('越想越不對勁，把錢放下離開', 'SAFE_EXIT_DROP', {
+          opt('越想越毛。錢放回原地，人先撤。', 'SAFE_EXIT_DROP', {
             effects: { awareness: 3 }
           })
         ]
@@ -2035,14 +1906,14 @@
       S3_PHOTO_REPLY: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
-        text: '不用拍啦，那是買家的跑腿小弟，正常的啦！錢拿到就好，快點匯給我。',
+        text: '阿杰秒回：「拍什麼啦XD 那是買家那邊的跑腿小弟，正常的！錢到手就好，快匯給我，我真的等到快哭了 🙏」',
         options: [
-          opt('既然阿杰說正常，那就把錢帶走吧', 'S4', {
+          opt('阿杰都說正常了……好吧，帶著錢走。', 'S4', {
             effects: { trust: 2, awareness: -1 },
             isMistake: true,
-            hint: '你把風險判斷權交還給了利害關係人。'
+            hint: '你把風險判斷權，交還給了這件事裡最急的利害關係人。'
           }),
-          opt('這不正常，我不能繼續下去', 'SAFE_EXIT_DROP', {
+          opt('連你都只認識「小弟」，那這包錢是誰的？我停手。', 'SAFE_EXIT_DROP', {
             effects: { awareness: 3 }
           })
         ]
@@ -2051,48 +1922,49 @@
       S4: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        text: '黑帽回報收到點交了。看你手腳滿快的，是個人才。我們工作室最近在找學生兼職，短影音剪輯帳號都在徵人，一天三千起，你要不要加減賺？',
+        instantTip: '警訊：完成第一單後馬上被「賞識」並邀請兼職，是車手集團的釣人手法。',
+        text: '深夜十一點，一個陌生帳號加你好友，頭像是一台重機。「黑帽回報，點交乾淨俐落 ✅ 學生仔，有天分。我們工作室長期缺課後兼職：跑腿、顧點、剪短影音都有缺，日領一千五起跳。要不要加減賺？」',
         options: [
-          opt('一天三千？具體要做什麼？', 'S4_AJIE_PUSH', {
+          opt('日領一千五？具體是要做什麼？', 'S4_AJIE_PUSH', {
             effects: { greed: 2, awareness: -1 },
             isMistake: true,
-            hint: '你開始把它當工作，而不是風險。'
+            hint: '你開始把它當「工作機會」評估，而不是當風險。'
           }),
-          opt('不用碰帳戶的話，可以先試一個小任務。', 'S4_TRIAL_TASK', {
+          opt('如果不用碰錢也不用給帳戶，小任務可以試試。', 'S4_TRIAL_TASK', {
             effects: { greed: 1, trust: 1, awareness: -1 },
             isMistake: true,
-            hint: '詐騙招募常先丟低風險任務，讓你習慣聽指令。'
+            hint: '先丟低風險任務讓你習慣聽指令，是招募的標準暖身。'
           }),
-          opt('我先不要加陌生工作室。', 'SAFE_EXIT_BLOCK1', {
+          opt('陌生工作室？不了。刪好友。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 3, trust: -1 }
           }),
-          opt('我先問老師、家人或165再說。', 'SAFE_EXIT_BLOCK1', {
+          opt('先截圖，明天拿去問老師、家人或165。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '向可信任對象或165確認紀錄',
+            evidence: '陌生工作室招募訊息截圖',
             actionType: 'verifyOfficial',
-            hint: '當未知風險出現時，先找局外且可信任的人或165確認，而不是先答應。'
+            hint: '面對未知的邀約，先找局外的可信任大人，而不是先答應。'
           })
         ]
       },
 
-
       S4_TRIAL_TASK: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        text: 'K哥說：「不用帳戶也行，先給你試用任務。去附近超商 ATM 拍一下排隊狀況，回報有沒有警察或保全，五分鐘給你五百。只是幫忙看現場，不會碰到錢。」',
+        instantTip: '警訊：回報警察與保全動向，就是替犯罪流程「把風」。',
+        text: '「都有不碰錢的缺啦。」K哥丟來一個超商定位：「你去這間門口的 ATM 拍一下排隊狀況，順便回報有沒有警察或保全經過。五分鐘，五百塊，就當幫我們做『市場調查』。」',
         options: [
-          opt('只是回報現場狀況，做一下應該還好。', 'S5', {
+          opt('拍個照就有五百，這哪算壞事？接了。', 'S5', {
             effects: { greed: 2, awareness: -2, risk: 3 },
             isMistake: true,
-            hint: '看似旁觀的小任務，可能已經是在替犯罪流程放哨。'
+            hint: '看似旁觀的小任務，實際上已經是犯罪流程的一環。'
           }),
-          opt('拍完拿五百就好，後面我不接。', 'S5_AJIE', {
+          opt('拍完這單就收，後面都不接。', 'S5_AJIE', {
             effects: { greed: 2, trust: 1, awareness: -2, risk: 3 },
             isMistake: true,
-            hint: '拿到第一筆小錢後，拒絕下一步會變得更困難。'
+            hint: '拿了第一筆錢之後，「收手」會比你想的難很多。'
           }),
-          opt('要我觀察 ATM 和巡邏，這不對。', 'SAFE_EXIT_BLOCK1', {
+          opt('回報警察動向？這是在替人把風吧！', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4, fear: 1 }
           })
         ]
@@ -2101,15 +1973,15 @@
       S4_AJIE_PUSH: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
-        instantTip: '熟人背書是非常強的說服器，尤其當你已經做過一次。',
-        text: '對對對！我也在他們這做了好幾單了，穩的啦。真的很簡單，就是跑跑腿而已。你不是說想換鍵盤、耳機，還想存畢旅零用錢嗎？機會難得欸！',
+        instantTip: '警訊：熟人現身說法＋戳中你的願望清單，是最強的推坑組合。',
+        text: '阿杰跳出來敲你：「K哥找你了喔！！他們超罩，我這兩週跟著跑了幾單，車馬費比在飲料店站八小時還多。你不是想換新鍵盤？還想存畢旅的錢？這波不跟，真的虧爆。」',
         options: [
-          opt('連阿杰都掛保證了，那到底做什麼？', 'S5', {
+          opt('連你都掛保證……好，那到底要做什麼？', 'S5', {
             effects: { trust: 2, greed: 1, awareness: -1 },
             isMistake: true,
-            hint: '熟人背書會讓你忽視結構上的不合理。'
+            hint: '熟人背書會讓你忽略整件事在結構上的不合理。'
           }),
-          opt('等等，你也在做？那你怎麼不自己跑？', 'S4B_DOUBT', {
+          opt('等等，你都跑好幾單了，怎麼自己還缺三萬？', 'S4B_DOUBT', {
             effects: { awareness: 2, trust: -1 }
           })
         ]
@@ -2118,15 +1990,15 @@
       S4B_DOUBT: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
-        instantTip: '警訊：對方用更多說辭填補漏洞，通常代表前面的說法站不住腳。',
-        text: '我被我媽監控中啊你忘了？而且他們需要更多人輪流跑才不會被銀行注意。K哥說你條件很好，不做太可惜了！',
+        instantTip: '警訊：漏洞需要用更多說法去補，通常代表第一個說法就是假的。',
+        text: '「我的錢卡在『結算週期』啦，下週才撥！」阿杰打字飛快：「而且他們要多找新人輪著跑，同一個人跑太多次會被銀行盯上。K哥說你反應快，很適合。」',
         options: [
-          opt('好吧，具體做什麼說來聽聽', 'S5', {
+          opt('結算週期……聽起來滿正式的。好吧，說來聽聽。', 'S5', {
             effects: { trust: 1, greed: 1, awareness: -1 },
             isMistake: true,
-            hint: '你雖然懷疑，但仍然跟著節奏走。'
+            hint: '你雖然起了疑，但還是順著對方鋪好的台階走了下去。'
           }),
-          opt('這整件事太詭異了，封鎖', 'S4_DECLINE', {
+          opt('錢拿不出來還一直拉新人？這是老鼠會吧。封鎖。', 'S4_DECLINE', {
             effects: { awareness: 3, trust: -2 }
           })
         ]
@@ -2135,15 +2007,15 @@
       S4_DECLINE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        instantTip: '警訊：拿低薪工作做對比，讓高風險酬勞看起來合理。',
-        text: '別急著拒絕嘛。只是幫忙跑跑腿領個錢，比飲料店排班輕鬆多了。學生打工排一整晚也沒多少，我們一天三千起跳，你好好考慮。',
+        instantTip: '警訊：拿最低薪的打工來對比，是要讓高風險報酬顯得「合理」。',
+        text: '「先別急著走嘛。」K哥的訊息追了上來：「飲料店時薪一百八，站一整晚腳痠到死。我們這裡一天三千起，動動手指就好。年輕人，機會不等人喔。」',
         options: [
-          opt('那工作內容到底是什麼？', 'S5', {
+          opt('一天三千……好啦，工作內容到底是什麼？', 'S5', {
             effects: { greed: 1, awareness: -1 },
             isMistake: true,
-            hint: '你被報酬拉回談判桌。'
+            hint: '你被報酬重新拉回了談判桌。'
           }),
-          opt('果斷封鎖對方', 'SAFE_EXIT_BLOCK1', {
+          opt('正當工作不會怕人貨比三家。封鎖，結束。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 3 }
           })
         ]
@@ -2152,39 +2024,39 @@
       S5: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        instantTip: '高危險紅旗：要求用你的帳戶收款，再由你提現交人。',
-        text: '工作很簡單。我們做遊戲幣和虛擬貨幣買賣，平台金流會卡學生帳號，所以會把客戶款項匯到你的帳戶，你去 ATM 領出來交給我們專員。每一筆讓你抽 3%，十萬就是三千塊。',
+        instantTip: '超高危險紅旗：客人的錢先進「你的」帳戶、再由你領現轉交——這就是車手。',
+        text: '「我們做遊戲幣和虛擬幣買賣。」K哥傳來一張流程圖：「平台會卡學生金流，所以客戶款項先匯進你的帳戶，你去 ATM 領出來交給專員。每一筆抽 3%——十萬就是三千，一個晚上跑個兩三筆，自己算。」',
         options: [
-          opt('聽起來滿簡單的，我要怎麼配合？', 'S5_AJIE', {
+          opt('等於幫忙領錢就能抽三千？我要怎麼開始？', 'S5_AJIE', {
             effects: { greed: 2, awareness: -2, trust: 1 },
             isMistake: true,
-            hint: '高報酬、低門檻、代領現金，是車手招募常見包裝。',
+            hint: '高報酬、低門檻、代領現金——車手招募的完整包裝。',
             educationalType: '車手招募'
           }),
-          opt('如果金額更大，我是不是抽更多？', 'S5_AJIE', {
+          opt('那如果一筆是五十萬，我是不是抽更多？', 'S5_AJIE', {
             effects: { greed: 3, awareness: -2, risk: 3 },
             requiredState: { greed: { min: 4 } },
             isMistake: true,
-            hint: '貪婪已經讓你主動追問更高風險的金流。',
+            hint: '貪念已經讓你主動追問更大的金流。',
             educationalType: '高薪誘惑'
           }),
-          opt('先做小額測試可以嗎？不要一開始就十萬。', 'S5_SMALL_TEST', {
+          opt('可以先跑一筆小額的測試嗎？我怕出事。', 'S5_SMALL_TEST', {
             effects: { greed: 1, awareness: -1, trust: 1 },
             isMistake: true,
-            hint: '把高風險行為縮小金額，不會讓行為本身變安全。'
+            hint: '把金額縮小，不會讓行為本身變合法。'
           }),
-          opt('用我的帳戶？這會不會變洗錢人頭？', 'S6', {
+          opt('客人的錢為什麼要繞進「我的」帳戶？這是洗錢吧？', 'S6', {
             effects: { awareness: 2, trust: -1 }
           }),
-          opt('這聽起來就是車手！立刻封鎖', 'SAFE_EXIT_BLOCK2', {
+          opt('這個流程就是車手。封鎖＋檢舉。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, fear: -1 }
           }),
-          opt('我先離開，找可信任的人或165確認。', 'SAFE_EXIT_BLOCK2', {
+          opt('我先把這張流程圖傳給165判斷。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, trust: -2 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '向可信任對象或165確認帳戶代收風險',
+            evidence: '車手招募流程圖截圖',
             actionType: 'verifyOfficial',
-            hint: '你選擇交叉驗證，而不是繼續跟對方學規則，符合防詐3C。'
+            hint: '你選擇讓官方管道來定性，而不是繼續跟對方學規則。'
           })
         ]
       },
@@ -2192,20 +2064,21 @@
       S5_SMALL_TEST: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        text: 'K哥回：「可以，先跑兩萬測試單，給你六百。你做完知道流程，之後要不要接大單再說。」阿杰也傳：「先小額比較保險吧，幫我撐過今晚就好。」',
+        instantTip: '警訊：「小額測試單」是設計來讓你跨過第一道心理門檻的。',
+        text: '「謹慎是好事，我欣賞。」K哥回得飛快：「先跑一筆兩萬的測試單，抽六百。流程熟了，要不要接大單你自己決定，我們不勉強。」阿杰也私訊你：「先小額真的比較安心，幫我撐過這週就好 🙏」',
         options: [
-          opt('小額應該沒事，先跑一次流程。', 'S7', {
+          opt('兩萬……應該還好吧？先跑一次看看。', 'S7', {
             effects: { greed: 2, trust: 1, awareness: -3, risk: 4 },
             isMistake: true,
-            hint: '小額測試是讓你跨過心理門檻，下一步才會升級。'
+            hint: '跨過第一次之後，下一步的金額和要求都會升級。'
           }),
-          opt('只要錢進我帳戶，就不是小事。', 'SAFE_EXIT_BLOCK2', {
+          opt('兩萬也是不明錢。金額變小，性質沒變。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, trust: -1 }
           }),
-          opt('我不要用帳戶，改成現場幫忙可以嗎？', 'S4_TRIAL_TASK', {
+          opt('錢不過我帳戶的話，改成現場幫忙行嗎？', 'S4_TRIAL_TASK', {
             effects: { awareness: -1, greed: 1 },
             isMistake: true,
-            hint: '你避開帳戶，卻回到另一種被支配的任務。'
+            hint: '你避開了帳戶，卻走進另一種被指揮的任務。'
           })
         ]
       },
@@ -2213,15 +2086,15 @@
       S5_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
-        instantTip: '警訊：以自身「成功經驗」淡化風險，是很常見的誤導方式。',
-        text: '就這樣而已啦，超簡單的！我上個月做了五筆賺了快一萬五，還把收益放小帳限動，大家都問我去哪打工。你不做真的虧到爆 🔥',
+        instantTip: '警訊：用自己的「成功經驗」幫流程擔保，是最有效也最危險的誤導。',
+        text: '阿杰的訊息又插進來：「我上個月跟著跑五筆，賺一萬五！我還發到小帳限動，一堆人私訊問我在哪打工 🔥 這種缺是搶著要的，K哥看我面子才留給你。」',
         options: [
-          opt('好吧那我試試看，要怎麼開始？', 'S7', {
+          opt('好，看在你面子上，我要怎麼開始？', 'S7', {
             effects: { greed: 2, trust: 1, awareness: -2 },
             isMistake: true,
-            hint: '你被收益故事說服，而不是被合法性說服。'
+            hint: '說服你的是收益故事，不是這件事的合法性。'
           }),
-          opt('等等，這真的合法嗎？', 'S6', {
+          opt('等等，這種「工作」敢發限動？它真的合法嗎？', 'S6', {
             effects: { awareness: 2 }
           })
         ]
@@ -2229,16 +2102,16 @@
 
       S6: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
-        instantTip: '警訊：對方不正面回答合法性，而是說「哪有那麼容易出事」。',
-        text: '你想太多了啦！哪有那麼容易變洗錢。我自己也跑了好幾筆，穩的啦！出事的話K哥會扛。你看我現在不是好好的嗎？放心啦！',
+        speaker: '阿杰 (語音)',
+        instantTip: '警訊：不正面回答「合法嗎」，只說「哪那麼容易出事」，答案已經很明顯。',
+        text: '唉唷你很煩欸！哪有那麼容易變洗錢啦！我跑了幾筆不是都好好的？真出事K哥會扛，他們有「法務」。你看我現在，是不是活得好好的？放心啦！',
         options: [
-          opt('好吧，你都有做那我也試試看。', 'S7', {
+          opt('有法務喔……好啦，你都沒事，那我試試。', 'S7', {
             effects: { trust: 2, awareness: -2, greed: 1 },
             isMistake: true,
-            hint: '你用別人的短期沒事，誤判了整體風險。'
+            hint: '「別人短期沒事」不等於「這件事沒事」。'
           }),
-          opt('不管，用我的名字我就是怕。拒絕並封鎖', 'SAFE_EXIT_BLOCK2', {
+          opt('「會扛」跟「合法」是兩回事。我不做，也勸你收手。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, trust: -1 }
           })
         ]
@@ -2252,39 +2125,39 @@
         challenge: {
           title: '證件傳送前停手',
           subtitle: '防詐3C：冷靜停手，再查證求助',
-          label: '長按拒絕傳送證件',
+          label: '長按拒傳證件',
           icon: 'id-card',
           holdMs: 1500,
-          completeText: '停下來，保留截圖並拒絕傳送證件',
+          completeText: '停下來。截圖保留要求，證件一張都不傳。',
           completeNext: 'SAFE_EXIT_BLOCK3',
           completeEffects: { awareness: 4, fear: -1, risk: -2 },
-          evidence: 'K哥要求身分證與提款卡截圖',
-          hint: '你在資料外流前停手，保住了最關鍵的身分與金融資訊。',
-          postTip: '遇到要求拍攝身分證、提款卡或密碼的流程，應立即停止、保留對話，並撥165或聯絡銀行官方客服。'
+          evidence: 'K哥要求身分證與提款卡照片的截圖',
+          hint: '你在資料外流前踩了煞車，保住最關鍵的身分與金融資訊。',
+          postTip: '遇到要求拍身分證、提款卡或密碼的流程：立刻停止、保留對話、撥165或聯絡銀行官方客服。'
         },
-        instantTip: '超高危險紅旗：要求提供身分證、提款卡照片。',
-        text: '【系統提示：K哥傳送了一張寫著「學生兼職身分驗證」的截圖】\n要加入的話，照規矩來。現在拍你的身分證正反面、學生證，還有提款卡傳過來。快點，財務要建檔才能匯款給你。',
+        instantTip: '超高危險紅旗：兼職卻要身分證＋提款卡照片，是證件蒐集的標準手法。',
+        text: '【工作室-財務】傳來一張「兼職人員建檔表」：「要撥款給你，財務需要：身分證正反面、學生證，加提款卡正面照。十分鐘內傳齊，明天第一筆單就排你。動作快，這一期缺人缺很兇。」',
         options: [
-          opt('立刻將身分證和提款卡照片傳過去', 'S8', {
+          opt('為了明天能開跑……拍了，全部傳過去。', 'S8', {
             effects: { awareness: -3, fear: 1, greed: 1, risk: 5 },
             isMistake: true,
-            hint: '你把關鍵身分資訊交給對方，風險已實質升高。',
+            hint: '關鍵身分資訊一旦外流，對方就多了控制你的籌碼。',
             educationalType: '證件蒐集'
           }),
-          opt('只傳學生證可以嗎？提款卡不太方便', 'S7_DELAYED_COMPLIANCE', {
+          opt('證件有點不方便……先傳學生證可以嗎？', 'S7_DELAYED_COMPLIANCE', {
             effects: { awareness: -1, fear: 1, risk: 2 },
             isMistake: true,
-            hint: '你雖然猶豫，但仍在對方設定的框架內談判。'
+            hint: '你在猶豫，卻仍然在對方畫好的框架裡討價還價。'
           }),
-          opt('要證件就不對，立刻停手封鎖', 'SAFE_EXIT_BLOCK3', {
+          opt('跟錢無關的兼職要提款卡照？停手＋封鎖。', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 4, trust: -2 }
           }),
-          opt('我先打給銀行或165確認這種流程是否正常', 'SAFE_EXIT_BLOCK3', {
+          opt('我先打給銀行或165，問這種「建檔」正不正常。', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 5 },
             requiredState: { awareness: { min: 2 } },
             evidence: 'K哥要求證件與提款卡照片的截圖',
             actionType: 'verifyOfficial',
-            hint: '你啟動銀行或165外部驗證，切斷詐騙節奏。'
+            hint: '你啟動了外部驗證，直接切斷對方的節奏。'
           })
         ]
       },
@@ -2293,19 +2166,20 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         effect: 'shake',
-        text: 'K哥很快回：「也行，先傳學生證和健保卡，提款卡晚點補。你把生日、照片、學校留著，其他遮起來就好。」他傳來一張馬賽克範例，畫面看起來像真的公司驗證流程。',
+        instantTip: '警訊：主動教你「遮隱私」的貼心，是為了讓你放心交出剩下的部分。',
+        text: '「可以啊，我們很好說話 😊」財務秒回一張範例圖：「先傳學生證＋健保卡，生日、照片、學校要看得到，其他自己遮。你看，隱私我們都幫你想好了。」範例圖做得有模有樣，還壓了浮水印。',
         options: [
-          opt('照範例遮一下再傳，應該比較安全。', 'S8', {
+          opt('連遮哪裡都幫我標好了，應該算正規吧。照著傳。', 'S8', {
             effects: { trust: 2, awareness: -3, risk: 5 },
             isMistake: true,
-            hint: '遮掉部分資訊不代表安全，足夠的身分資料仍可能被用來開戶、冒名或威脅。'
+            hint: '遮掉部分欄位不等於安全；露出的資料已足夠冒名與威脅。'
           }),
-          opt('他願意讓我遮資料，感覺不像詐騙。', 'S7_PUSH', {
+          opt('他願意讓我遮資料，感覺不像詐騙……先傳學生證好了。', 'S7_PUSH', {
             effects: { trust: 2, awareness: -2, risk: 3 },
             isMistake: true,
-            hint: '詐騙者常用「讓步」來降低你的防備，核心目的沒有改變。'
+            hint: '詐騙者最常用「讓步」換你卸下防備，核心目的從沒變過。'
           }),
-          opt('只要是證件就不傳。', 'SAFE_EXIT_BLOCK3', {
+          opt('遮不遮都一樣。證件就是不給。', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 4, trust: -1 }
           })
         ]
@@ -2315,15 +2189,15 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         effect: 'shake',
-        instantTip: '對方用羞辱、催促、貶低你帳戶價值，是在逼你放下戒心。',
-        text: '公司規定就是這樣！沒有卡片照財務怎麼核對帳戶？你以為我們會盜領你那空空的戶頭喔？別浪費我時間，要賺錢就快！',
+        instantTip: '警訊：羞辱＋貶低＋催促，目的是讓你為了「證明自己」而照做。',
+        text: '你猶豫得有點久，對方的口氣忽然變了：「公司規定就是要卡片照，不然財務怎麼核對帳戶？你以為我們稀罕你戶頭裡那三位數喔？要賺不賺一句話，後面排隊的人很多。」',
         options: [
-          opt('妥協補傳提款卡照片', 'S8', {
+          opt('被講得好像我很窮……好啦好啦，補傳就是了。', 'S8', {
             effects: { fear: 2, awareness: -2, risk: 4 },
             isMistake: true,
-            hint: '你在羞辱與催促下妥協，這是常見的壓力服從。'
+            hint: '你在羞辱與催促下讓步——這是典型的壓力服從。'
           }),
-          opt('那我不做了。封鎖', 'SAFE_EXIT_BLOCK3', {
+          opt('激將法對我沒用。不做了，封鎖。', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 3, fear: -1 }
           })
         ]
@@ -2332,15 +2206,15 @@
       S8_FORCE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        instantTip: '時間壓迫會縮短你思考與驗證的空間。',
-        text: '你還在猶豫什麼？你知不知道阿杰幫你擔保了多少？等一下這筆 10 萬塊的手續費 3000 元你不想賺是不是？照片快傳來！',
+        instantTip: '警訊：訊息連環轟炸，是要壓縮你思考與查證的時間。',
+        text: '「還在想？」K哥的訊息一則接一則轟過來：「阿杰為了推薦你，押了自己的信用。」「等下那筆十萬的單，手續費三千，本來是你的。」「照片。現在。」',
         options: [
-          opt('怕失去賺錢機會，趕快傳送照片', 'S8', {
+          opt('三千要飛了……手忙腳亂把照片傳出去。', 'S8', {
             effects: { fear: 2, greed: 1, awareness: -2, risk: 5 },
             isMistake: true,
-            hint: '你在害怕失去機會時，更容易做出高風險決策。'
+            hint: '「怕錯過」的心情，最容易催出高風險決定。'
           }),
-          opt('緊迫盯人太不尋常了，直接封鎖', 'SAFE_EXIT_BLOCK3', {
+          opt('連環催促就是要我別思考。封鎖。', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 4 }
           })
         ]
@@ -2349,27 +2223,28 @@
       S8: {
         bg: SCENE_IMAGES.ATM,
         speaker: '系統',
-        instantTip: '警訊：帳戶突然收到不明大額款項，不要先提領。',
-        text: '隔天下午，補習前手機震動：【銀行通知：您的帳戶已轉入 NT$100,000】。你走到超商 ATM 前，班群還在討論明天小考。你插卡、輸入密碼，螢幕發出瑩綠色的光... 只要按下去，就正式越界了。',
+        isRealWorld: true,
+        instantTip: '警訊：帳戶突然收到不明大額入帳——先不要動它，一動風險就落地。',
+        text: '隔天下午四點半，補習前的空檔，手機震了一下：【銀行通知：您的帳戶轉入 NT$100,000】。你站在超商的 ATM 前，插卡、輸入密碼，餘額欄多出來的六位數在螢幕上發著光。班群正在討論明天小考的範圍——而你只要按下「提款」，就正式跨過那條線了。',
         options: [
-          opt('深吸一口氣，把10萬現金全領出來', 'S9', {
+          opt('深呼吸……十萬，全部領出來。', 'S9', {
             effects: { risk: 5, fear: 2, greed: 1, awareness: -3 },
             isMistake: true,
-            hint: '提領是從可疑接觸走向實際涉入的關鍵行為。'
+            hint: '「提領」是從可疑接觸走向實際涉入的關鍵一步。'
           }),
-          opt('手停在鍵盤上...這筆錢一定不乾淨吧？', 'S8_HESITATE', {
+          opt('手指停在按鍵上——這筆錢，絕對不乾淨。', 'S8_HESITATE', {
             effects: { awareness: 1, fear: 1 }
           }),
-          opt('抽出提款卡，立刻聯絡銀行、警方或165', 'SAFE_EXIT_LATE1', {
+          opt('退卡。直接打給銀行、警方或165處理這筆錢。', 'SAFE_EXIT_LATE1', {
             effects: { awareness: 5, fear: 1 },
             evidence: '銀行十萬元入帳通知',
             actionType: 'verifyOfficial',
-            postTip: '不明款項進帳時先不要提領，保留通知並聯絡銀行、警方或165。'
+            postTip: '不明款項入帳：不要提領，保留通知，聯絡銀行、警方或165。'
           }),
-          opt('心生貪念，轉到朋友戶頭藏起來', 'BAD_ENDING_STEAL', {
+          opt('或者……把它轉到朋友戶頭先藏起來？', 'BAD_ENDING_STEAL', {
             effects: { greed: 4, risk: 6, awareness: -3 },
             isMistake: true,
-            hint: '你從被誘導者變成主動挪用者，風險與惡性都暴增。'
+            hint: '你從被誘導者變成主動挪用者，風險和惡性同時暴增。'
           })
         ]
       },
@@ -2378,15 +2253,15 @@
         bg: SCENE_IMAGES.ATM,
         speaker: 'K哥 (LINE)',
         effect: 'shake',
-        instantTip: '「我們看得到你」是恐嚇控場，目的就是讓你無法抽離。',
-        text: '系統顯示錢進去了，你站在ATM前面怎麼還沒領？快點，不要浪費大家時間。監視器看得到你喔。',
+        instantTip: '警訊：「我們看得到你」是控場話術，要讓你覺得無路可退。',
+        text: '手機在掌心裡炸開：「錢到了，你站在那邊發什麼呆？」下一則：「超商的監視器很清楚喔，你穿制服。」再一則：「三分鐘內領完，不要逼我們處理『延誤』。」',
         options: [
-          opt('被監視的感覺嚇到手心冒汗，趕快領出來', 'S9', {
+          opt('他們知道我在哪……手抖著按下提款。', 'S9', {
             effects: { fear: 3, awareness: -2, risk: 5 },
             isMistake: true,
-            hint: '恐懼使你選擇服從，而不是停損。'
+            hint: '恐懼讓你選擇服從，而不是停損。'
           }),
-          opt('驚覺被監視，立刻抽出卡片逃離並報警或撥165', 'SAFE_EXIT_LATE1', {
+          opt('被監視就更要走。抽卡、離開，馬上報警或撥165。', 'SAFE_EXIT_LATE1', {
             effects: { awareness: 4, fear: 1 }
           })
         ]
@@ -2400,30 +2275,30 @@
         challenge: {
           title: '謊言腳本中斷',
           subtitle: '防詐3C：冷靜、保留、求助',
-          label: '長按刪除謊言腳本',
+          label: '長按刪除腳本',
           icon: 'ban',
           holdMs: 1800,
-          completeText: '停下來，不照對方教的話術，帶現金去警局或撥165求助',
+          completeText: '不背台詞。帶著現金和對話紀錄，直接去警局或撥165。',
           completeNext: 'SAFE_EXIT_LATE2',
           completeEffects: { awareness: 4, fear: 1, risk: -2 },
-          evidence: 'K哥要求對銀行與警方說謊的對話',
-          hint: '當對方開始教你說謊，代表這已經不是正常交易。',
-          postTip: '保留對方要求你說謊的紀錄，並向警方或165求助，能幫助釐清你是在壓力下被指揮。'
+          evidence: 'K哥要求對銀行與警方統一說詞的訊息',
+          hint: '對方開始教你說謊的那一刻，一切就不再是灰色地帶。',
+          postTip: '保留「教你說謊」的紀錄再求助，能證明你是在壓力下被指揮的。'
         },
-        instantTip: '只要開始教你如何對銀行或警方說謊，就已經不是灰色地帶，而是明確犯罪流程。',
-        text: '很好，帶著錢到二二八公園廁所交給專員。還有，如果銀行打給你或被警察盤問，你就統一口徑說是要「買社團比賽用的高階電腦」。沒問題吧？',
+        instantTip: '超高危險紅旗：替你準備「應付銀行和警察」的台詞，代表流程本身就是犯罪。',
+        text: '「很好。」K哥傳來下一步：「帶著現金到二二八公園靠公園路的廁所，交給穿灰色連帽的專員。」接著是一張「應答表」：「如果銀行打來、或警察攔查，統一說詞——『買社團比賽用的電腦』。背起來。」',
         options: [
-          opt('了解，自己要買電腦，記住了。', 'S11_SPIRAL', {
+          opt('買電腦、買電腦……好，我背起來了。', 'S11_SPIRAL', {
             effects: { fear: 1, awareness: -3, risk: 5 },
             isMistake: true,
-            hint: '對方開始替你設計說詞，代表你已進入組織化犯罪腳本。'
+            hint: '對方替你設計說詞，代表你已進入組織化的犯罪腳本。'
           }),
-          opt('還要對警察說謊？我不幹了，錢還你們！', 'S10_THREAT', {
+          opt('連說謊的台詞都幫我寫好了？我不幹了，錢還你們！', 'S10_THREAT', {
             effects: { awareness: 1, fear: 2 }
           }),
-          opt('極度恐懼，拿著現金直接跑進派出所或撥165', 'SAFE_EXIT_LATE2', {
+          opt('拿著錢和對話紀錄，直接走進派出所。', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 4, fear: 2 },
-            evidence: 'K哥要求前往交款地點與說謊腳本的對話',
+            evidence: 'K哥指定交款地點與說謊腳本的對話',
             actionType: 'verifyOfficial'
           })
         ]
@@ -2437,34 +2312,34 @@
         timeoutNext: 'S11_SPIRAL',
         challenge: {
           title: '恐嚇語音停損',
-          subtitle: '防詐3C：冷靜保留證據，立即求助',
-          label: '長按保留恐嚇語音',
+          subtitle: '防詐3C：保留證據，立即求助',
+          label: '長按保留語音',
           icon: 'audio-lines',
           holdMs: 2000,
-          completeText: '保留恐嚇語音，不再回覆，帶現金去警局或撥165',
+          completeText: '把恐嚇語音存下來，不再回覆，帶著現金直奔警局或撥165。',
           completeNext: 'SAFE_EXIT_LATE2',
           completeEffects: { awareness: 5, fear: 1, risk: -3 },
           evidence: 'K哥恐嚇家人安全的語音',
-          hint: '你把恐嚇內容轉成求助證據，而不是繼續被恐懼指揮。',
-          postTip: '遭威脅時不要私下談判；保留語音、對話與帳號，交給警方或165處理。'
+          hint: '你把恐嚇變成了求助的證據，而不是讓恐懼繼續指揮你。',
+          postTip: '被威脅時不要私下談判：保留語音、對話與帳號，交給警方或165。'
         },
-        instantTip: '恐嚇家人安全，是常見的高壓控制手段。',
-        text: '想退出？你以為在玩扮家家酒？監視器畫面、你的身分證、戶籍地址我全都有！不配合，我現在就叫小弟去你家找你家人「喝茶」！',
+        instantTip: '警訊：恐嚇家人安全是高壓控制的手段，目的是堵死你求助的念頭。',
+        text: '「退出？」語音裡的聲音冷得不像同一個人：「監視器拍到的是你，領錢用的是你的卡，建檔的是你的身分證。」他停頓了兩秒：「住址我們也有。不想家人被『拜訪』的話，把事情做完。」',
         options: [
-          opt('對不起我繼續做，拜託別找我家人', 'S11_SPIRAL', {
+          opt('對不起對不起，我做……拜託不要去我家……', 'S11_SPIRAL', {
             effects: { fear: 4, awareness: -2, risk: 5 },
             isMistake: true,
-            hint: '你在威脅下服從，會加速捲入更深層流程。'
+            hint: '在威脅下服從，只會被捲進更深的流程。'
           }),
-          opt('掛斷電話雙手發抖，立刻打給阿杰求救', 'S10_AJIE', {
+          opt('掛掉電話，手抖著打給阿杰求救。', 'S10_AJIE', {
             effects: { fear: 2, trust: 1 }
           }),
-          opt('嚇壞了，帶著錢跑去網咖躲起來', 'BAD_ENDING_HIDE', {
+          opt('嚇到腿軟，抓著錢衝進網咖躲起來。', 'BAD_ENDING_HIDE', {
             effects: { fear: 5, awareness: -2, risk: 5 },
             isMistake: true,
-            hint: '逃跑不會中止風險，只會失去主動處理空間。'
+            hint: '逃跑不會中止風險，只會失去主動處理的空間。'
           }),
-          opt('不再對話，帶現金去警局自首或撥165', 'SAFE_EXIT_LATE2', {
+          opt('保留語音、不再回覆，帶著現金直奔警局或撥165。', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 5, fear: 2 },
             requiredState: { awareness: { min: 1 } },
             evidence: 'K哥恐嚇家人安全的語音',
@@ -2476,17 +2351,17 @@
       S10_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (語音)',
-        instantTip: '熟人把你的恐懼再放大，會讓你更難做正確處置。',
-        text: '兄弟你千萬別惹K哥，他們背後有人！你就先把錢交給他們。千萬別報警啊！報警我也會被拖下水！',
+        instantTip: '警訊：連幫腔的熟人也在恐懼裡，代表你們需要的是外部救援，不是彼此安撫。',
+        text: '阿杰的聲音也在抖：「你千萬不要報警……他們連我家在哪都知道。我上次說要退，隔天我家信箱就被塞了我的照片。」他哽咽了一下：「把錢交出去就沒事了，真的，就這一次。」',
         options: [
-          opt('深深的絕望，只能乖乖去交錢', 'S11_SPIRAL', {
+          opt('連阿杰都被拿捏住了……我還能怎麼辦，去交錢。', 'S11_SPIRAL', {
             effects: { fear: 3, trust: 1, awareness: -2 },
             isMistake: true,
-            hint: '你再次把決策權交給恐懼與熟人壓力。'
+            hint: '你又一次把決定權交給了恐懼和熟人壓力。'
           }),
-          opt('連阿杰都嚇成這樣，只能硬著頭皮報警或撥165', 'SAFE_EXIT_LATE2', {
+          opt('我們兩個都被咬住了——所以更要一起報警或撥165。', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 4, fear: 2 },
-            evidence: '阿杰要求不要報警的語音',
+            evidence: '阿杰勸阻報警的語音',
             actionType: 'verifyOfficial'
           })
         ]
@@ -2495,28 +2370,29 @@
       S11_SPIRAL: {
         bg: SCENE_IMAGES.ATM,
         speaker: '系統',
-        instantTip: '連續多次執行後，大腦會逐步麻木，這正是深陷其中的機制。',
-        text: '接下來的整整一週，你戴著口罩、鴨舌帽穿梭在各個 ATM 之間瘋狂領錢。進出的金流越來越大，你的良知也越來越麻木... 你感覺自己像具行屍走肉。',
+        isRealWorld: true,
+        instantTip: '警訊：從發抖到麻木，不是你變勇敢了，而是越陷越深的訊號。',
+        text: '接下來的一整週，你活得像另一個人：口罩、鴨舌帽、每天換不同路線的 ATM。第一次領錢時手抖到按錯密碼，第五次已經面不改色。經手的數字越來越大，你開始不敢點開班群，也不敢看媽媽傳來的訊息。',
         options: [
-          opt('K哥說拉人可抽成，詢問室友要不要打工', 'BAD_ENDING_RECRUIT', {
+          opt('K哥說拉一個新人抽五千……去問問打球的學弟好了。', 'BAD_ENDING_RECRUIT', {
             effects: { greed: 4, awareness: -4, risk: 6 },
             isMistake: true,
-            hint: '你從被利用者轉向招募者，性質已經改變。'
+            hint: '從被利用變成拉人下水，事情的性質已經改變。'
           }),
-          opt('每天提心吊膽受不了，把手機丟掉裝死', 'BAD_ENDING_SCARED', {
+          opt('不行了，每天都在怕。手機關機，人間蒸發。', 'BAD_ENDING_SCARED', {
             effects: { fear: 4, awareness: -1, risk: 5 },
             isMistake: true,
-            hint: '裝死不會撤銷已經做過的事。'
+            hint: '裝死不會撤銷已經發生的事。'
           }),
-          opt('遇到巡邏員警盤查，心理防線崩潰全盤托出', 'SAFE_EXIT_LATE3', {
+          opt('路口臨檢，警察多看了你兩眼——你崩潰全說了。', 'SAFE_EXIT_LATE3', {
             effects: { awareness: 2, fear: 3 },
-            evidence: '多次提款後的對話紀錄',
+            evidence: '多次提款後的完整對話紀錄',
             actionType: 'verifyOfficial'
           }),
-          opt('就這樣繼續做下去吧...', 'S12_CAUGHT', {
+          opt('已經回不去了……就繼續吧。', 'S12_CAUGHT', {
             effects: { greed: 1, awareness: -2, risk: 6 },
             isMistake: true,
-            hint: '重複僥倖會把風險變成實際後果。'
+            hint: '一再的僥倖，遲早把風險變成真實後果。'
           })
         ]
       },
@@ -2525,7 +2401,8 @@
         bg: SCENE_IMAGES.STREET_NIGHT,
         speaker: '系統',
         effect: 'shake',
-        text: '某個清晨，你還在睡夢中，門外傳來急促的敲門聲。「警察！開門！」你被壓制在地上，冰冷的手銬銬上了雙腕。媽媽在一旁哭喊著，而你腦中一片空白...',
+        isRealWorld: true,
+        text: '某個週三清晨六點，急促的敲門聲。「警察！開門！」你在半夢半醒間被壓制在客廳地板上，手銬冰得刺骨。媽媽的哭喊聲好像隔了一層水。你盯著天花板，想起兩週前那通「拜託幫我一次」的電話。',
         options: [
           opt('結束模擬', 'BAD_ENDING_CAUGHT', {
             effects: { fear: 2, risk: 2 }
@@ -2687,7 +2564,8 @@
         icon: 'message-alert',
         startNode: 'SCN_PHISHING_START',
         summary: '辨識仿冒交易平台、短網址、帳號密碼與簡訊驗證碼陷阱。',
-        tags: ['仿冒平台', '帳號密碼', '驗證碼']
+        tags: ['仿冒平台', '帳號密碼', '驗證碼'],
+        intro: '放學的公車上，班群正在瘋傳今晚聯賽的精華片段。你滑到一半，螢幕突然被一通來電蓋住——是阿杰。'
       },
       account_rental: {
         title: '人頭帳戶與提款卡',
@@ -2695,7 +2573,8 @@
         icon: 'id-card',
         startNode: 'SCN_ACCOUNT_START',
         summary: '判斷租借帳戶、提款卡、存摺與身分資料要求的金流風險。',
-        tags: ['帳戶借用', '提款卡', '證件資料']
+        tags: ['帳戶借用', '提款卡', '證件資料'],
+        intro: '補習班下課，你在超商冰櫃前挑飲料。口袋裡的手機震個不停，掏出來一看：阿杰，已經第三通。'
       },
       sim_card: {
         title: '辦門號換現金',
@@ -2703,7 +2582,8 @@
         icon: 'phone',
         startNode: 'SCN_SIM_START',
         summary: '看懂手機、門號、合約月租與現金誘惑背後的責任。',
-        tags: ['手機合約', '月租費', '現場壓力']
+        tags: ['手機合約', '月租費', '現場壓力'],
+        intro: '週五傍晚，你剛把社辦的鍵盤滑鼠歸位。才走出校門，阿杰的來電就追了上來。'
       },
       cash_mule: {
         title: '現金代收與車手招募',
@@ -2711,7 +2591,8 @@
         icon: 'siren',
         startNode: 'SCN_CASH_MULE_START',
         summary: '拆解高報酬跑腿、不明現金、提款與恐嚇服從流程。',
-        tags: ['代收現金', '高薪誘惑', '提款風險']
+        tags: ['代收現金', '高薪誘惑', '提款風險'],
+        intro: '剛下過雨的校門口，路燈把地上的水漬照得發亮。你背著書包才走兩步，手機開始狂震——阿杰。'
       }
     };
 
@@ -2865,52 +2746,88 @@
     ============================================================ */
     function getOfficialAdviceForNode(nodeId = currentNodeId) {
       const adviceMap = {
-        S1C: {
-          text: '朋友要求你深夜代收不明現金，建議先拒絕、截圖保留對話，並向家長、警方或165查證。',
+        SCN_PHISHING_START: {
+          text: '高價收購＋限時驗證是遊戲帳號詐騙常見開場。不要點對方給的連結，改用官方入口查詢，或先撥165確認。',
+          next: 'SAFE_EXIT_PHISHING'
+        },
+        SCN_ACCOUNT_START: {
+          text: '任何「租帳戶、掛帳戶」都是人頭帳戶招募。帳戶、提款卡與密碼不能交給任何人，保留對話後撥165。',
+          next: 'SAFE_EXIT_BLOCK2'
+        },
+        SCN_SIM_START: {
+          text: '用你的名義辦門號、領手機再轉交他人，合約與月租責任都會回到你身上。先向電信官方客服與165查證。',
+          next: 'SAFE_EXIT_BLOCK1'
+        },
+        SCN_CASH_MULE_START: {
+          text: '路邊代收不明現金是車手流程的入口。不要前往，保留對話並向165查證。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S_CLASS_GROUP_PRESSURE: {
-          text: '社團群截圖、限動收益圖與學長推薦都不能替代官方查證。建議不要點連結，保留截圖後由官方入口或165確認。',
+          text: '社團群截圖、限動收益圖與學長推薦都不能替代官方查證。不要點連結，保留截圖後由官方入口或165確認。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S_PHISHING_LINK: {
-          text: '可疑交易連結不可直接點擊或登入。請自行輸入官方網址、使用官方App，或撥打165查證。',
+          text: '可疑交易連結不可點擊或登入。自行輸入官方網址、使用官方App，或撥165查證。',
           next: 'SAFE_EXIT_PHISHING'
         },
+        S_PHISHING_OTP: {
+          text: '任何頁面或任何人要求簡訊驗證碼都是重大紅旗。立刻停止輸入、修改密碼並撥165。',
+          next: 'SAFE_EXIT_PHISHING'
+        },
+        S_RENT_ACCOUNT_AJIE: {
+          text: '帳戶「出租」就是人頭帳戶，可能涉及幫助詐欺與洗錢。停止對話、保留紀錄並撥165。',
+          next: 'SAFE_EXIT_BLOCK2'
+        },
+        S_RENT_ACCOUNT_HALF_STEP: {
+          text: '存摺封面與提款卡末四碼也是金融資料，不可拍照外流。保留對話後聯絡銀行或165。',
+          next: 'SAFE_EXIT_BLOCK2'
+        },
+        S_RENT_ACCOUNT_PRESSURE: {
+          text: '用朋友的債務威脅你交帳戶已涉恐嚇。截圖保留對話，直接交給警方或165處理。',
+          next: 'SAFE_EXIT_BLOCK2'
+        },
+        S_SIM_CARD_QUESTION: {
+          text: '門號合約、月租與違約金都登記在申辦人名下。向電信官方客服查證，不要替他人辦門號。',
+          next: 'SAFE_EXIT_BLOCK1'
+        },
+        S_SIM_CARD_STORE: {
+          text: '現場催促簽名是常見話術。合約帶回家讓家長看過，或撥165確認再決定。',
+          next: 'SAFE_EXIT_BLOCK1'
+        },
         S2_REFUSE: {
-          text: '對方用情緒與急迫感施壓，建議停止協助，改由當事人自己與家人、警方或165處理。',
+          text: '對方用情緒與急迫感施壓。停止協助，改由當事人自己與家人、警方或165處理。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S2_DOUBT: {
-          text: '高額現金面交與代收都不合理，建議不要前往，也不要碰錢。',
+          text: '高額現金面交與代收都不合理。不要前往，也不要碰錢。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S3: {
-          text: '已接觸不明現金與可疑人物，建議不要帶走現金，離開現場並保留可疑訊息。',
+          text: '已接觸不明現金與可疑人物。不要帶走現金，離開現場並保留可疑訊息。',
           next: 'SAFE_EXIT_DROP'
         },
         S4: {
-          text: '陌生人高薪招募與現金日領高度可疑，建議封鎖並保留對話。',
+          text: '陌生工作室高薪招募、現金日領高度可疑。封鎖並保留對話。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S5: {
-          text: '要求使用你的帳戶收款再領現，這是車手招募高風險特徵，建議立刻停止並撥165查證。',
+          text: '要求用你的帳戶收款再領現，是車手招募的核心特徵。立刻停止並撥165。',
           next: 'SAFE_EXIT_BLOCK2'
         },
         S7: {
-          text: '要求拍攝身分證、提款卡是重大紅旗，建議不要傳送，立刻封鎖、保留截圖並聯絡銀行或165。',
+          text: '要求拍身分證、提款卡是重大紅旗。不要傳送，封鎖、保留截圖並聯絡銀行或165。',
           next: 'SAFE_EXIT_BLOCK3'
         },
         S8: {
-          text: '帳戶出現不明款項時不要提領，建議抽出卡片、聯絡銀行、警方或165。',
+          text: '帳戶出現不明款項時不要提領。抽出卡片，聯絡銀行、警方或165。',
           next: 'SAFE_EXIT_LATE1'
         },
         S9: {
-          text: '對方教你向銀行或警方說謊，代表已進入犯罪流程；帶現金尋求警方協助或撥165求助。',
+          text: '對方教你向銀行或警方說謊，代表已進入犯罪流程。帶現金尋求警方協助或撥165。',
           next: 'SAFE_EXIT_LATE2'
         },
         S10_THREAT: {
-          text: '遭恐嚇時不要再與對方談判，保留語音與對話，直接尋求警方保護或撥165。',
+          text: '遭恐嚇時不要再與對方談判。保留語音與對話，直接尋求警方保護或撥165。',
           next: 'SAFE_EXIT_LATE2'
         }
       };
@@ -2959,7 +2876,7 @@
       return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    const ALL_VIEWS = ['guide-view', 'scenario-view', 'menu-view', 'call-view', 'playing-view', 'ending-view'];
+    const ALL_VIEWS = ['guide-view', 'scenario-view', 'call-view', 'playing-view', 'ending-view'];
 
     function setView(viewId) {
       ALL_VIEWS.forEach(id => document.getElementById(id)?.classList.add('hidden'));
@@ -2967,7 +2884,6 @@
       const view = document.getElementById(viewId);
       if (!view) return;
       view.classList.remove('hidden');
-      if (viewId === 'menu-view') view.style.opacity = '';
     }
 
     /* 場景背景（顏色 → 漸層） */
@@ -2993,16 +2909,10 @@
 
       SCENE_IMAGES.STREET_NIGHT = isDaytime ? '#334155' : '#0f172a';
 
-      STORY.START.text = isDaytime
-        ? '放學後的台北街頭。電競社練習剛結束，你背著書包走出校門，手機卻狂震起來。是死黨阿杰的來電。'
-        : '剛下過雨的台北街頭。電競社練習剛結束，你背著書包走出校門，手機卻狂震起來。是死黨阿杰的來電。';
-
-      introNarration = isDaytime
-        ? '放學後的校門口，社團群還在刷比賽精華。你的手機突然劇烈震動…'
-        : '剛下過雨的校門口，社團群還在刷比賽精華。你的手機突然劇烈震動…';
+      introNarration = selectedScenario?.intro
+        || '電競社練習剛結束，你背著書包走出校門，手機突然狂震起來——是阿杰的來電。';
 
       setSceneBackground(SCENE_IMAGES.STREET_NIGHT);
-      document.getElementById('menu-view').style.background = sceneGradient(SCENE_IMAGES.STREET_NIGHT);
     }
 
     function prepareChatView() {
@@ -3087,16 +2997,7 @@
       stopRingtone();
       resetActionChallenge();
       configureOpeningScene();
-
-      const mv = document.getElementById('menu-view');
-      mv.style.display = '';
-      mv.style.transform = '';
-      mv.style.opacity = '';
-      mv.style.transition = '';
-
-      updateLockscreenClock();
-      setView('menu-view');
-      setTimeout(() => showIncomingCall(), 1600);
+      showIncomingCall();
     }
 
     function scrollToBottom() {
@@ -3659,7 +3560,7 @@
         setView('playing-view');
         prepareChatView();
         appendBubble('系統', introNarration, 'incoming');
-        setTimeout(() => renderNode(selectedScenario?.startNode || 'S1'), 1200);
+        setTimeout(() => renderNode(selectedScenario?.startNode || 'SCN_CASH_MULE_START'), 1200);
       }, 320);
     }
 
@@ -3993,61 +3894,11 @@
     }
 
     /* ============================================================
-       鎖定畫面
-    ============================================================ */
-    function updateLockscreenClock() {
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const mins = now.getMinutes().toString().padStart(2, '0');
-      document.getElementById('lockscreen-time').textContent = `${hours}:${mins}`;
-
-      const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-      const month = now.getMonth() + 1;
-      const day = now.getDate();
-      document.getElementById('lockscreen-date').textContent = `${weekdays[now.getDay()]}，${month}月${day}日`;
-    }
-
-    function initSwipeLockscreen() {
-      const mv = document.getElementById('menu-view');
-      if (!mv) return;
-      let startY = 0, dragging = false;
-
-      function unlock() {
-        mv.style.transition = 'transform .45s ease, opacity .35s ease';
-        mv.style.transform = 'translateY(-100%)';
-        mv.style.opacity = '0';
-        setTimeout(() => { mv.style.display = 'none'; }, 450);
-      }
-      function onStart(e) {
-        const t = e.touches?.[0] || e;
-        startY = t.clientY; dragging = true;
-      }
-      function onMove(e) {
-        if (!dragging) return;
-        const t = e.touches?.[0] || e;
-        if (startY - t.clientY > 60) { dragging = false; unlock(); }
-      }
-      function onEnd() { dragging = false; }
-
-      mv.addEventListener('touchstart', onStart, { passive: true });
-      mv.addEventListener('touchmove', onMove, { passive: true });
-      mv.addEventListener('touchend', onEnd);
-      mv.addEventListener('mousedown', onStart);
-      mv.addEventListener('mousemove', onMove);
-      mv.addEventListener('mouseup', onEnd);
-
-      mv.querySelector('#swipe-hint')?.addEventListener('click', unlock);
-    }
-
-    /* ============================================================
        初始化
     ============================================================ */
     (function init() {
-      updateLockscreenClock();
-      setInterval(updateLockscreenClock, 30000);
       renderIcons();
       bindCallSlider();
-      initSwipeLockscreen();
 
       document.getElementById('btn-165').addEventListener('click', open165Modal);
       document.getElementById('modal-cancel-btn').addEventListener('click', close165Modal);
