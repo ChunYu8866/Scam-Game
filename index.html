@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託 v23｜高中校園社群防詐互動遊戲</title>
+  <title>午夜委託 v24｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v23 — 手作海報風（單檔自足，雙主題）
+       午夜委託 v24 — 手作海報風（單檔自足，雙主題，預設亮色）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -386,7 +386,13 @@
       color: var(--text);
       margin-bottom: 10px;
     }
-    .card h2 .h2-emoji { font-size: 15px; line-height: 1; }
+    .card h2::before {
+      content: '';
+      width: 9px; height: 9px; flex-shrink: 0;
+      background: #ffd23f;
+      border: 1.5px solid var(--line);
+      transform: rotate(8deg);
+    }
 
     /* ── 主題切換鈕 ── */
     .theme-toggle {
@@ -398,7 +404,7 @@
       border: 2px solid var(--line);
       box-shadow: 2px 2px 0 var(--shadow-col);
       display: flex; align-items: center; justify-content: center;
-      font-size: 17px;
+      font-size: 15px; font-weight: 900; color: var(--text);
       z-index: 130;
       transition: transform 0.12s ease;
     }
@@ -459,7 +465,7 @@
       border: 2px solid var(--line);
       box-shadow: 4px 4px 0 var(--shadow-col);
       display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
+      font-size: 28px; font-weight: 900; color: var(--text);
       transform: rotate(2deg);
     }
     .hero-kicker {
@@ -501,7 +507,7 @@
       border: 2px solid var(--line);
       box-shadow: 3px 3px 0 var(--shadow-col);
     }
-    .goal-chip .chip-emoji { font-size: 20px; line-height: 1; }
+    .goal-chip .chip-emoji { font-size: 18px; font-weight: 900; line-height: 1; color: #20242e; }
     .goal-chip span:last-child { font-size: 12px; font-weight: 800; color: #20242e; }
     .goal-chip:nth-child(1) { transform: rotate(-1.4deg); }
     .goal-chip:nth-child(2) { transform: rotate(0.9deg); }
@@ -614,7 +620,7 @@
     .scenario-icon {
       width: 46px; height: 46px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
+      font-size: 22px; font-weight: 900; color: #20242e;
       border: 2px solid var(--line);
     }
     .scenario-card:nth-child(1) .scenario-icon { background: #cfe7ff; }
@@ -643,52 +649,71 @@
     ============================================================ */
     #call-view {
       align-items: center;
-      justify-content: space-between;
-      padding: calc(var(--notch) + var(--safe-top) + 52px) 24px calc(var(--safe-bottom) + 40px);
+      justify-content: center;
+      padding: calc(var(--notch) + var(--safe-top) + 40px) 24px calc(var(--safe-bottom) + 40px);
       background: linear-gradient(180deg, var(--call-veil1), var(--call-veil2) 55%, var(--call-veil3));
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     }
-    .call-top { text-align: center; }
-    .call-kicker { font-size: 11px; letter-spacing: 0.32em; color: var(--faint); text-transform: uppercase; }
-    .call-name { font-size: 40px; font-weight: 800; letter-spacing: 0.1em; margin-top: 12px; }
-    .call-status { font-size: 13.5px; color: var(--accent); letter-spacing: 0.22em; margin-top: 10px; font-weight: 600; }
+    .call-card {
+      position: relative;
+      width: min(320px, 92%);
+      background: var(--solid);
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 6px 6px 0 var(--shadow-col);
+      padding: 34px 22px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      transform: rotate(-0.5deg);
+    }
+    .call-badge {
+      position: absolute; top: -14px; left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      background: #ffd23f;
+      color: #1c212e;
+      border: 2px solid var(--line);
+      box-shadow: 2px 2px 0 var(--shadow-col);
+      font-size: 12px; font-weight: 900; letter-spacing: 0.22em;
+      padding: 5px 16px 5px 18px;
+    }
+    .call-id { text-align: center; }
+    .call-name { font-size: 30px; font-weight: 900; letter-spacing: 0.12em; }
+    .call-status { font-size: 12px; color: var(--dim); letter-spacing: 0.14em; margin-top: 7px; font-weight: 700; }
 
-    .call-avatar-wrap { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
+    .call-avatar-wrap { position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
     .call-ring {
       position: absolute; inset: 0; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(59, 130, 246, 0.16);
       animation: ring-expand 2s ease-out infinite;
     }
     .call-ring:nth-child(2) { animation-delay: 0.65s; }
     .call-ring:nth-child(3) { animation-delay: 1.3s; }
-    .call-avatar-wrap .avatar { position: relative; z-index: 2; border: 3px solid rgba(255, 255, 255, 0.25); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); }
+    .call-avatar-wrap .avatar { position: relative; z-index: 2; border: 3px solid var(--line); box-shadow: 3px 3px 0 var(--shadow-col); }
 
     .call-actions {
-      width: 100%; max-width: 330px;
-      display: flex; align-items: center; gap: 14px;
+      width: 100%;
+      display: flex; align-items: center;
     }
     .call-slider {
-      position: relative; flex: 1; height: 62px;
+      position: relative; flex: 1; height: 60px;
       border-radius: 999px;
-      border: 1px solid var(--slider-track-border);
+      border: 2px solid var(--line);
       background: var(--slider-track-bg);
       overflow: hidden;
       touch-action: none;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
     .call-slider-fill {
-      position: absolute; top: 4px; left: 4px; bottom: 4px;
+      position: absolute; top: 3px; left: 3px; bottom: 3px;
       width: 54px; border-radius: 999px;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.75), rgba(22, 163, 74, 0.9));
-      box-shadow: 0 0 24px rgba(34, 197, 94, 0.28);
+      background: rgba(46, 207, 143, 0.35);
     }
     .call-slider-thumb {
-      position: absolute; top: 4px; left: 4px;
-      width: 54px; height: 54px; border-radius: 999px;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
+      position: absolute; top: 3px; left: 3px;
+      width: 50px; height: 50px; border-radius: 999px;
+      background: #2ecf8f;
+      border: 2px solid var(--line);
       display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 22px;
-      box-shadow: 0 14px 30px rgba(34, 197, 94, 0.35);
+      color: #06231a; font-size: 20px;
+      box-shadow: 2px 2px 0 var(--shadow-col);
       cursor: grab; touch-action: none;
     }
     .call-slider-thumb:active { cursor: grabbing; }
@@ -872,7 +897,16 @@
       margin-bottom: 5px;
       color: #232a3c;
     }
-    .tip-emoji { font-size: 13px; line-height: 1; }
+    .tip-dot {
+      width: 10px; height: 10px; flex-shrink: 0;
+      display: inline-block;
+      border: 1.5px solid #232a3c;
+      background: #f5b301;
+      transform: rotate(8deg);
+    }
+    .tip-danger .tip-dot  { background: #f43f5e; }
+    .tip-success .tip-dot { background: #2ecf8f; }
+    .tip-info .tip-dot    { background: #3b82f6; }
     .tip p { font-size: 12.5px; line-height: 1.75; color: #333b50; }
     .tip p + p { margin-top: 5px; }
     .tip-warning  { background: #fff3ae; }
@@ -968,7 +1002,7 @@
       transition: transform 0.1s ease, background 0.15s ease, box-shadow 0.1s ease;
     }
     #qte-action-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--shadow-col); background: var(--btn-ghost-hover); }
-    #qte-action-btn .ic, #qte-action-icon { font-size: 16px; }
+    #qte-action-btn .ic, #qte-action-icon { font-size: 15px; font-weight: 900; color: var(--danger); }
     .qte-progress {
       height: 5px; margin-top: 9px;
       background: var(--track);
@@ -1016,7 +1050,8 @@
       background: var(--solid);
       border: 3px dashed var(--end-badge-bd, rgba(244, 63, 94, 0.5));
       display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
+      font-size: 30px; font-weight: 900;
+      color: var(--end-color, var(--danger-soft));
       transform: rotate(-6deg);
       box-shadow: 3px 3px 0 var(--shadow-col);
     }
@@ -1178,7 +1213,7 @@
       background: #c9f2dd;
       border: 2px solid var(--line);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
+      font-size: 15px; font-weight: 900; letter-spacing: 0.04em; color: #14532d;
       transform: rotate(2deg);
     }
     .modal h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 9px; }
@@ -1222,8 +1257,8 @@
       <section id="guide-view" class="view">
         <div class="scroll-area">
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v23</span>
-            <div class="hero-badge">🕵️</div>
+            <span class="ver-chip">v24</span>
+            <div class="hero-badge">防</div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
             <p class="hero-sub">一通深夜來電，一場防詐試煉</p>
@@ -1235,18 +1270,18 @@
 
           <div class="goal-grid">
             <div class="goal-chip goal-sky">
-              <span class="chip-emoji">👀</span><span>辨識警訊</span>
+              <span class="chip-emoji">看</span><span>辨識警訊</span>
             </div>
             <div class="goal-chip goal-amber">
-              <span class="chip-emoji">📎</span><span>保留證據</span>
+              <span class="chip-emoji">存</span><span>保留證據</span>
             </div>
             <div class="goal-chip goal-emerald">
-              <span class="chip-emoji">☎️</span><span>查證求助</span>
+              <span class="chip-emoji">問</span><span>查證求助</span>
             </div>
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">🎯</span>遊戲目標</h2>
+            <h2>遊戲目標</h2>
             <ul class="guide-list">
               <li>看穿班群截圖、限時動態背書、短影音留言與學長推薦背後的風險。</li>
               <li>守住遊戲帳號密碼、驗證碼、銀行帳戶、提款卡、證件、手機與不明現金。</li>
@@ -1255,7 +1290,7 @@
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">🎮</span>操作方式</h2>
+            <h2>操作方式</h2>
             <ol class="guide-list numbered">
               <li>選擇詐騙情境後，滑動接聽阿杰的來電。</li>
               <li>在對話下方選擇你的回覆，每個選擇都會影響後續劇情。</li>
@@ -1265,7 +1300,7 @@
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">🛡️</span>防詐3C 口訣</h2>
+            <h2>防詐3C 口訣</h2>
             <div class="c3-row">
               <span class="c3-key">冷靜</span>
               <p>不要照對方的節奏走，先停下來想一想。</p>
@@ -1295,8 +1330,8 @@
       <section id="scenario-view" class="view hidden">
         <div class="scroll-area">
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v23</span>
-            <div class="hero-badge">🎯</div>
+            <span class="ver-chip">v24</span>
+            <div class="hero-badge">選</div>
             <p class="hero-kicker">選擇主線情境</p>
             <h1 class="hero-title">今晚你要拆哪一局？</h1>
             <p class="hero-sub">每完成一條主線，就會留下一筆匿名的研究紀錄</p>
@@ -1312,26 +1347,26 @@
 
       <!-- ═══════════ 來電畫面 ═══════════ -->
       <section id="call-view" class="view hidden">
-        <div class="call-top">
-          <p class="call-kicker">行動電話 · 來電</p>
-          <h2 class="call-name">阿杰</h2>
-          <p id="call-subtitle-text" class="call-status pulse">來電中…</p>
-        </div>
-
-        <div class="call-avatar-wrap">
-          <div class="call-ring"></div>
-          <div class="call-ring"></div>
-          <div class="call-ring"></div>
-          <div class="avatar av-jie xl">杰</div>
-        </div>
-
-        <div class="call-actions">
-          <div id="answer-slider" class="call-slider" aria-label="滑動接聽">
-            <div id="answer-slider-fill" class="call-slider-fill"></div>
-            <div id="answer-slider-label" class="call-slider-label">滑動接聽</div>
-            <button id="answer-slider-thumb" type="button" class="call-slider-thumb" aria-label="滑動接聽">
-              <i data-ic="phone"></i>
-            </button>
+        <div class="call-card">
+          <span class="call-badge pulse">來電中</span>
+          <div class="call-avatar-wrap">
+            <div class="call-ring"></div>
+            <div class="call-ring"></div>
+            <div class="call-ring"></div>
+            <div class="avatar av-jie xl">杰</div>
+          </div>
+          <div class="call-id">
+            <h2 class="call-name">阿杰</h2>
+            <p id="call-subtitle-text" class="call-status">行動電話 · 同班好友</p>
+          </div>
+          <div class="call-actions">
+            <div id="answer-slider" class="call-slider" aria-label="滑動接聽">
+              <div id="answer-slider-fill" class="call-slider-fill"></div>
+              <div id="answer-slider-label" class="call-slider-label">滑動接聽</div>
+              <button id="answer-slider-thumb" type="button" class="call-slider-thumb" aria-label="滑動接聽">
+                <i data-ic="phone"></i>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -1365,7 +1400,7 @@
           </div>
           <div class="sheet-inner">
             <div id="qte-alert" class="hidden pulse">
-              ⏱️ 請立即回覆
+              請立即回覆！
             </div>
 
             <div id="qte-challenge" class="hidden">
@@ -1430,52 +1465,52 @@
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">📄</span>事件紀錄</h2>
+            <h2>事件紀錄</h2>
             <p id="ending-content" class="end-body"></p>
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">🧠</span>心理防禦評估</h2>
+            <h2>心理防禦評估</h2>
             <p id="ending-analysis" class="end-body"></p>
           </div>
 
           <div class="card hidden" id="near-miss-container">
-            <h2><span class="h2-emoji">🎯</span>差點中招的關鍵</h2>
+            <h2>差點中招的關鍵</h2>
             <p id="near-miss-text" class="end-body"></p>
           </div>
 
           <div class="card hidden" id="trap-tags-container">
-            <h2><span class="h2-emoji">🏷️</span>這一局遇到的詐騙手法</h2>
+            <h2>這一局遇到的詐騙手法</h2>
             <div id="trap-tags"></div>
           </div>
 
           <div class="card hidden" id="mistake-container">
-            <h2><span class="h2-emoji">🚨</span>關鍵失誤回顧</h2>
+            <h2>關鍵失誤回顧</h2>
             <div id="ending-mistakes"></div>
           </div>
 
           <div class="card hidden" id="advice-container">
-            <h2><span class="h2-emoji">⚠️</span>風險點與處理方式</h2>
+            <h2>風險點與處理方式</h2>
             <p id="ending-advice" class="end-body"></p>
           </div>
 
           <div class="card hidden" id="path-replay-container">
-            <h2><span class="h2-emoji">🧭</span>決策路徑回顧</h2>
+            <h2>決策路徑回顧</h2>
             <div id="path-replay"></div>
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">☎️</span>官方查證工具</h2>
+            <h2>官方查證工具</h2>
             <p class="end-body">遇到可疑電話、簡訊、交易連結、帳戶或門號要求，先套用防詐3C：冷靜、查證、求助。可以撥打165反詐騙諮詢專線，或自己輸入網址進入 <a href="https://165.npa.gov.tw" target="_blank" rel="noopener">165全民防騙網</a> 查詢；涉及匯款、帳戶或提款時，請改聯絡銀行官方客服，或直接到派出所處理。</p>
           </div>
 
           <div class="card">
-            <h2><span class="h2-emoji">📋</span>資料與風險說明</h2>
+            <h2>資料與風險說明</h2>
             <p class="end-body" style="font-size:12px;color:var(--faint);">本研究工具會匿名記錄情境類型 scenarioType、遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；使用者代碼僅用來區分同一裝置的遊玩紀錄。遊戲中的法律文字屬於情境化風險提示，不作個案法律判斷；實際遇到類似事件，請向家長、教師、銀行、警方或165確認。</p>
           </div>
 
           <button class="btn-restart" onclick="returnToScenarioSelect()">
-            🔁 挑戰其他情境
+            ↻ 挑戰其他情境
           </button>
         </div>
       </section>
@@ -1483,7 +1518,7 @@
       <!-- ═══════════ 165 查證確認 ═══════════ -->
       <div id="confirm-165" class="overlay hidden">
         <div class="modal">
-          <div class="modal-icon">☎️</div>
+          <div class="modal-icon">165</div>
           <h3>撥打 165 反詐騙專線？</h3>
           <p>165 是警政署的反詐騙諮詢專線。撥打之後，你會把目前的狀況告訴專線人員，停下眼前的流程，並保留對話紀錄。</p>
           <div class="modal-actions">
@@ -2772,7 +2807,7 @@
       phishing_link: {
         title: '釣魚連結與帳號盜用',
         shortTitle: '釣魚連結',
-        emoji: '🎣',
+        emoji: '釣',
         startNode: 'SCN_PHISHING_START',
         summary: '假交易網站做得跟真的一樣，帳密和驗證碼一輸入，帳號就是別人的了。',
         tags: ['仿冒平台', '帳號密碼', '驗證碼'],
@@ -2781,7 +2816,7 @@
       account_rental: {
         title: '人頭帳戶與提款卡',
         shortTitle: '人頭帳戶',
-        emoji: '💳',
+        emoji: '帳',
         startNode: 'SCN_ACCOUNT_START',
         summary: '「借我帳戶就好」聽起來無害，但流進來的錢會讓你變成人頭帳戶。',
         tags: ['帳戶借用', '提款卡', '證件資料'],
@@ -2790,7 +2825,7 @@
       sim_card: {
         title: '辦門號換現金',
         shortTitle: '辦門號',
-        emoji: '📱',
+        emoji: '門',
         startNode: 'SCN_SIM_START',
         summary: '辦一支手機當場換五千現金？合約上的名字是你的，債也是你的。',
         tags: ['手機合約', '月租費', '現場壓力'],
@@ -2799,7 +2834,7 @@
       cash_mule: {
         title: '現金代收與車手招募',
         shortTitle: '車手招募',
-        emoji: '💰',
+        emoji: '車',
         startNode: 'SCN_CASH_MULE_START',
         summary: '幫忙拿個錢就有兩千跑腿費？小心一步一步變成詐團的車手。',
         tags: ['代收現金', '高薪誘惑', '提款風險'],
@@ -3142,7 +3177,7 @@
       ['theme-toggle-float', 'theme-toggle-chat'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.textContent = theme === 'light' ? '🌙' : '☀️';
+        el.textContent = theme === 'light' ? '暗' : '亮';
         el.setAttribute('aria-label', label);
         el.title = label;
       });
@@ -3404,11 +3439,11 @@
 
     /* 即時教學回饋卡（對應論文之「即時回饋」設計原則） */
     const TIP_STYLES = {
-      warning:  { cls: 'tip-warning', emoji: '💡', label: '防詐提示' },
-      danger:   { cls: 'tip-danger',  emoji: '🚨', label: '風險警示' },
-      success:  { cls: 'tip-success', emoji: '✅', label: '安全行動' },
-      info:     { cls: 'tip-info',    emoji: '📌', label: '小提醒' },
-      evidence: { cls: 'tip-info',    emoji: '📎', label: '證據保留' }
+      warning:  { cls: 'tip-warning', label: '防詐提示' },
+      danger:   { cls: 'tip-danger',  label: '風險警示' },
+      success:  { cls: 'tip-success', label: '安全行動' },
+      info:     { cls: 'tip-info',    label: '小提醒' },
+      evidence: { cls: 'tip-info',    label: '證據保留' }
     };
 
     function appendTipCard(text, type = 'warning', secondText = '') {
@@ -3416,7 +3451,7 @@
       const style = TIP_STYLES[type] || TIP_STYLES.warning;
       const html = `
         <div class="tip ${style.cls} msg-pop">
-          <div class="tip-head"><span class="tip-emoji">${style.emoji}</span><span>${style.label}</span></div>
+          <div class="tip-head"><b class="tip-dot"></b><span>${style.label}</span></div>
           <p>${text}</p>
           ${secondText ? `<p>${secondText}</p>` : ''}
         </div>`;
@@ -3532,8 +3567,7 @@
       title.textContent = challenge.title || '壓力操作';
       subtitle.textContent = challenge.subtitle || '長按完成冷靜判斷';
       label.textContent = challenge.label || '長按冷靜';
-      const QTE_EMOJI = { 'ban': '🛑', 'folder': '📁', 'file-x-2': '🛑', 'id-card': '💳', 'audio-lines': '🎙️', 'shield-alert': '🛡️' };
-      iconSlot.textContent = QTE_EMOJI[challenge.icon] || '🛡️';
+      iconSlot.textContent = '停';
       fill.style.width = '0%';
       panel.classList.remove('hidden');
 
@@ -4023,12 +4057,12 @@
 
     function classifyEndingTheme(endingId) {
       if (endingId.startsWith('SAFE_EXIT_LATE')) {
-        return { theme: 'end-neutral', label: '驚險脫身', emoji: '⚠️', sound: 'warn' };
+        return { theme: 'end-neutral', label: '驚險脫身', emoji: '險', sound: 'warn' };
       }
       if (endingId.startsWith('SAFE_') || endingId === 'EARLY_EXIT_IGNORE') {
-        return { theme: 'end-safe', label: '安全結局', emoji: '🛡️', sound: 'success' };
+        return { theme: 'end-safe', label: '安全結局', emoji: '安', sound: 'success' };
       }
-      return { theme: 'end-bad', label: '高風險結局', emoji: '🚨', sound: 'danger' };
+      return { theme: 'end-bad', label: '高風險結局', emoji: '危', sound: 'danger' };
     }
 
     function riskLevelSpec(value) {
@@ -4163,8 +4197,8 @@
       renderIcons();
       bindCallSlider();
 
-      let savedTheme = 'dark';
-      try { savedTheme = localStorage.getItem('game_theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+      let savedTheme = 'light';
+      try { if (localStorage.getItem('game_theme') === 'dark') savedTheme = 'dark'; } catch (e) {}
       applyTheme(savedTheme);
       document.getElementById('theme-toggle-float').addEventListener('click', toggleTheme);
       document.getElementById('theme-toggle-chat').addEventListener('click', toggleTheme);
