@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託 v22｜高中校園社群防詐互動遊戲</title>
+  <title>午夜委託 v23｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v22 — 設計系統（單檔自足，雙主題）
+       午夜委託 v23 — 手作海報風（單檔自足，雙主題）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -88,6 +88,9 @@
       --push-bg: rgba(24, 27, 34, 0.92);
       --btn-ghost-bg: rgba(255, 255, 255, 0.08);
       --btn-ghost-hover: rgba(255, 255, 255, 0.13);
+      --line: #414a63;
+      --shadow-col: rgba(0, 0, 0, 0.5);
+      --note-shadow: rgba(0, 0, 0, 0.4);
     }
 
     html { color-scheme: dark; }
@@ -95,11 +98,11 @@
     /* ── 亮色主題 ── */
     html[data-theme="light"] {
       color-scheme: light;
-      --bg-page: #e7ebf2;
-      --frame-bg: #f4f6fb;
+      --bg-page: #e6e1d2;
+      --frame-bg: #f4f0e3;
       --surface: rgba(15, 23, 42, 0.045);
       --surface-2: rgba(15, 23, 42, 0.08);
-      --solid: #ffffff;
+      --solid: #fffdf4;
       --border: rgba(15, 23, 42, 0.10);
       --border-strong: rgba(15, 23, 42, 0.20);
       --text: #18202f;
@@ -116,8 +119,8 @@
       --info: #0284c7;
 
       --app-bg:
-        radial-gradient(1100px 700px at 50% -12%, #ffffff 0%, transparent 60%),
-        radial-gradient(900px 600px at 85% 110%, #d8ece3 0%, transparent 55%),
+        radial-gradient(1100px 700px at 50% -12%, #fffef6 0%, transparent 60%),
+        radial-gradient(900px 600px at 85% 110%, #e6dfc6 0%, transparent 55%),
         var(--bg-page);
       --body-strong: #333d52;
       --body-mid: #46506a;
@@ -126,7 +129,7 @@
       --orange-text: #c2410c;
       --header-bg: rgba(255, 255, 255, 0.92);
       --sheet-bg: rgba(251, 252, 254, 0.96);
-      --footer-fade: #f4f6fb;
+      --footer-fade: #f4f0e3;
       --bubble-in-bg: #ffffff;
       --bubble-in-border: rgba(15, 23, 42, 0.08);
       --bubble-k-bg: linear-gradient(135deg, #fdeaec, #fbdadd);
@@ -137,8 +140,8 @@
       --scene-card-text: #26304a;
       --typing-dot: #7b859a;
       --voice-btn-bg: rgba(15, 23, 42, 0.08);
-      --opt-bg: #ffffff;
-      --opt-bg-hover: #eff3f9;
+      --opt-bg: #fffdf4;
+      --opt-bg-hover: #f1ebd8;
       --opt-border: rgba(15, 23, 42, 0.10);
       --track: rgba(15, 23, 42, 0.09);
       --inset-bg: rgba(15, 23, 42, 0.045);
@@ -156,11 +159,14 @@
       --tag-bg: rgba(162, 28, 175, 0.07);
       --tag-border: rgba(162, 28, 175, 0.30);
       --tag-text: #86198f;
-      --modal-bg: #ffffff;
+      --modal-bg: #fffdf4;
       --overlay-bg: rgba(15, 23, 42, 0.35);
       --push-bg: rgba(255, 255, 255, 0.95);
       --btn-ghost-bg: rgba(15, 23, 42, 0.06);
       --btn-ghost-hover: rgba(15, 23, 42, 0.11);
+      --line: #2a3044;
+      --shadow-col: rgba(42, 48, 68, 0.85);
+      --note-shadow: rgba(42, 48, 68, 0.24);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -278,6 +284,16 @@
     #playing-view { z-index: 10; }
     #ending-view  { z-index: 80; background: var(--frame-bg); }
 
+    /* ── 紙張顆粒 ── */
+    #guide-view::after, #scenario-view::after, #ending-view::after {
+      content: '';
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 5;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+      opacity: 0.05;
+      mix-blend-mode: overlay;
+    }
+
     .scroll-area {
       flex: 1; overflow-y: auto;
       scrollbar-width: none; -ms-overflow-style: none;
@@ -355,43 +371,44 @@
 
     /* ── 卡片 ── */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      background: var(--solid);
+      border: 2px solid var(--line);
+      border-radius: 10px;
       padding: 16px;
+      box-shadow: 4px 4px 0 var(--shadow-col);
     }
     .card + .card { margin-top: 12px; }
 
     .card h2 {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12.5px; font-weight: 800;
-      letter-spacing: 0.14em;
-      color: var(--dim);
+      display: flex; align-items: center; gap: 7px;
+      font-size: 13.5px; font-weight: 900;
+      letter-spacing: 0.04em;
+      color: var(--text);
       margin-bottom: 10px;
     }
-    .card h2 .ic { font-size: 15px; }
+    .card h2 .h2-emoji { font-size: 15px; line-height: 1; }
 
     /* ── 主題切換鈕 ── */
     .theme-toggle {
       position: absolute;
       top: calc(var(--notch) + var(--safe-top) + 12px);
       left: 14px;
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--solid);
+      border: 2px solid var(--line);
+      box-shadow: 2px 2px 0 var(--shadow-col);
       display: flex; align-items: center; justify-content: center;
-      color: var(--dim); font-size: 16px;
+      font-size: 17px;
       z-index: 130;
-      transition: transform 0.15s ease, color 0.15s ease;
+      transition: transform 0.12s ease;
     }
-    .theme-toggle:hover { color: var(--text); }
-    .theme-toggle:active { transform: scale(0.9); }
+    .theme-toggle:active { transform: scale(0.92); }
     .theme-toggle.chat {
       position: static;
       width: 30px; height: 30px; font-size: 14px;
       z-index: auto;
-      backdrop-filter: none; -webkit-backdrop-filter: none;
+      box-shadow: none;
+      border-width: 1.5px;
       background: transparent;
     }
 
@@ -436,18 +453,26 @@
 
     .guide-hero { text-align: center; margin-bottom: 20px; position: relative; }
     .hero-badge {
-      width: 60px; height: 60px; margin: 0 auto 14px;
-      border-radius: 20px;
-      background: rgba(52, 211, 153, 0.12);
-      border: 1px solid rgba(52, 211, 153, 0.3);
+      width: 64px; height: 64px; margin: 0 auto 14px;
+      border-radius: 16px;
+      background: var(--solid);
+      border: 2px solid var(--line);
+      box-shadow: 4px 4px 0 var(--shadow-col);
       display: flex; align-items: center; justify-content: center;
-      color: var(--accent); font-size: 30px;
-      box-shadow: 0 0 40px rgba(52, 211, 153, 0.15);
+      font-size: 32px;
+      transform: rotate(2deg);
     }
     .hero-kicker {
-      font-size: 11.5px; font-weight: 800;
-      letter-spacing: 0.3em; color: var(--accent);
-      margin-bottom: 8px;
+      display: inline-block;
+      background: #ffd23f;
+      color: #1c212e;
+      border: 2px solid var(--line);
+      box-shadow: 3px 3px 0 var(--shadow-col);
+      font-size: 12px; font-weight: 900;
+      letter-spacing: 0.1em;
+      padding: 5px 14px;
+      transform: rotate(-1.2deg);
+      margin-bottom: 12px;
     }
     .hero-title {
       font-size: 36px; font-weight: 900; letter-spacing: 0.12em;
@@ -457,9 +482,11 @@
     .ver-chip {
       position: absolute; top: -12px; right: -4px;
       font-family: ui-monospace, Consolas, monospace;
-      font-size: 10px; color: var(--faint);
-      border: 1px solid var(--border); border-radius: 999px;
+      font-size: 10px; font-weight: 700; color: var(--dim);
+      border: 2px dashed var(--border-strong);
+      border-radius: 6px;
       padding: 3px 9px;
+      transform: rotate(2deg);
     }
 
     .intro-card p { font-size: 13.5px; line-height: 1.85; color: var(--body-strong); }
@@ -469,15 +496,19 @@
       gap: 10px; margin: 12px 0;
     }
     .goal-chip {
-      border-radius: 15px; padding: 12px 10px;
-      display: flex; flex-direction: column; gap: 8px;
-      border: 1px solid;
+      border-radius: 10px; padding: 12px 10px;
+      display: flex; flex-direction: column; gap: 7px;
+      border: 2px solid var(--line);
+      box-shadow: 3px 3px 0 var(--shadow-col);
     }
-    .goal-chip .ic { font-size: 18px; }
-    .goal-chip span { font-size: 12px; font-weight: 700; color: var(--text); }
-    .goal-sky     { background: rgba(56, 189, 248, 0.09);  border-color: rgba(56, 189, 248, 0.25);  color: var(--sky-text); }
-    .goal-amber   { background: rgba(245, 158, 11, 0.09);  border-color: rgba(245, 158, 11, 0.25);  color: var(--warn-soft); }
-    .goal-emerald { background: rgba(52, 211, 153, 0.09);  border-color: rgba(52, 211, 153, 0.25);  color: var(--accent); }
+    .goal-chip .chip-emoji { font-size: 20px; line-height: 1; }
+    .goal-chip span:last-child { font-size: 12px; font-weight: 800; color: #20242e; }
+    .goal-chip:nth-child(1) { transform: rotate(-1.4deg); }
+    .goal-chip:nth-child(2) { transform: rotate(0.9deg); }
+    .goal-chip:nth-child(3) { transform: rotate(-0.6deg); }
+    .goal-sky     { background: #cfe7ff; }
+    .goal-amber   { background: #ffe9a8; }
+    .goal-emerald { background: #c9f2dd; }
 
     .guide-list { list-style: none; }
     .guide-list li {
@@ -511,12 +542,14 @@
     .c3-row + .c3-row { margin-top: 10px; }
     .c3-key {
       flex-shrink: 0;
-      min-width: 44px; text-align: center;
-      background: rgba(52, 211, 153, 0.14);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-      color: var(--accent);
-      font-size: 12.5px; font-weight: 800;
-      border-radius: 9px; padding: 4px 8px;
+      min-width: 46px; text-align: center;
+      background: #c9f2dd;
+      border: 2px solid var(--line);
+      box-shadow: 2px 2px 0 var(--shadow-col);
+      color: #14532d;
+      font-size: 12.5px; font-weight: 900;
+      border-radius: 8px; padding: 4px 8px;
+      transform: rotate(-1deg);
     }
     .c3-row p { font-size: 13px; line-height: 1.7; color: var(--body-mid); padding-top: 3px; }
 
@@ -526,18 +559,18 @@
     }
     .btn-primary {
       width: 100%;
-      background: linear-gradient(135deg, #3ddc97, #10b981);
-      color: var(--accent-ink);
-      font-size: 16px; font-weight: 900; letter-spacing: 0.22em;
-      padding: 16px;
-      border-radius: 17px;
+      background: #2ecf8f;
+      color: #06231a;
+      border: 2px solid var(--line);
+      font-size: 16px; font-weight: 900; letter-spacing: 0.14em;
+      padding: 15px;
+      border-radius: 12px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 16px 38px rgba(16, 185, 129, 0.28);
-      transition: transform 0.15s ease, filter 0.15s ease;
+      box-shadow: 5px 5px 0 var(--shadow-col);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s ease;
     }
-    .btn-primary:hover { filter: brightness(1.06); }
-    .btn-primary:active { transform: scale(0.97); }
-    .btn-primary .ic { font-size: 17px; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-primary:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--shadow-col); }
 
     .research-note {
       font-size: 10.5px; line-height: 1.7;
@@ -565,30 +598,31 @@
     .scenario-card {
       width: 100%;
       text-align: left;
-      border-radius: 16px;
+      border-radius: 10px;
       padding: 15px;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 2px solid var(--line);
+      background: var(--solid);
       color: var(--text);
       display: grid;
-      grid-template-columns: 44px 1fr;
+      grid-template-columns: 46px 1fr;
       gap: 12px;
-      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      box-shadow: 4px 4px 0 var(--shadow-col);
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
     }
-    .scenario-card:hover {
-      transform: translateY(-1px);
-      background: var(--surface-2);
-      border-color: rgba(52, 211, 153, 0.38);
-    }
-    .scenario-card:active { transform: scale(0.985); }
+    .scenario-card:nth-child(odd) { transform: rotate(-0.35deg); }
+    .scenario-card:nth-child(even) { transform: rotate(0.35deg); }
+    .scenario-card:hover { background: var(--opt-bg-hover); }
+    .scenario-card:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow-col); }
     .scenario-icon {
-      width: 44px; height: 44px; border-radius: 14px;
+      width: 46px; height: 46px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      color: var(--accent);
-      background: rgba(52, 211, 153, 0.12);
-      border: 1px solid rgba(52, 211, 153, 0.24);
+      font-size: 24px;
+      border: 2px solid var(--line);
     }
-    .scenario-icon .ic { width: 22px; height: 22px; }
+    .scenario-card:nth-child(1) .scenario-icon { background: #cfe7ff; }
+    .scenario-card:nth-child(2) .scenario-icon { background: #ffd3d6; }
+    .scenario-card:nth-child(3) .scenario-icon { background: #c9f2dd; }
+    .scenario-card:nth-child(4) .scenario-icon { background: #ffe9a8; }
     .scenario-card h3 {
       font-size: 15px; font-weight: 900; letter-spacing: 0.04em;
       margin-bottom: 5px;
@@ -596,11 +630,12 @@
     .scenario-card p { font-size: 12.5px; line-height: 1.7; color: var(--body-mid); }
     .scenario-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
     .scenario-tags span {
-      font-size: 10.5px; color: var(--faint);
-      border: 1px solid var(--border);
-      border-radius: 999px;
+      font-size: 10.5px; font-weight: 800; color: var(--text);
+      border: 1.5px solid var(--line);
+      border-radius: 5px;
       padding: 3px 8px;
-      background: var(--inset-bg);
+      background: var(--surface);
+      box-shadow: 1.5px 1.5px 0 var(--shadow-col);
     }
 
     /* ============================================================
@@ -815,28 +850,36 @@
 
     /* 教學提示卡（即時回饋） */
     .tip {
-      margin: 10px 2px;
-      border-radius: 14px;
-      padding: 10px 13px;
-      border: 1px solid;
-      border-left-width: 3px;
+      position: relative;
+      margin: 15px 6px 10px;
+      border-radius: 3px;
+      padding: 13px 14px 11px;
+      box-shadow: 3px 5px 0 var(--note-shadow);
     }
+    .tip::before {
+      content: '';
+      position: absolute;
+      top: -8px; left: 50%;
+      width: 76px; height: 17px;
+      transform: translateX(-50%) rotate(-2deg);
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(35, 42, 60, 0.12);
+    }
+    .tip:nth-of-type(odd) { transform: rotate(0.5deg); }
+    .tip:nth-of-type(even) { transform: rotate(-0.6deg); }
     .tip-head {
       display: flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 900; letter-spacing: 0.16em;
+      font-size: 11.5px; font-weight: 900; letter-spacing: 0.08em;
       margin-bottom: 5px;
+      color: #232a3c;
     }
-    .tip-head .ic { font-size: 13px; }
-    .tip p { font-size: 12.5px; line-height: 1.75; color: var(--body-soft); }
+    .tip-emoji { font-size: 13px; line-height: 1; }
+    .tip p { font-size: 12.5px; line-height: 1.75; color: #333b50; }
     .tip p + p { margin-top: 5px; }
-    .tip-warning  { background: rgba(245, 158, 11, 0.07); border-color: rgba(245, 158, 11, 0.3); }
-    .tip-warning .tip-head { color: var(--warn-soft); }
-    .tip-danger   { background: rgba(244, 63, 94, 0.07);  border-color: rgba(244, 63, 94, 0.32); }
-    .tip-danger .tip-head { color: var(--danger-soft); }
-    .tip-success  { background: rgba(52, 211, 153, 0.07); border-color: rgba(52, 211, 153, 0.32); }
-    .tip-success .tip-head { color: var(--accent); }
-    .tip-info     { background: rgba(56, 189, 248, 0.07); border-color: rgba(56, 189, 248, 0.32); }
-    .tip-info .tip-head { color: var(--sky-text); }
+    .tip-warning  { background: #fff3ae; }
+    .tip-danger   { background: #ffd3d6; }
+    .tip-success  { background: #cdf2da; }
+    .tip-info     { background: #d3e8ff; }
 
     /* 打字指示 */
     .typing-bubble {
@@ -893,12 +936,19 @@
     #qte-alert .ic { font-size: 12px; }
 
     #qte-challenge {
+      position: relative;
       margin-bottom: 11px;
-      border: 1px solid var(--qte-border);
-      background: var(--qte-bg);
-      border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 0 26px rgba(244, 63, 94, 0.1);
+      border: 2px solid var(--danger);
+      background: var(--solid);
+      border-radius: 10px;
+      padding: 19px 12px 12px;
+      box-shadow: 4px 4px 0 var(--shadow-col);
+      overflow: hidden;
+    }
+    #qte-challenge::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 9px;
+      background: repeating-linear-gradient(-45deg, #ffd23f 0 12px, #1c212e 12px 24px);
     }
     .qte-head {
       display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
@@ -908,16 +958,17 @@
     #qte-subtitle { color: var(--faint); font-size: 10px; text-align: right; }
     #qte-action-btn {
       width: 100%; height: 48px;
-      border-radius: 13px;
-      border: 1px solid var(--qte-btn-border);
+      border-radius: 8px;
+      border: 2px solid var(--line);
       background: var(--qte-btn-bg);
       color: var(--text);
-      font-size: 13px; font-weight: 800; letter-spacing: 0.08em;
+      font-size: 13px; font-weight: 900; letter-spacing: 0.08em;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       touch-action: none; user-select: none;
-      transition: transform 0.15s ease, background 0.15s ease;
+      box-shadow: 2px 2px 0 var(--shadow-col);
+      transition: transform 0.1s ease, background 0.15s ease, box-shadow 0.1s ease;
     }
-    #qte-action-btn:active { transform: scale(0.985); background: var(--btn-ghost-hover); }
+    #qte-action-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--shadow-col); background: var(--btn-ghost-hover); }
     #qte-action-btn .ic, #qte-action-icon { font-size: 16px; }
     .qte-progress {
       height: 5px; margin-top: 9px;
@@ -935,19 +986,19 @@
     .opt-btn {
       width: 100%;
       background: var(--opt-bg);
-      border: 1px solid var(--opt-border);
+      border: 2px solid var(--line);
       color: var(--text);
-      padding: 13px 14px;
-      border-radius: 14px;
-      font-size: 14.5px; font-weight: 600;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14.5px; font-weight: 700;
       letter-spacing: 0.02em;
       line-height: 1.5;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      transition: background 0.15s ease, transform 0.12s ease, border-color 0.15s ease;
+      box-shadow: 3px 3px 0 var(--shadow-col);
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
     }
-    .opt-btn:hover { background: var(--opt-bg-hover); border-color: var(--border-strong); }
-    .opt-btn:active { transform: scale(0.98); }
+    .opt-btn:hover { background: var(--opt-bg-hover); }
+    .opt-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow-col); }
 
     /* ============================================================
        結局畫面（ending-view）
@@ -961,18 +1012,24 @@
       background: linear-gradient(180deg, var(--end-tint, rgba(244, 63, 94, 0.16)), transparent);
     }
     .end-badge {
-      width: 62px; height: 62px; margin: 0 auto 14px;
+      width: 72px; height: 72px; margin: 0 auto 14px;
       border-radius: 50%;
-      background: var(--end-badge-bg, rgba(244, 63, 94, 0.14));
-      border: 1px solid var(--end-badge-bd, rgba(244, 63, 94, 0.4));
+      background: var(--solid);
+      border: 3px dashed var(--end-badge-bd, rgba(244, 63, 94, 0.5));
       display: flex; align-items: center; justify-content: center;
-      color: var(--end-color, var(--danger-soft));
-      font-size: 30px;
+      font-size: 32px;
+      transform: rotate(-6deg);
+      box-shadow: 3px 3px 0 var(--shadow-col);
     }
     .end-label {
-      font-size: 11.5px; font-weight: 900; letter-spacing: 0.34em;
+      display: inline-block;
+      font-size: 12px; font-weight: 900; letter-spacing: 0.2em;
       color: var(--end-color, var(--danger-soft));
-      margin-bottom: 10px;
+      border: 2px solid currentColor;
+      border-radius: 6px;
+      padding: 4px 12px;
+      transform: rotate(-1.5deg);
+      margin-bottom: 12px;
     }
     #ending-title {
       font-size: 23px; font-weight: 900; letter-spacing: 0.04em;
@@ -993,11 +1050,12 @@
     }
     .score-num small { font-size: 15px; font-weight: 700; color: var(--faint); margin-left: 4px; }
     .rank-ring {
-      width: 74px; height: 74px; border-radius: 50%;
-      border: 2px solid var(--end-badge-bd, var(--border-strong));
-      background: var(--end-badge-bg, var(--surface));
+      width: 76px; height: 76px; border-radius: 50%;
+      border: 3px dashed var(--end-badge-bd, var(--border-strong));
+      background: transparent;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 1px; flex-shrink: 0;
+      transform: rotate(-8deg);
     }
     #ending-rank { font-size: 27px; font-weight: 900; color: var(--end-color, var(--text)); line-height: 1; }
     .rank-cap { font-size: 9px; letter-spacing: 0.22em; color: var(--faint); font-weight: 800; }
@@ -1043,13 +1101,16 @@
 
     #trap-tags { display: flex; flex-wrap: wrap; gap: 7px; }
     #trap-tags span {
-      font-size: 12px; font-weight: 600;
-      background: var(--tag-bg);
-      border: 1px solid var(--tag-border);
-      color: var(--tag-text);
-      border-radius: 999px;
-      padding: 5px 12px;
+      font-size: 12px; font-weight: 800;
+      background: #f3d9fa;
+      border: 1.5px solid var(--line);
+      color: #6d1b7b;
+      border-radius: 6px;
+      padding: 4px 11px;
+      box-shadow: 2px 2px 0 var(--shadow-col);
     }
+    #trap-tags span:nth-child(odd) { transform: rotate(-1deg); }
+    #trap-tags span:nth-child(even) { transform: rotate(0.8deg); }
 
     .path-step {
       display: flex; align-items: flex-start; gap: 10px;
@@ -1079,17 +1140,18 @@
     .btn-restart {
       width: 100%;
       margin-top: 18px;
-      background: var(--btn-ghost-bg);
-      border: 1px solid var(--border-strong);
+      background: var(--solid);
+      border: 2px solid var(--line);
       color: var(--text);
-      padding: 15px;
-      border-radius: 15px;
-      font-size: 14px; font-weight: 800; letter-spacing: 0.18em;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px; font-weight: 900; letter-spacing: 0.14em;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: background 0.15s ease, transform 0.12s ease;
+      box-shadow: 4px 4px 0 var(--shadow-col);
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
     }
-    .btn-restart:hover { background: var(--btn-ghost-hover); }
-    .btn-restart:active { transform: scale(0.98); }
+    .btn-restart:hover { background: var(--opt-bg-hover); }
+    .btn-restart:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow-col); }
 
     /* ============================================================
        165 確認視窗
@@ -1104,33 +1166,36 @@
     .modal {
       width: 100%; max-width: 320px;
       background: var(--modal-bg);
-      border: 1px solid var(--border-strong);
-      border-radius: 22px;
+      border: 2px solid var(--line);
+      border-radius: 14px;
       padding: 24px 20px 18px;
       text-align: center;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      box-shadow: 6px 6px 0 var(--shadow-col);
       animation: msg-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2) both;
     }
     .modal-icon {
       width: 54px; height: 54px; margin: 0 auto 13px;
-      border-radius: 50%;
-      background: rgba(52, 211, 153, 0.12);
-      border: 1px solid rgba(52, 211, 153, 0.35);
+      border-radius: 14px;
+      background: #c9f2dd;
+      border: 2px solid var(--line);
       display: flex; align-items: center; justify-content: center;
-      color: var(--accent); font-size: 24px;
+      font-size: 24px;
+      transform: rotate(2deg);
     }
     .modal h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 9px; }
     .modal p { font-size: 12.5px; line-height: 1.8; color: var(--dim); margin-bottom: 18px; }
     .modal-actions { display: flex; gap: 9px; }
     .modal-actions button {
       flex: 1; padding: 12px;
-      border-radius: 13px;
-      font-size: 13.5px; font-weight: 800;
-      transition: transform 0.12s ease, filter 0.15s ease;
+      border-radius: 10px;
+      border: 2px solid var(--line);
+      font-size: 13.5px; font-weight: 900;
+      box-shadow: 3px 3px 0 var(--shadow-col);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
     }
-    .modal-actions button:active { transform: scale(0.97); }
-    .modal-cancel { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--dim); }
-    .modal-confirm { background: linear-gradient(135deg, #3ddc97, #10b981); color: var(--accent-ink); }
+    .modal-actions button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow-col); }
+    .modal-cancel { background: var(--btn-ghost-bg); color: var(--dim); }
+    .modal-confirm { background: #2ecf8f; color: #06231a; }
   </style>
 </head>
 
@@ -1158,8 +1223,8 @@
       <section id="guide-view" class="view">
         <div class="scroll-area">
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v22</span>
-            <div class="hero-badge"><i data-ic="shield-check"></i></div>
+            <span class="ver-chip">v23</span>
+            <div class="hero-badge">🕵️</div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
             <p class="hero-sub">一通深夜來電，一場防詐試煉</p>
@@ -1171,18 +1236,18 @@
 
           <div class="goal-grid">
             <div class="goal-chip goal-sky">
-              <i data-ic="eye"></i><span>辨識警訊</span>
+              <span class="chip-emoji">👀</span><span>辨識警訊</span>
             </div>
             <div class="goal-chip goal-amber">
-              <i data-ic="folder"></i><span>保留證據</span>
+              <span class="chip-emoji">📎</span><span>保留證據</span>
             </div>
             <div class="goal-chip goal-emerald">
-              <i data-ic="phone"></i><span>查證求助</span>
+              <span class="chip-emoji">☎️</span><span>查證求助</span>
             </div>
           </div>
 
           <div class="card">
-            <h2><i data-ic="target"></i>遊戲目標</h2>
+            <h2><span class="h2-emoji">🎯</span>遊戲目標</h2>
             <ul class="guide-list">
               <li>看穿班群截圖、限時動態背書、短影音留言與學長推薦背後的風險。</li>
               <li>守住遊戲帳號密碼、驗證碼、銀行帳戶、提款卡、證件、手機與不明現金。</li>
@@ -1191,7 +1256,7 @@
           </div>
 
           <div class="card">
-            <h2><i data-ic="gamepad"></i>操作方式</h2>
+            <h2><span class="h2-emoji">🎮</span>操作方式</h2>
             <ol class="guide-list numbered">
               <li>選擇詐騙情境後，滑動接聽阿杰的來電。</li>
               <li>在對話下方選擇你的回覆，每個選擇都會影響後續劇情。</li>
@@ -1201,7 +1266,7 @@
           </div>
 
           <div class="card">
-            <h2><i data-ic="shield-alert"></i>防詐3C 口訣</h2>
+            <h2><span class="h2-emoji">🛡️</span>防詐3C 口訣</h2>
             <div class="c3-row">
               <span class="c3-key">冷靜</span>
               <p>不要照對方的節奏走，先停下來想一想。</p>
@@ -1219,7 +1284,7 @@
 
         <div class="guide-footer">
           <button class="btn-primary" onclick="showScenarioSelect()">
-            <i data-ic="play"></i>選擇情境
+            選擇情境 ▶
           </button>
           <p class="research-note">
             研究用途：本遊戲匿名記錄情境類型 scenarioType、遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；不收集姓名、電話或任何可以直接辨識身分的資料。
@@ -1231,8 +1296,8 @@
       <section id="scenario-view" class="view hidden">
         <div class="scroll-area">
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v22</span>
-            <div class="hero-badge"><i data-ic="target"></i></div>
+            <span class="ver-chip">v23</span>
+            <div class="hero-badge">🎯</div>
             <p class="hero-kicker">選擇主線情境</p>
             <h1 class="hero-title">今晚你要拆哪一局？</h1>
             <p class="hero-sub">每次完成一條主線都會形成一筆匿名研究紀錄</p>
@@ -1301,7 +1366,7 @@
           </div>
           <div class="sheet-inner">
             <div id="qte-alert" class="hidden pulse">
-              <i data-ic="clock"></i>請立即回覆
+              ⏱️ 請立即回覆
             </div>
 
             <div id="qte-challenge" class="hidden">
@@ -1366,52 +1431,52 @@
           </div>
 
           <div class="card">
-            <h2><i data-ic="file-text"></i>事件紀錄</h2>
+            <h2><span class="h2-emoji">📄</span>事件紀錄</h2>
             <p id="ending-content" class="end-body"></p>
           </div>
 
           <div class="card">
-            <h2><i data-ic="activity"></i>心理防禦評估</h2>
+            <h2><span class="h2-emoji">🧠</span>心理防禦評估</h2>
             <p id="ending-analysis" class="end-body"></p>
           </div>
 
           <div class="card hidden" id="near-miss-container">
-            <h2><i data-ic="crosshair"></i>差點中招的關鍵</h2>
+            <h2><span class="h2-emoji">🎯</span>差點中招的關鍵</h2>
             <p id="near-miss-text" class="end-body"></p>
           </div>
 
           <div class="card hidden" id="trap-tags-container">
-            <h2><i data-ic="tag"></i>這一局遇到的詐騙手法</h2>
+            <h2><span class="h2-emoji">🏷️</span>這一局遇到的詐騙手法</h2>
             <div id="trap-tags"></div>
           </div>
 
           <div class="card hidden" id="mistake-container">
-            <h2><i data-ic="siren"></i>關鍵失誤回顧</h2>
+            <h2><span class="h2-emoji">🚨</span>關鍵失誤回顧</h2>
             <div id="ending-mistakes"></div>
           </div>
 
           <div class="card hidden" id="advice-container">
-            <h2><i data-ic="alert-triangle"></i>風險點與處理方式</h2>
+            <h2><span class="h2-emoji">⚠️</span>風險點與處理方式</h2>
             <p id="ending-advice" class="end-body"></p>
           </div>
 
           <div class="card hidden" id="path-replay-container">
-            <h2><i data-ic="route"></i>決策路徑回顧</h2>
+            <h2><span class="h2-emoji">🧭</span>決策路徑回顧</h2>
             <div id="path-replay"></div>
           </div>
 
           <div class="card">
-            <h2><i data-ic="info"></i>官方查證工具</h2>
+            <h2><span class="h2-emoji">☎️</span>官方查證工具</h2>
             <p class="end-body">遇到可疑電話、簡訊、交易連結、帳戶或門號要求，先套用防詐3C：冷靜、查證、求助。可以撥打165反詐騙諮詢專線，或自己輸入網址進入 <a href="https://165.npa.gov.tw" target="_blank" rel="noopener">165全民防騙網</a> 查詢；涉及匯款、帳戶或提款時，請改聯絡銀行官方客服，或直接到派出所處理。</p>
           </div>
 
           <div class="card">
-            <h2><i data-ic="file-text"></i>資料與風險說明</h2>
+            <h2><span class="h2-emoji">📋</span>資料與風險說明</h2>
             <p class="end-body" style="font-size:12px;color:var(--faint);">本研究工具會匿名記錄情境類型 scenarioType、遊玩路徑、結局、分數、耗時、狀態分數、蒐證項目、165使用、錯誤類型與壓力操作逾時；使用者代碼僅用來區分同一裝置的遊玩紀錄。遊戲中的法律文字屬於情境化風險提示，不作個案法律判斷；實際遇到類似事件，請向家長、教師、銀行、警方或165確認。</p>
           </div>
 
           <button class="btn-restart" onclick="returnToScenarioSelect()">
-            <i data-ic="target"></i>挑戰其他情境
+            🔁 挑戰其他情境
           </button>
         </div>
       </section>
@@ -1419,7 +1484,7 @@
       <!-- ═══════════ 165 查證確認 ═══════════ -->
       <div id="confirm-165" class="overlay hidden">
         <div class="modal">
-          <div class="modal-icon"><i data-ic="phone"></i></div>
+          <div class="modal-icon">☎️</div>
           <h3>撥打 165 反詐騙專線？</h3>
           <p>165 是警政署的反詐騙諮詢專線。你會把目前的狀況告訴專線人員，停止現在的流程並保留對話紀錄。</p>
           <div class="modal-actions">
@@ -2708,7 +2773,7 @@
       phishing_link: {
         title: '釣魚連結與帳號盜用',
         shortTitle: '釣魚連結',
-        icon: 'message-alert',
+        emoji: '🎣',
         startNode: 'SCN_PHISHING_START',
         summary: '辨識仿冒交易平台、短網址、帳號密碼與簡訊驗證碼陷阱。',
         tags: ['仿冒平台', '帳號密碼', '驗證碼'],
@@ -2717,7 +2782,7 @@
       account_rental: {
         title: '人頭帳戶與提款卡',
         shortTitle: '人頭帳戶',
-        icon: 'id-card',
+        emoji: '💳',
         startNode: 'SCN_ACCOUNT_START',
         summary: '判斷租借帳戶、提款卡、存摺與身分資料要求的金流風險。',
         tags: ['帳戶借用', '提款卡', '證件資料'],
@@ -2726,7 +2791,7 @@
       sim_card: {
         title: '辦門號換現金',
         shortTitle: '辦門號',
-        icon: 'phone',
+        emoji: '📱',
         startNode: 'SCN_SIM_START',
         summary: '看懂手機、門號、合約月租與現金誘惑背後的責任。',
         tags: ['手機合約', '月租費', '現場壓力'],
@@ -2735,7 +2800,7 @@
       cash_mule: {
         title: '現金代收與車手招募',
         shortTitle: '車手招募',
-        icon: 'siren',
+        emoji: '💰',
         startNode: 'SCN_CASH_MULE_START',
         summary: '拆解高報酬跑腿、不明現金、提款與恐嚇服從流程。',
         tags: ['代收現金', '高薪誘惑', '提款風險'],
@@ -3074,12 +3139,11 @@
       document.documentElement.dataset.theme = theme;
       try { localStorage.setItem('game_theme', theme); } catch (e) {}
       setSceneBackground();
-      const icon = theme === 'light' ? 'moon' : 'sun';
       const label = theme === 'light' ? '切換深色模式' : '切換淺色模式';
       ['theme-toggle-float', 'theme-toggle-chat'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.innerHTML = iconSVG(icon);
+        el.textContent = theme === 'light' ? '🌙' : '☀️';
         el.setAttribute('aria-label', label);
         el.title = label;
       });
@@ -3126,7 +3190,7 @@
         button.className = 'scenario-card';
         button.dataset.scenarioType = scenarioType;
         button.innerHTML = `
-          <div class="scenario-icon">${iconSVG(scenario.icon)}</div>
+          <div class="scenario-icon">${scenario.emoji}</div>
           <div>
             <h3>${scenario.title}</h3>
             <p>${scenario.summary}</p>
@@ -3341,11 +3405,11 @@
 
     /* 即時教學回饋卡（對應論文之「即時回饋」設計原則） */
     const TIP_STYLES = {
-      warning:  { cls: 'tip-warning', icon: 'shield-alert', label: '防詐提示' },
-      danger:   { cls: 'tip-danger',  icon: 'siren',        label: '風險警示' },
-      success:  { cls: 'tip-success', icon: 'shield-check', label: '安全行動' },
-      info:     { cls: 'tip-info',    icon: 'info',         label: '小提醒' },
-      evidence: { cls: 'tip-info',    icon: 'folder',       label: '證據保留' }
+      warning:  { cls: 'tip-warning', emoji: '💡', label: '防詐提示' },
+      danger:   { cls: 'tip-danger',  emoji: '🚨', label: '風險警示' },
+      success:  { cls: 'tip-success', emoji: '✅', label: '安全行動' },
+      info:     { cls: 'tip-info',    emoji: '📌', label: '小提醒' },
+      evidence: { cls: 'tip-info',    emoji: '📎', label: '證據保留' }
     };
 
     function appendTipCard(text, type = 'warning', secondText = '') {
@@ -3353,7 +3417,7 @@
       const style = TIP_STYLES[type] || TIP_STYLES.warning;
       const html = `
         <div class="tip ${style.cls} msg-pop">
-          <div class="tip-head">${iconSVG(style.icon)}<span>${style.label}</span></div>
+          <div class="tip-head"><span class="tip-emoji">${style.emoji}</span><span>${style.label}</span></div>
           <p>${text}</p>
           ${secondText ? `<p>${secondText}</p>` : ''}
         </div>`;
@@ -3469,7 +3533,8 @@
       title.textContent = challenge.title || '壓力操作';
       subtitle.textContent = challenge.subtitle || '長按完成冷靜判斷';
       label.textContent = challenge.label || '長按冷靜';
-      iconSlot.innerHTML = iconSVG(challenge.icon);
+      const QTE_EMOJI = { 'ban': '🛑', 'folder': '📁', 'file-x-2': '🛑', 'id-card': '💳', 'audio-lines': '🎙️', 'shield-alert': '🛡️' };
+      iconSlot.textContent = QTE_EMOJI[challenge.icon] || '🛡️';
       fill.style.width = '0%';
       panel.classList.remove('hidden');
 
@@ -3954,12 +4019,12 @@
 
     function classifyEndingTheme(endingId) {
       if (endingId.startsWith('SAFE_EXIT_LATE')) {
-        return { theme: 'end-neutral', label: '驚險脫身', icon: 'alert-circle', sound: 'warn' };
+        return { theme: 'end-neutral', label: '驚險脫身', emoji: '⚠️', sound: 'warn' };
       }
       if (endingId.startsWith('SAFE_') || endingId === 'EARLY_EXIT_IGNORE') {
-        return { theme: 'end-safe', label: '安全結局', icon: 'shield-check', sound: 'success' };
+        return { theme: 'end-safe', label: '安全結局', emoji: '🛡️', sound: 'success' };
       }
-      return { theme: 'end-bad', label: '高風險結局', icon: 'alert-triangle', sound: 'danger' };
+      return { theme: 'end-bad', label: '高風險結局', emoji: '🚨', sound: 'danger' };
     }
 
     function riskLevelSpec(value) {
@@ -3999,7 +4064,7 @@
       view.classList.remove('end-safe', 'end-neutral', 'end-bad');
       view.classList.add(themeSpec.theme);
 
-      document.getElementById('end-icon').innerHTML = iconSVG(themeSpec.icon);
+      document.getElementById('end-icon').textContent = themeSpec.emoji;
       document.getElementById('end-label').innerText = themeSpec.label;
       document.getElementById('ending-title').innerText = ending.title;
       document.getElementById('ending-content').innerText = ending.content;
