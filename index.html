@@ -227,16 +227,6 @@
       transition: box-shadow 0.4s ease;
     }
 
-    #phone-frame::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: calc(var(--safe-top) + 54px);
-      background: linear-gradient(180deg, var(--frame-bg) 0%, var(--frame-bg) 72%, transparent 100%);
-      pointer-events: none;
-      z-index: 190;
-    }
-
     .notch { display: none; }
 
     @media (min-width: 768px) and (min-height: 720px) {
@@ -590,17 +580,33 @@
     }
 
     /* ── 主題切換鈕 ── */
-    .theme-toggle {
+    .theme-slot {
+      position: relative;
+      z-index: 6;
+      min-height: 42px;
+      display: flex;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+    #call-view .theme-slot {
       position: absolute;
       top: calc(var(--safe-top) + 8px);
       left: 14px;
+      min-height: 38px;
+    }
+    #ending-view .theme-slot {
+      min-height: calc(var(--safe-top) + 50px);
+      padding-top: calc(var(--safe-top) + 8px);
+    }
+    .theme-toggle {
+      position: static;
       width: 38px; height: 38px; border-radius: 50%;
       background: var(--solid);
       border: 2px solid var(--line);
       box-shadow: 2px 2px 0 var(--shadow-col);
       display: flex; align-items: center; justify-content: center;
       font-size: 15px; font-weight: 900; color: var(--text);
-      z-index: 260;
+      z-index: 1;
       transition: transform 0.12s ease;
     }
     .theme-toggle:active { transform: scale(0.92); }
@@ -649,7 +655,7 @@
        遊玩介紹（guide-view）
     ============================================================ */
     #guide-view .scroll-area {
-      padding: calc(var(--notch) + var(--safe-top) + 30px) 20px 8px;
+      padding: calc(var(--safe-top) + 8px) 20px 8px;
     }
 
     .guide-hero { text-align: center; margin-bottom: 20px; position: relative; }
@@ -784,7 +790,7 @@
        情境選擇（scenario-view）
     ============================================================ */
     #scenario-view .scroll-area, #summary-view .scroll-area {
-      padding: calc(var(--notch) + var(--safe-top) + 28px) 20px calc(var(--safe-bottom) + 24px);
+      padding: calc(var(--safe-top) + 8px) 20px calc(var(--safe-bottom) + 24px);
     }
     .scenario-title { text-align: center; margin-bottom: 18px; }
     .scenario-title h2 {
@@ -1357,6 +1363,10 @@
     ============================================================ */
     #ending-view .scroll-area { padding: 0 18px calc(var(--safe-bottom) + 26px); }
 
+    #ending-view .theme-slot + .end-hero {
+      padding-top: 12px;
+    }
+
     .end-hero {
       text-align: center;
       padding: calc(var(--notch) + var(--safe-top) + 42px) 20px 26px;
@@ -1558,8 +1568,6 @@
       <div class="notch" aria-hidden="true"></div>
       <div id="scene-bg" aria-hidden="true"></div>
 
-      <button id="theme-toggle-float" class="theme-toggle" type="button" aria-label="切換淺色模式"></button>
-
       <!-- 推播通知 -->
       <div id="push-notification" class="hidden" role="status">
         <div class="push-icon"><i data-ic="message-alert"></i></div>
@@ -1575,6 +1583,9 @@
       <!-- ═══════════ 遊玩介紹 ═══════════ -->
       <section id="guide-view" class="view">
         <div class="scroll-area">
+          <div class="theme-slot">
+            <button id="theme-toggle-float" class="theme-toggle" type="button" aria-label="切換淺色模式"></button>
+          </div>
           <header class="guide-hero fade-in">
             <span class="ver-chip">v26</span>
             <div class="hero-badge">防</div>
@@ -1648,6 +1659,7 @@
       <!-- ═══════════ 情境選擇 ═══════════ -->
       <section id="scenario-view" class="view hidden">
         <div class="scroll-area">
+          <div class="theme-slot"></div>
           <header class="guide-hero fade-in">
             <span class="ver-chip">v26</span>
             <div class="hero-badge">選</div>
@@ -1672,6 +1684,7 @@
 
       <!-- ═══════════ 來電畫面 ═══════════ -->
       <section id="call-view" class="view hidden">
+        <div class="theme-slot"></div>
         <div class="call-card">
           <span class="call-badge pulse">來電中</span>
           <div class="call-avatar-wrap">
@@ -1750,6 +1763,7 @@
       <!-- ═══════════ 結局畫面 ═══════════ -->
       <section id="ending-view" class="view hidden">
         <div class="scroll-area">
+          <div class="theme-slot"></div>
           <header class="end-hero">
             <div class="end-badge"><span id="end-icon"></span></div>
             <p class="end-label" id="end-label">模擬結束</p>
@@ -1851,6 +1865,7 @@
       <!-- ═══════════ 全破總結 ═══════════ -->
       <section id="summary-view" class="view hidden">
         <div class="scroll-area">
+          <div class="theme-slot"></div>
           <header class="guide-hero fade-in">
             <div class="hero-badge">畢</div>
             <p class="hero-kicker">四條主線全部完成</p>
@@ -3822,7 +3837,14 @@
       const view = document.getElementById(viewId);
       if (!view) return;
       view.classList.remove('hidden');
-      document.getElementById('theme-toggle-float')?.classList.toggle('hidden', viewId === 'playing-view');
+      const themeToggle = document.getElementById('theme-toggle-float');
+      const themeSlot = view.querySelector('.theme-slot');
+      if (themeToggle && themeSlot) {
+        themeSlot.appendChild(themeToggle);
+        themeToggle.classList.remove('hidden');
+      } else {
+        themeToggle?.classList.add('hidden');
+      }
     }
 
     /* 場景背景（顏色 → 漸層，依主題切換） */
