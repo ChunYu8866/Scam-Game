@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託 v26｜高中校園社群防詐互動遊戲</title>
+  <title>午夜委託 v27｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v26：主線解鎖、圖鑑與找破綻（單檔自足，雙主題）
+       午夜委託 v27：主線解鎖、圖鑑與找破綻（單檔自足，雙主題）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -1587,7 +1587,7 @@
             <button id="theme-toggle-float" class="theme-toggle" type="button" aria-label="切換淺色模式"></button>
           </div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v26</span>
+            <span class="ver-chip">v27</span>
             <div class="hero-badge">防</div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
@@ -1661,7 +1661,7 @@
         <div class="scroll-area">
           <div class="theme-slot"></div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v26</span>
+            <span class="ver-chip">v27</span>
             <div class="hero-badge">選</div>
             <p class="hero-kicker">選擇主線情境</p>
             <h1 class="hero-title">今晚要處理哪個情境？</h1>
@@ -1675,7 +1675,7 @@
           </div>
 
           <div class="card intro-card">
-            <p>同一個晚上，你會接到四通電話，面對四種詐騙手法。完成一條主線後，系統會解鎖下一條；完成四條主線即可查看總結報告。</p>
+            <p>同一個晚上，你會接到四通電話，面對四種詐騙手法。完成一條主線後，系統會解鎖下一條；完成四條主線即可檢視總結報告。</p>
           </div>
 
           <div class="scenario-grid" id="scenario-list"></div>
@@ -1712,7 +1712,7 @@
       <!-- ═══════════ 聊天畫面 ═══════════ -->
       <section id="playing-view" class="view hidden">
         <header id="chat-header">
-          <button class="hdr-back" aria-label="返回聊天列表">
+          <button class="hdr-back" aria-label="回到聊天清單">
             <i data-ic="chevron-left"></i>聊天
           </button>
           <div class="hdr-id">
@@ -2412,7 +2412,7 @@
             effects: { awareness: 5 },
             evidence: '向電信官方客服查證方案真偽',
             actionType: 'verifyOfficial',
-            hint: '聯絡官方客服，即可核實這項方案是否存在。'
+            hint: '聯絡官方客服，就能確認是否真的有這項方案。'
           })
         ]
       },
@@ -2585,7 +2585,7 @@
       S2_GREED: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '小宇 (語音)',
-        instantTip: '警訊：高額報酬容易使人只計算收益，忽略可能承擔的風險。',
+        instantTip: '警訊：高額報酬容易讓人只想到能賺多少錢，忽略背後可能承擔的風險。',
         text: '爽啦，我就知道你最可靠！錢拿到先抽兩千，剩下轉我戶頭就好。地點傳你了：中山站二號出口旁邊那條巷子，九點半。對方戴黑色鴨舌帽，他不問名字，只核對你的手機末三碼。',
         options: [
           opt('對手機末三碼？搞得跟電影一樣……算了，有兩千塊，出發。', 'S3', {
@@ -3127,7 +3127,7 @@
           postTip: '保留對方要求你說謊的訊息，再向警方求助，可作為你受到指示的相關證據。'
         },
         instantTip: '最高等級警訊：連應付銀行和警察的台詞都幫你準備好，代表這件事本身就是犯罪。',
-        text: '「很好。」K哥傳來下一步：「帶著現金到二二八公園靠公園路的廁所，交給穿灰色連帽的專員。」接著是一張「應答表」：「如果銀行打來，或警察攔查，統一說詞是『買社團比賽用的電腦』。背起來。」',
+        text: '「很好。」K哥傳來下一步：「帶著現金到二二八公園靠公園路的廁所，交給穿灰色連帽的專員。」接著是一張「說詞表」：「如果銀行打來，或警察攔查，統一說詞是『買社團比賽用的電腦』。背起來。」',
         options: [
           opt('買電腦、買電腦……好，我背起來了。', 'S11_SPIRAL', {
             effects: { fear: 1, awareness: -3, risk: 5 },
@@ -3486,7 +3486,7 @@
       '情感勒索': { how: '利用交情、哭訴或「只有你能救我」等說法迫使你答應。', counter: '答應幫忙前，先找另一位可信任的人一起判斷。', ex: '常見案例：盜用好友帳號裝可憐借錢，一晚騙走上萬元。' },
       '假截圖證明': { how: '利用修改或裁切過的截圖，使你相信交易真實。', counter: '截圖無法單獨證明交易；應查證圖片來源與完整紀錄。', ex: '常見案例：使用假匯款截圖，誘使賣家先行出貨。' },
       '社會認同': { how: '以「大家都在做」「學長也有辦」降低你的戒心。', counter: '參與人數不能證明安全；應先確認責任歸屬。', ex: '常見案例：假投資群組中安排成員假裝獲利。' },
-      '低門檻試用': { how: '先安排看似無害的小任務，使你逐漸習慣依照指示行動。', counter: '重新檢視整體流程，確認這些任務最終協助誰完成什麼事。', ex: '常見案例：「幫忙查看 ATM 附近是否有警察」實際上是在把風。' },
+      '低門檻試用': { how: '先安排看似無害的小任務，使你逐漸習慣依照指示行動。', counter: '重新檢視整體流程，確認這些任務最終協助誰完成什麼事。', ex: '常見案例：「幫忙看看 ATM 附近有沒有警察」實際上是在把風。' },
       '小額測試': { how: '先提供小額款項建立信任，再要求你進一步配合。', counter: '收到小額款項後仍須查證；這可能是降低戒心的誘餌。', ex: '常見案例：先匯 500 元「誠意金」，接著要求寄出提款卡。' },
       '高薪誘惑': { how: '以輕鬆、日領與高報酬吸引你，使你忽略工作風險。', counter: '先確認工作內容、報酬來源與責任歸屬是否合理。', ex: '常見案例：「一天三千元的跑腿」實際上是詐騙車手。' },
       '車手招募': { how: '要求款項先進入你的帳戶，再由你到 ATM 提領轉交。', counter: '不要讓不明款項進入帳戶或代為提領；應拒絕並封鎖對方。', ex: '常見案例：學生擔任車手遭逮捕，並面臨民事求償。' },
@@ -3716,7 +3716,7 @@
           next: 'SAFE_EXIT_BLOCK1'
         },
         S_CLASS_GROUP_PRESSURE: {
-          text: '社團群組截圖、限時動態收益圖與學長推薦都不能取代官方查證。不要點開連結；保留截圖後，透過官方入口或 165 確認。',
+          text: '社團群組截圖、限時動態獲利截圖與學長推薦都不能取代官方查證。不要點開連結；保留截圖後，透過官方入口或 165 確認。',
           next: 'SAFE_EXIT_BLOCK1'
         },
         S_PHISHING_LINK: {
@@ -5082,7 +5082,7 @@
       if (nextBtn) {
         const doneN = completedCount();
         if (doneN >= 4) {
-          nextBtn.innerHTML = '查看本次遊戲總結 ▶';
+          nextBtn.innerHTML = '檢視本次遊戲總結 ▶';
           nextBtn.onclick = showSummary;
         } else {
           nextBtn.innerHTML = `挑戰下一條主線（${doneN}/4）▶`;
