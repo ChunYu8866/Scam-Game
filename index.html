@@ -370,6 +370,9 @@
     .av-k   { background: linear-gradient(135deg, #881337, #450a0a); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
     .av-sys { background: linear-gradient(135deg, #374151, #1f2937); color: #d1d5db; }
     .av-mom { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .av-ting { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+    .av-kai { background: linear-gradient(135deg, #f97316, #c2410c); }
+    .av-yu { background: linear-gradient(135deg, #ec4899, #be185d); }
     .av-sr  { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
     /* ── 卡片 ── */
@@ -784,16 +787,17 @@
     }
     .scenario-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
     .sp-bar {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 9px 12px;
       margin-bottom: 12px;
       background: var(--solid);
       border: 2px solid var(--line);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 10px 13px;
       box-shadow: 3px 3px 0 var(--shadow-col);
     }
     .sp-count { font-size: 12px; font-weight: 900; white-space: nowrap; }
-    .sp-dots { display: flex; gap: 5px; flex: 1; }
+    .sp-dots { display: flex; gap: 7px; margin-right: auto; padding-top: 1px; }
     .sp-dot {
       width: 12px; height: 12px;
       border: 1.5px solid var(--line);
@@ -817,17 +821,18 @@
       width: 100%;
       text-align: left;
       border-radius: 10px;
-      padding: 15px;
+      padding: 16px;
       border: 2px solid var(--line);
       background: var(--solid);
       color: var(--text);
       display: grid;
-      grid-template-columns: 46px 1fr auto;
-      align-items: center;
-      gap: 12px;
+      grid-template-columns: 46px minmax(0, 1fr);
+      align-items: start;
+      gap: 14px;
       box-shadow: 4px 4px 0 var(--shadow-col);
       transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
     }
+    .sc-body { min-width: 0; }
     .scenario-card.is-locked {
       opacity: 0.55;
       box-shadow: none;
@@ -838,25 +843,26 @@
     .sc-stars {
       font-style: normal; font-size: 11px;
       color: var(--warn);
-      margin-left: 7px; letter-spacing: 0.12em;
+      letter-spacing: 0.12em;
     }
     .sc-status {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 5px;
-      min-width: 54px;
+      margin-left: auto;
+      display: flex; align-items: center; gap: 7px;
     }
+    .sc-status:empty { display: none; }
     .sc-stamp {
-      font-size: 12px; font-weight: 900; color: #0a8a63;
+      font-size: 11px; font-weight: 900; color: #0a8a63;
       border: 2px dashed rgba(10, 138, 99, 0.65);
-      border-radius: 6px; padding: 3px 8px;
-      transform: rotate(-8deg);
+      border-radius: 6px; padding: 2px 7px;
+      transform: rotate(-4deg);
+      white-space: nowrap;
     }
-    .sc-score { font-size: 10px; font-weight: 700; color: var(--dim); white-space: nowrap; }
+    .sc-score { font-size: 10.5px; font-weight: 700; color: var(--dim); white-space: nowrap; }
     .sc-lock {
-      font-size: 13px; font-weight: 900; color: var(--faint);
+      font-size: 11.5px; font-weight: 900; color: var(--faint);
       border: 2px solid var(--border-strong);
       border-radius: 50%;
-      width: 32px; height: 32px;
+      width: 26px; height: 26px;
       display: flex; align-items: center; justify-content: center;
     }
     .sc-next {
@@ -864,13 +870,14 @@
       background: #ffd23f; color: #1c212e;
       border: 1.5px solid var(--line);
       box-shadow: 2px 2px 0 var(--shadow-col);
-      padding: 3px 8px;
-      transform: rotate(2deg);
+      padding: 2px 8px;
+      transform: rotate(1deg);
       white-space: nowrap;
     }
 
     .summary-row {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 6px 10px;
       background: var(--surface);
       border: 1.5px solid var(--border);
       border-radius: 10px;
@@ -878,7 +885,7 @@
     }
     .summary-row + .summary-row { margin-top: 8px; }
     .summary-row .scenario-icon { width: 34px; height: 34px; font-size: 16px; border-radius: 8px; }
-    .sr-title { font-size: 13px; font-weight: 900; flex: 1; }
+    .sr-title { font-size: 13px; font-weight: 900; flex: 1 1 auto; min-width: 62px; }
     .sr-end { font-size: 11.5px; font-weight: 800; white-space: nowrap; }
     .sr-end.end-safe { color: #0a8a63; }
     .sr-end.end-neutral { color: #a16207; }
@@ -891,6 +898,8 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 22px; font-weight: 900; color: #20242e;
       border: 2px solid var(--line);
+      margin-top: 1px;
+      flex-shrink: 0;
     }
     .scenario-card:nth-child(1) .scenario-icon { background: #cfe7ff; }
     .scenario-card:nth-child(2) .scenario-icon { background: #ffd3d6; }
@@ -899,11 +908,13 @@
     .scenario-card:nth-child(odd) .scenario-icon { transform: rotate(-3deg); }
     .scenario-card:nth-child(even) .scenario-icon { transform: rotate(3deg); }
     .scenario-card h3 {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 5px 8px;
       font-size: 15px; font-weight: 900; letter-spacing: 0.04em;
-      margin-bottom: 5px;
+      margin-bottom: 7px;
     }
     .scenario-card p { font-size: 12.5px; line-height: 1.7; color: var(--body-mid); }
-    .scenario-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .scenario-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
     .scenario-tags span {
       font-size: 10.5px; font-weight: 800; color: var(--text);
       border: 1.5px solid var(--line);
@@ -1018,17 +1029,18 @@
     .hdr-back .ic { font-size: 21px; margin-right: -3px; }
     .hdr-id { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
     .hdr-meta { display: flex; flex-direction: column; min-width: 0; }
-    #header-name { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; }
+    #header-name { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     #header-sub { font-size: 10.5px; color: var(--faint); margin-top: 1px; }
     #header-sub.sub-danger { color: var(--danger-soft); }
-    .hdr-actions { display: flex; align-items: center; gap: 14px; color: var(--info); font-size: 19px; }
+    .hdr-actions { display: flex; align-items: center; gap: 8px; color: var(--info); font-size: 19px; flex-shrink: 0; }
     .btn-165 {
-      font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+      font-size: 11px; font-weight: 900; letter-spacing: 0.03em;
       color: var(--accent);
       border: 1px solid rgba(52, 211, 153, 0.4);
       background: rgba(52, 211, 153, 0.1);
       border-radius: 999px;
-      padding: 5px 11px;
+      padding: 5px 9px;
+      white-space: nowrap;
       transition: transform 0.15s ease, background 0.15s ease;
     }
     .btn-165:active { transform: scale(0.94); background: rgba(52, 211, 153, 0.2); }
@@ -1145,7 +1157,7 @@
     /* 教學提示卡（即時回饋） */
     .tip {
       position: relative;
-      margin: 15px 6px 10px;
+      margin: 17px 6px 11px;
       border-radius: 3px;
       padding: 13px 14px 11px;
       box-shadow: 3px 5px 0 var(--note-shadow);
@@ -1199,7 +1211,7 @@
     .typing-bubble i:nth-child(1) { animation-delay: -0.3s; }
     .typing-bubble i:nth-child(2) { animation-delay: -0.15s; }
 
-    #scroll-anchor { height: 300px; flex-shrink: 0; width: 100%; }
+    #scroll-anchor { height: min(56dvh, 460px); flex-shrink: 0; width: 100%; }
 
     /* 選項面板 */
     #options-area {
@@ -1214,12 +1226,26 @@
       overflow: hidden;
     }
     #options-area.sheet-hidden { transform: translateY(110%); }
+    #options-area.peek { transform: translateY(calc(100% - 41px)); }
+    #options-area.peek #timer-container { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+    #sheet-toggle {
+      display: block;
+      width: 100%;
+      height: 38px;
+      font-size: 11.5px; font-weight: 900;
+      color: var(--dim);
+      letter-spacing: 0.06em;
+      border-bottom: 1px dashed var(--border);
+      background: transparent;
+    }
+    #sheet-toggle:active { color: var(--text); }
     #options-area.pressure { box-shadow: 0 -22px 55px rgba(244, 63, 94, 0.14); border-top-color: rgba(244, 63, 94, 0.3); }
     @media (min-width: 768px) and (min-height: 720px) {
       #options-area { border-radius: 22px 22px 44px 44px; }
     }
 
     #timer-container { width: 100%; height: 3px; background: var(--track); }
+    #timer-container.timer-paused #timer-bar-fill { opacity: 0.35; }
     #timer-bar-fill {
       height: 100%; width: 100%;
       background: linear-gradient(90deg, #fb7185, #ef4444);
@@ -1284,7 +1310,16 @@
       transition: width 0.08s linear;
     }
 
-    #options-container { display: flex; flex-direction: column; gap: 8px; }
+    #options-container {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 38dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+      padding: 2px;
+      margin: -2px;
+    }
+    #options-container::-webkit-scrollbar { display: none; }
     .opt-btn {
       width: 100%;
       background: var(--opt-bg);
@@ -1534,7 +1569,7 @@
           </header>
 
           <div class="card intro-card">
-            <p>你將扮演一名高二學生，剛結束電競社練習，死黨阿杰突然打來求救。這次的詐騙不是陌生簡訊，而是從班群、限時動態、短影音、遊戲帳號交易和同學推薦，一步步滲進你的日常生活。</p>
+            <p>你將扮演一名高二學生。今天晚上，四位朋友的求救電話會接連打來——詐騙不是陌生簡訊，而是從班群、限時動態、短影音、遊戲帳號交易和同學推薦，一步步滲進你的日常生活。</p>
           </div>
 
           <div class="goal-grid">
@@ -1561,7 +1596,7 @@
           <div class="card">
             <h2>操作方式</h2>
             <ol class="guide-list numbered">
-              <li>四條主線依難度解鎖：完成一條，才能挑戰下一條。選好情境後，滑動接聽阿杰的來電。</li>
+              <li>四條主線依難度解鎖：完成一條，才能挑戰下一條。選好情境後，滑動接聽朋友的來電。</li>
               <li>在對話下方選擇你的回覆，每個選擇都會影響後續劇情。</li>
               <li>出現紅色壓力關卡時，依照提示長按按鈕，完成冷靜或停損動作。</li>
               <li>覺得情況可疑時，隨時可以按右上角「165」向反詐騙專線查證。</li>
@@ -1628,10 +1663,10 @@
             <div class="call-ring"></div>
             <div class="call-ring"></div>
             <div class="call-ring"></div>
-            <div class="avatar av-jie xl">杰</div>
+            <div class="avatar av-jie xl" id="call-avatar">杰</div>
           </div>
           <div class="call-id">
-            <h2 class="call-name">阿杰</h2>
+            <h2 class="call-name" id="call-name">阿杰</h2>
             <p id="call-subtitle-text" class="call-status">行動電話 · 同班好友</p>
           </div>
           <div class="call-actions">
@@ -1674,6 +1709,7 @@
           <div id="timer-container" class="hidden">
             <div id="timer-bar-fill" style="width:100%"></div>
           </div>
+          <button id="sheet-toggle" type="button">▼ 收合選項，先看對話</button>
           <div class="sheet-inner">
             <div id="qte-alert" class="hidden pulse">
               請立即回覆！
@@ -1853,7 +1889,7 @@
             <span id="inspect-title">截圖檢視</span>
             <button id="inspect-close" type="button" class="sheet-close">關閉</button>
           </div>
-          <p class="inspect-hint">點一點你覺得可疑的地方，找出藏在圖裡的破綻。</p>
+          <p class="inspect-hint">點一點你覺得可疑的地方，找出藏在圖裡的破綻。檢視期間，限時倒數會先暫停。</p>
           <div id="inspect-doc" class="inspect-doc"></div>
           <p id="inspect-status" class="inspect-status">已找到破綻 0/3</p>
         </div>
@@ -2018,7 +2054,7 @@
           ]
         },
         instantTip: '警訊：截圖、限動、學長掛保證都是「別人說」，不是「查證過」。',
-        text: '阿杰連丟三張截圖：社團小群裡學長貼著「昨天剛出金」的入帳畫面、下面接一整排火焰表情，還有人發限動寫「這平台屌打其他家」。他補一句：「大家都在用欸，你不要害我錯過這單。」',
+        text: '阿杰連丟三張截圖：社團小群裡學長貼著「昨天剛出金」的入帳畫面、下面接一整排火焰表情，還有人發限動寫「這平台屌打其他家」。他補一句：「大家都在用欸，你不要害我錯過這一筆。」',
         options: [
           opt('學長都出金了，應該是真的吧，我看一下流程。', 'S_PHISHING_LINK', {
             effects: { trust: 2, awareness: -2, greed: 1 },
@@ -2082,7 +2118,7 @@
           postTip: '任何頁面、任何人開口要簡訊驗證碼，都可以直接當成詐騙處理。'
         },
         instantTip: '最高等級警訊：簡訊驗證碼就是帳號的鑰匙，真正的客服絕對不會跟你要。',
-        text: '你輸入帳密的下一秒，手機跳出簡訊：【驗證碼 481253，切勿提供他人】。同時頁面彈出紅色視窗：「系統偵測異地登入！請於 60 秒內輸入簡訊驗證碼完成保護，逾時帳號將被凍結。」',
+        text: '你輸入帳密的下一秒，手機跳出簡訊：【驗證碼 481253，切勿提供他人】。同時頁面跳出紅色視窗：「系統偵測異地登入！請於 60 秒內輸入簡訊驗證碼完成保護，逾時帳號將被凍結。」',
         options: [
           opt('帳號要被凍結了！快，輸入481253。', 'S_PHISHING_AFTER', {
             effects: { fear: 2, awareness: -3, risk: 5 },
@@ -2152,7 +2188,7 @@
 
       SCN_ACCOUNT_START: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小廷 (語音)',
         instantTip: '警訊：「租帳戶」「掛帳戶」「學生帳戶乾淨」都是人頭帳戶招募的話術。',
         text: '兄弟，我出事了……我欠學長三千五，他今天直接在社團小群點我名字。他說有個網拍工作室缺「掛帳戶」的人，一本存摺月租兩萬，學生的帳戶最乾淨。我的已經借出去了，他們說再找到一個人，今晚就先撥五千幫我還債……',
         options: [
@@ -2173,7 +2209,7 @@
 
       S_RENT_ACCOUNT_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小廷 (語音)',
         instantTip: '警訊：說是「放著收租金」，其實是要讓來路不明的錢從你的帳戶進出。',
         text: '就是把存摺放著收租金而已啊！工作室說他們做網拍，要「分散收貨款」才不會被課稅。我上個月真的收到兩萬，還請社團喝飲料，你忘了喔？他們現在就缺一本存摺，你那個辦了都沒在用的戶頭剛剛好啊！',
         options: [
@@ -2196,7 +2232,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         instantTip: '警訊：先只要「看起來不重要」的資料、先給一點小錢，這是人頭帳戶詐騙固定的暖身動作。',
-        text: '阿杰把你拉進一個三人小群，「財務-Ken」秒回：「新朋友你好 👋 我們有保障流程：不用先寄卡，先拍存摺封面＋提款卡背面末四碼，系統確認是本人帳戶。明天測試入帳一筆，你看到錢再決定要不要正式合作。」',
+        text: '小廷把你拉進一個三人小群，「財務-Ken」秒回：「新朋友你好 👋 我們有保障流程：不用先寄卡，先拍存摺封面＋提款卡背面末四碼，系統確認是本人帳戶。明天測試入帳一筆，你看到錢再決定要不要正式合作。」',
         options: [
           opt('只是封面跟末四碼，又不是密碼……拍給他好了。', 'S_ACCOUNT_TEST_PAY', {
             effects: { trust: 2, greed: 1, awareness: -2, risk: 5 },
@@ -2236,15 +2272,15 @@
           postTip: '先保留對話再封鎖——之後不管是報案還是幫朋友求助，都用得上。'
         },
         instantTip: '警訊：拿朋友欠的錢逼你交出帳戶，一邊勒索感情、一邊逼你限時決定。',
-        text: '群裡跳出一個新頭像「K哥」：「小朋友，阿杰欠的三千五今晚要結。你那本帳戶點個頭，他的債我直接抹掉，你每個月再收兩萬。不點頭的話——他的事就得用他的方式處理了。給你兩分鐘。」',
+        text: '群裡跳出一個新頭像「K哥」：「小朋友，小廷欠的三千五今晚要結。你那本帳戶點個頭，他的債我直接抹掉，你每個月再收兩萬。不點頭的話——他的事就得用他的方式處理了。給你兩分鐘。」',
         options: [
-          opt('不要動阿杰！……帳戶給你們就是了。', 'BAD_ENDING_RENT_ACCOUNT', {
+          opt('不要動小廷！……帳戶給你們就是了。', 'BAD_ENDING_RENT_ACCOUNT', {
             effects: { fear: 3, trust: 1, awareness: -2, risk: 5 },
             isMistake: true,
             hint: '對方把朋友當成人質，逼你在害怕的時候交出帳戶。',
             educationalType: '人頭帳戶'
           }),
-          opt('拿還債威脅同學？我現在就告訴老師和阿杰的爸媽。', 'SAFE_EXIT_BLOCK2', {
+          opt('拿還債威脅同學？我現在就告訴老師和小廷的爸媽。', 'SAFE_EXIT_BLOCK2', {
             effects: { awareness: 4, fear: 1 },
             evidence: 'K哥威脅訊息截圖',
             actionType: 'evidence',
@@ -2294,7 +2330,7 @@
             actionType: 'evidence',
             hint: '跟家人開口的那一刻，你就已經跳出對方寫好的劇本了。'
           }),
-          opt('可是阿杰還欠著錢……我再想一下好了。', 'S_RENT_ACCOUNT_PRESSURE', {
+          opt('可是小廷還欠著錢……我再想一下好了。', 'S_RENT_ACCOUNT_PRESSURE', {
             effects: { trust: 1, awareness: -1 },
             isMistake: true,
             hint: '心軟拖著不處理，等於把決定權又還給了對方。'
@@ -2306,7 +2342,7 @@
 
       SCN_SIM_START: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '阿凱 (語音)',
         instantTip: '警訊：辦門號、領手機、轉交第三人——合約與帳單只認你的名字。',
         text: '拜託幫我這一次！車站前那間通訊行在跑「學生專案」：用你的名字辦一個門號，現場領新手機，直接轉賣給他們配合的人，你當場拿五千現金！月租他們每個月會匯給你去繳。跆拳社已經有人辦了三個門號，昨天還發限動炫耀新球鞋！',
         options: [
@@ -2328,7 +2364,7 @@
 
       S_SIM_CARD_QUESTION: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '阿凱 (語音)',
         instantTip: '警訊：說不清楚「錢從哪來、出事誰負責」的方案，不是方案，是話術。',
         text: '唉唷，月租他們會匯給你啊，匯到你戶頭你再去繳，等於沒花錢！手機他們拿去賣，門號留著你打電動綁驗證多方便。學生方案審核超鬆，店員都馬知道，不會多問啦。跆拳社那個學長辦了三個門號，也活得好好的啊！',
         options: [
@@ -2369,7 +2405,7 @@
           postTip: '辦門號、領手機、轉交他人——任何一步用你的名字完成，責任都會回到你身上。'
         },
         instantTip: '警訊：資料都填好了、筆已經遞到你面前、門口還有人在等——整個現場都在催你快點簽。',
-        text: '通訊行冷氣很強。櫃檯上早就擺好「學生優惠專案」、一支未拆封的手機和簽名板，店員笑著把筆遞過來：「同學，資料都幫你打好了，簽名就好。」門口一個黑外套男子靠著機車滑手機。阿杰傳訊：「簽完出來，五千馬上到手 💰」',
+        text: '通訊行冷氣很強。櫃檯上早就擺好「學生優惠專案」、一支未拆封的手機和簽名板，店員笑著把筆遞過來：「同學，資料都幫你打好了，簽名就好。」門口一個黑外套男子靠著機車滑手機。阿凱傳訊：「簽完出來，五千馬上到手 💰」',
         options: [
           opt('都走進來了……簽吧，五千先落袋。', 'BAD_ENDING_SIM_CARD', {
             effects: { trust: 2, greed: 2, awareness: -2, risk: 6 },
@@ -2379,7 +2415,7 @@
           opt('我只拿方案DM，今天不簽任何東西。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 4, trust: -1 }
           }),
-          opt('先打給阿杰：「你確定他們每個月真的會匯月租？」', 'S_SIM_CARD_QUESTION', {
+          opt('先打給阿凱：「你確定他們每個月真的會匯月租？」', 'S_SIM_CARD_QUESTION', {
             effects: { trust: 1, awareness: -1 },
             isMistake: true,
             hint: '把問題丟回給勸你的人，只會聽到更完整的說服台詞。'
@@ -2391,7 +2427,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '學長 (LINE)',
         instantTip: '警訊：「本人現身說法」也可能是安排好的一環——他自己可能也還沒踩到帳單。',
-        text: '往車站的路上，一個陌生帳號加你好友：「同學你好，我跆拳社的，阿杰說你在考慮學生專案 👍 我上個月辦了三個門號，現金當場拿，超級順。」附圖是一雙全新的球鞋和三張SIM卡的合照。',
+        text: '往車站的路上，一個陌生帳號加你好友：「同學你好，我跆拳社的，阿凱說你在考慮學生專案 👍 我上個月辦了三個門號，現金當場拿，超級順。」附圖是一雙全新的球鞋和三張SIM卡的合照。',
         options: [
           opt('連學長都親自出來掛保證，應該真的沒問題。', 'S_SIM_CARD_STORE', {
             effects: { trust: 2, awareness: -2 },
@@ -2412,9 +2448,9 @@
 
       S_SIM_GHOST: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
+        speaker: '阿凱 (LINE)',
         instantTip: '警訊：一個關鍵問題就讓對方安靜，代表你問到了不能回答的地方。',
-        text: '訊息顯示已讀。一分鐘、三分鐘、十分鐘——學長沒有回。阿杰趕緊跳出來打圓場：「學長在練習啦！帳單那種小事你問那麼細幹嘛，走啦走啦，店家還在等我們。」',
+        text: '訊息顯示已讀。一分鐘、三分鐘、十分鐘——學長沒有回。阿凱趕緊跳出來打圓場：「學長在練習啦！帳單那種小事你問那麼細幹嘛，走啦走啦，店家還在等我們。」',
         options: [
           opt('問到重點就已讀不回……這一攤我不去了。', 'SAFE_EXIT_BLOCK1', {
             effects: { awareness: 5, trust: -2 },
@@ -2432,7 +2468,7 @@
 
       SCN_CASH_MULE_START: {
         bg: SCENE_IMAGES.STREET_NIGHT,
-        speaker: '阿杰 (語音)',
+        speaker: '小宇 (語音)',
         instantTip: '警訊：路邊交收現金、跑腿費高得離譜、又急著今晚完成——三個警訊同時出現。',
         text: '欸你終於接了！我帳號賣掉了，三萬！但買家說他們工作室「只走現金」，晚上九點半在中山站二號出口交收。我被我媽禁足出不了門，你幫我跑一趟，跑腿費兩千直接從裡面抽！今晚收不到錢，我畢旅尾款就開天窗了，拜託！',
         options: [
@@ -2456,7 +2492,7 @@
 
       S2_DOUBT: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小宇 (語音)',
         instantTip: '警訊：搬出「工作室」「代儲」「大家都這樣」，是在把不合理的事講成很正常。',
         text: '你想太多了啦！買家是專門做代儲的工作室，現金交易是他們的日常好嗎。我帳號都已經移轉過去了，現在收不到錢我直接虧三萬！你只是幫我「拿」一下東西，又不是叫你做壞事。兩千當你的辛苦費！',
         options: [
@@ -2472,7 +2508,7 @@
           opt('把成交畫面截圖傳來，我拿去165或官方平台查。', 'S_CASH_FAKE_VERIFY', {
             effects: { awareness: 1, trust: 1 },
             requiredState: { awareness: { min: 2 } },
-            evidence: '要求阿杰提供交易畫面截圖並準備165查證',
+            evidence: '要求小宇提供交易畫面截圖並準備165查證',
             actionType: 'evidence',
             hint: '要到資料只是第一步，重點是接下來的獨立驗證。'
           })
@@ -2481,9 +2517,9 @@
 
       S_CASH_FAKE_VERIFY: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
+        speaker: '小宇 (LINE)',
         inspect: {
-          label: '阿杰傳來成交畫面的截圖',
+          label: '小宇傳來成交畫面的截圖',
           button: '檢視截圖',
           title: '被裁切過的成交畫面',
           rows: [
@@ -2498,7 +2534,7 @@
         timeLimit: 12,
         timeoutNext: 'S3',
         instantTip: '警訊：被裁切過的截圖，想給你看什麼、不想給你看什麼，都是對方決定的。',
-        text: '截圖傳來了——買家暱稱「收帳號-阿豪」、成交金額 NT$30,000，還有一行紅字：「23:40 前未交付視同棄單，保證金沒收」。但畫面四邊都被裁掉，看不出是哪個平台。阿杰在後面狂催：「看到沒！真的快來不及了啦！」',
+        text: '截圖傳來了——買家暱稱「收帳號-阿豪」、成交金額 NT$30,000，還有一行紅字：「23:40 前未交付視同棄單，保證金沒收」。但畫面四邊都被裁掉，看不出是哪個平台。小宇在後面狂催：「看到沒！真的快來不及了啦！」',
         options: [
           opt('金額和時間都對得上，應該是真的。我出門了。', 'S3', {
             effects: { trust: 2, greed: 1, awareness: -2 },
@@ -2518,7 +2554,7 @@
 
       S2_GREED: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小宇 (語音)',
         instantTip: '警訊：報酬一高，人會先算能賺多少，卻忘了先想會出什麼事。',
         text: '爽啦我就知道你最可靠！錢拿到先抽兩千，剩下轉我戶頭就好。地點傳你了——中山站二號出口旁邊那條巷子，九點半。對方戴黑色鴨舌帽，他不問名字，只核對你的手機末三碼。',
         options: [
@@ -2536,7 +2572,7 @@
 
       S2_HELP: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小宇 (語音)',
         instantTip: '警訊：交收前先立「規矩」，代表對方在避免留下紀錄。',
         text: '嗚嗚你真的是我親兄弟！九點半，中山站二號出口旁的巷子，對方戴黑帽。拿到錢先抽一千，剩下匯我戶頭。啊對了，他們有交代：交收的時候不要講話、不要拍照，這是他們的「規矩」。',
         options: [
@@ -2554,7 +2590,7 @@
 
       S2_REFUSE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小宇 (語音)',
         instantTip: '警訊：後果講得越可怕、時間逼得越緊，就是要讓你覺得「不幫不行」。',
         text: '拜託拜託！你是我最後能求的人了！這三萬要補畢旅尾款跟手機分期，明天沒繳我媽真的會把我手機丟進水裡！兩千當你車馬費，算我跪著求你，十點前一定讓你回家！',
         options: [
@@ -2620,7 +2656,7 @@
         instantTip: '警訊：不准你清點、不准你確認，就是不准你冷靜。',
         text: '男人猛地回頭，帽沿下的眼神狠得像刀：「數什麼數？這附近有『雷』，錢不會少。」他往前逼近一步，壓低聲音：「拿了就走，不要讓我說第二次。」',
         options: [
-          opt('手在抖……但還是把錢收好，準備匯給阿杰。', 'S4', {
+          opt('手在抖……但還是把錢收好，準備匯給小宇。', 'S4', {
             effects: { fear: 2, awareness: -1 },
             isMistake: true,
             hint: '被威嚇之後選擇照做，等於讓恐懼替你做了決定。'
@@ -2656,7 +2692,7 @@
         isRealWorld: true,
         text: '你假裝在回訊息，斜舉手機偷拍了一張。照片裡只有模糊的黑色外套、鴨舌帽，和半個消失在巷口的背影。',
         options: [
-          opt('把照片傳給阿杰：「這人到底是誰？」', 'S3_PHOTO_REPLY', {
+          opt('把照片傳給小宇：「這人到底是誰？」', 'S3_PHOTO_REPLY', {
             effects: { awareness: 1 }
           }),
           opt('越想越毛。錢放回原地，人先撤。', 'SAFE_EXIT_DROP', {
@@ -2667,10 +2703,10 @@
 
       S3_PHOTO_REPLY: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
-        text: '阿杰秒回：「拍什麼啦XD 那是買家那邊的跑腿小弟，正常的！錢到手就好，快匯給我，我真的等到快哭了 🙏」',
+        speaker: '小宇 (LINE)',
+        text: '小宇秒回：「拍什麼啦XD 那是買家那邊的跑腿小弟，正常的！錢到手就好，快匯給我，我真的等到快哭了 🙏」',
         options: [
-          opt('阿杰都說正常了……好吧，帶著錢走。', 'S4', {
+          opt('小宇都說正常了……好吧，帶著錢走。', 'S4', {
             effects: { trust: 2, awareness: -1 },
             isMistake: true,
             hint: '你把「安不安全」的判斷，交給了整件事裡最急著拿到錢的人。'
@@ -2721,7 +2757,7 @@
             isMistake: true,
             hint: '看似旁觀的小任務，實際上已經是犯罪流程的一環。'
           }),
-          opt('拍完這單就收，後面都不接。', 'S5_AJIE', {
+          opt('拍完這一趟就收，後面都不接。', 'S5_AJIE', {
             effects: { greed: 2, trust: 1, awareness: -2, risk: 3 },
             isMistake: true,
             hint: '拿了第一筆錢之後，「收手」會比你想的難很多。'
@@ -2734,16 +2770,16 @@
 
       S4_AJIE_PUSH: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
+        speaker: '小宇 (LINE)',
         instantTip: '警訊：好朋友現身說法，又剛好講中你想要的東西——這是最難拒絕的推坑方式。',
-        text: '阿杰跳出來敲你：「K哥找你了喔！！他們超罩，我這兩週跟著跑了幾單，車馬費比在飲料店站八小時還多。你不是想換新鍵盤？還想存畢旅的錢？這波不跟，真的虧爆。」',
+        text: '小宇跳出來敲你：「K哥找你了喔！！他們超罩，我這兩週跟著跑了幾趟，車馬費比在飲料店站八小時還多。你不是想換新鍵盤？還想存畢旅的錢？這波不跟，真的虧爆。」',
         options: [
           opt('連你都掛保證……好，那到底要做什麼？', 'S5', {
             effects: { trust: 2, greed: 1, awareness: -1 },
             isMistake: true,
             hint: '因為是朋友掛保證，你就沒去想整件事哪裡不合理。'
           }),
-          opt('等等，你都跑好幾單了，怎麼自己還缺三萬？', 'S4B_DOUBT', {
+          opt('等等，你都跑好幾趟了，怎麼自己還缺三萬？', 'S4B_DOUBT', {
             effects: { awareness: 2, trust: -1 }
           })
         ]
@@ -2751,9 +2787,9 @@
 
       S4B_DOUBT: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
+        speaker: '小宇 (LINE)',
         instantTip: '警訊：一個說法要用更多說法去圓，通常代表第一個就是假的。',
-        text: '「我的錢卡在『結算週期』啦，下週才撥！」阿杰打字飛快：「而且他們要多找新人輪著跑，同一個人跑太多次會被銀行盯上。K哥說你反應快，很適合。」',
+        text: '「我的錢卡在『結算週期』啦，下週才撥！」小宇打字飛快：「而且他們要多找新人輪著跑，同一個人跑太多次會被銀行盯上。K哥說你反應快，很適合。」',
         options: [
           opt('結算週期……聽起來滿正式的。好吧，說來聽聽。', 'S5', {
             effects: { trust: 1, greed: 1, awareness: -1 },
@@ -2827,7 +2863,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         instantTip: '警訊：「先跑一筆小額的」是設計好的，目的是讓你跨出第一步。',
-        text: '「謹慎是好事，我欣賞。」K哥回得飛快：「先跑一筆兩萬的測試單，抽六百。流程熟了，要不要接大單你自己決定，我們不勉強。」阿杰也私訊你：「先小額真的比較安心，幫我撐過這週就好 🙏」',
+        text: '「謹慎是好事，我欣賞。」K哥回得飛快：「先跑一筆兩萬的小案子，抽六百。流程熟了，之後要不要接大筆的你自己決定，我們不勉強。」小宇也私訊你：「先小額真的比較安心，幫我撐過這週就好 🙏」',
         options: [
           opt('兩萬……應該還好吧？先跑一次看看。', 'S7', {
             effects: { greed: 2, trust: 1, awareness: -3, risk: 4 },
@@ -2847,9 +2883,9 @@
 
       S5_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (LINE)',
+        speaker: '小宇 (LINE)',
         instantTip: '警訊：朋友拿自己「有賺到錢」來掛保證，是最有效、也最危險的誤導。',
-        text: '阿杰的訊息又插進來：「我上個月跟著跑五筆，賺一萬五！我還發到小帳限動，一堆人私訊問我在哪打工 🔥 這種缺是搶著要的，K哥看我面子才留給你。」',
+        text: '小宇的訊息又插進來：「我上個月跟著跑五筆，賺一萬五！我還發到小帳限動，一堆人私訊問我在哪打工 🔥 這種缺是搶著要的，K哥看我面子才留給你。」',
         options: [
           opt('好，看在你面子上，我要怎麼開始？', 'S7', {
             effects: { greed: 2, trust: 1, awareness: -2 },
@@ -2864,7 +2900,7 @@
 
       S6: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
+        speaker: '小宇 (語音)',
         instantTip: '警訊：不正面回答「合法嗎」，只說「哪那麼容易出事」，答案已經很明顯。',
         text: '唉唷你很煩欸！哪有那麼容易變洗錢啦！我跑了幾筆不是都好好的？真出事K哥會扛，他們有「法務」。你看我現在，是不是活得好好的？放心啦！',
         options: [
@@ -2911,7 +2947,7 @@
           postTip: '遇到要求拍身分證、提款卡或密碼的流程：立刻停止、保留對話、撥165或聯絡銀行官方客服。'
         },
         instantTip: '最高等級警訊：打工兼職卻要身分證和提款卡照片，就是在蒐集你的證件。',
-        text: '【工作室-財務】傳來一張「兼職人員建檔表」：「要撥款給你，財務需要：身分證正反面、學生證，加提款卡正面照。十分鐘內傳齊，明天第一筆單就排你。動作快，這一期缺人缺很兇。」',
+        text: '【工作室-財務】傳來一張「兼職人員建檔表」：「要撥款給你，財務需要：身分證正反面、學生證，加提款卡正面照。十分鐘內傳齊，明天第一筆就排你。動作快，這一期缺人缺很兇。」',
         options: [
           opt('為了明天能開跑……拍了，全部傳過去。', 'S8', {
             effects: { awareness: -3, fear: 1, greed: 1, risk: 5 },
@@ -2982,7 +3018,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         instantTip: '警訊：訊息一則接一則轟炸，就是不給你時間思考和查證。',
-        text: '「還在想？」K哥的訊息一則接一則轟過來：「阿杰為了推薦你，押了自己的信用。」「等下那筆十萬的單，手續費三千，本來是你的。」「照片。現在。」',
+        text: '「還在想？」K哥的訊息一則接一則轟過來：「小宇為了推薦你，押了自己的信用。」「等一下那筆十萬的案子，手續費三千，本來是你的。」「照片。現在。」',
         options: [
           opt('三千要飛了……手忙腳亂把照片傳出去。', 'S8', {
             effects: { fear: 2, greed: 1, awareness: -2, risk: 5 },
@@ -3106,7 +3142,7 @@
             isMistake: true,
             hint: '因為被威脅就照做，只會陷得更深。'
           }),
-          opt('掛掉電話，手抖著打給阿杰求救。', 'S10_AJIE', {
+          opt('掛掉電話，手抖著打給小宇求救。', 'S10_AJIE', {
             effects: { fear: 2, trust: 1 }
           }),
           opt('嚇到腿軟，抓著錢衝進網咖躲起來。', 'BAD_ENDING_HIDE', {
@@ -3125,18 +3161,18 @@
 
       S10_AJIE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
-        speaker: '阿杰 (語音)',
-        instantTip: '警訊：連阿杰自己都嚇成這樣，代表你們需要的是大人和警察，不是互相安慰。',
-        text: '阿杰的聲音也在抖：「你千萬不要報警……他們連我家在哪都知道。我上次說要退，隔天我家信箱就被塞了我的照片。」他哽咽了一下：「把錢交出去就沒事了，真的，就這一次。」',
+        speaker: '小宇 (語音)',
+        instantTip: '警訊：連小宇自己都嚇成這樣，代表你們需要的是大人和警察，不是互相安慰。',
+        text: '小宇的聲音也在抖：「你千萬不要報警……他們連我家在哪都知道。我上次說要退，隔天我家信箱就被塞了我的照片。」他哽咽了一下：「把錢交出去就沒事了，真的，就這一次。」',
         options: [
-          opt('連阿杰都被拿捏住了……我還能怎麼辦，去交錢。', 'S11_SPIRAL', {
+          opt('連小宇都被拿捏住了……我還能怎麼辦，去交錢。', 'S11_SPIRAL', {
             effects: { fear: 3, trust: 1, awareness: -2 },
             isMistake: true,
             hint: '你又一次讓害怕和人情替你做了決定。'
           }),
           opt('我們兩個都被咬住了——所以更要一起報警或撥165。', 'SAFE_EXIT_LATE2', {
             effects: { awareness: 4, fear: 2 },
-            evidence: '阿杰勸阻報警的語音',
+            evidence: '小宇勸阻報警的語音',
             actionType: 'verifyOfficial'
           })
         ]
@@ -3218,7 +3254,7 @@
         title: '結局：亡羊補牢的帳號救援',
         content: '帳號雖然被盜走了，但你在半小時內改掉所有共用密碼、通知平台與好友，並撥打165留下紀錄。對方拿不到更多東西，那則勒索訊息反而成了你報案的證據。',
         analysis: '【防禦力 C 級】\n你在第一關失守，但補救動作快、順序對。被騙之後的處理速度，決定損失會不會繼續擴大。',
-        legal: '【個資與帳號風險】\n帳號與部分個資可能已外流，仍需留意後續遭冒用；你沒有配合對方發送訊息，未涉入加害行為。',
+        legal: '【個資與帳號風險】\n帳號與部分個資可能已外流，仍需留意後續遭冒用；你沒有幫對方傳送訊息，未涉入加害行為。',
         advice: '【警訊】輸入帳密與驗證碼後，帳號被改密並遭勒索。\n【自救】立刻修改其他平台的相同密碼、通知平台客服與好友、保留對話證據，並撥165或報警。',
         psychTrap: '止損心切：越想快點拿回帳號，越容易答應更離譜的要求。'
       },
@@ -3346,6 +3382,7 @@
         title: '釣魚連結與帳號盜用',
         shortTitle: '釣魚連結',
         emoji: '釣',
+        caller: { name: '阿杰', ch: '杰', cls: 'av-jie', relation: '同班好友' },
         order: 1,
         stars: '★',
         startNode: 'SCN_PHISHING_START',
@@ -3357,34 +3394,37 @@
         title: '人頭帳戶與提款卡',
         shortTitle: '人頭帳戶',
         emoji: '帳',
+        caller: { name: '小廷', ch: '廷', cls: 'av-ting', relation: '國中同學' },
         order: 2,
         stars: '★★',
         startNode: 'SCN_ACCOUNT_START',
         summary: '「借我帳戶就好」聽起來無害，但流進來的錢會讓你變成人頭帳戶。',
         tags: ['帳戶借用', '提款卡', '證件資料'],
-        intro: '晚上七點，回家的公車上。你戴著耳機回看今天的練習影片，螢幕上方彈出來電——阿杰，今晚第二通。'
+        intro: '晚上七點，回家的公車上。你戴著耳機回看今天的練習影片，螢幕上方跳出來電——國中同學小廷，今晚第二通。'
       },
       sim_card: {
         title: '辦門號換現金',
         shortTitle: '辦門號',
         emoji: '門',
+        caller: { name: '阿凱', ch: '凱', cls: 'av-kai', relation: '跆拳社同學' },
         order: 3,
         stars: '★★',
         startNode: 'SCN_SIM_START',
         summary: '辦一支手機當場換五千現金？合約上的名字是你的，債也是你的。',
         tags: ['手機合約', '月租費', '現場壓力'],
-        intro: '晚上八點，補習班樓下的超商。你剛買好飯糰準備上樓，手機又開始狂震——還是阿杰。'
+        intro: '晚上八點，補習班樓下的超商。你剛買好飯糰準備上樓，手機又開始狂震——這次是跆拳社的阿凱。'
       },
       cash_mule: {
         title: '現金代收與車手招募',
         shortTitle: '車手招募',
         emoji: '車',
+        caller: { name: '小宇', ch: '宇', cls: 'av-yu', relation: '電競社隊友' },
         order: 4,
         stars: '★★★',
         startNode: 'SCN_CASH_MULE_START',
         summary: '幫忙拿個錢就有兩千跑腿費？小心一步一步變成詐團的車手。',
         tags: ['代收現金', '高薪誘惑', '提款風險'],
-        intro: '晚上九點半，下課後的補習班門口。剛下過雨，路燈把水漬照得發亮。手機今晚第四度響起——阿杰。'
+        intro: '晚上九點半，下課後的補習班門口。剛下過雨，路燈把水漬照得發亮。手機今晚第四度響起——電競社的小宇。'
       }
     };
 
@@ -3650,7 +3690,7 @@
           next: 'SAFE_EXIT_BLOCK1'
         },
         S_PHISHING_LINK: {
-          text: '可疑交易連結不可點擊或登入。自行輸入官方網址、使用官方App，或撥165查證。',
+          text: '可疑的交易連結不要點開、不要登入。自行輸入官方網址、使用官方App，或撥165查證。',
           next: 'SAFE_EXIT_PHISHING'
         },
         S_PHISHING_OTP: {
@@ -3880,14 +3920,17 @@
 
         button.innerHTML = `
           <div class="scenario-icon">${scenario.emoji}</div>
-          <div>
-            <h3>${scenario.title}<em class="sc-stars">${scenario.stars}</em></h3>
+          <div class="sc-body">
+            <h3>
+              <span class="sc-name">${scenario.title}</span>
+              <em class="sc-stars">${scenario.stars}</em>
+              <span class="sc-status">${statusHTML}</span>
+            </h3>
             <p>${unlocked ? scenario.summary : '完成上一條主線後解鎖。'}</p>
             <div class="scenario-tags">
               ${scenario.tags.map(tag => `<span>${tag}</span>`).join('')}
             </div>
-          </div>
-          <div class="sc-status">${statusHTML}</div>`;
+          </div>`;
         if (unlocked) button.addEventListener('click', () => startGame(scenarioType));
         root.appendChild(button);
       });
@@ -4110,6 +4153,9 @@
 
     function getSpeakerSpec(speakerStr = '') {
       if (speakerStr.includes('阿杰')) return { cls: 'av-jie', ch: '杰', sub: '同班好友', danger: false };
+      if (speakerStr.includes('小廷')) return { cls: 'av-ting', ch: '廷', sub: '國中同學', danger: false };
+      if (speakerStr.includes('阿凱')) return { cls: 'av-kai', ch: '凱', sub: '跆拳社同學', danger: false };
+      if (speakerStr.includes('小宇')) return { cls: 'av-yu', ch: '宇', sub: '電競社隊友', danger: false };
       if (speakerStr.includes('K哥')) return { cls: 'av-k', ch: 'K', sub: '未知帳號', danger: true };
       if (speakerStr.includes('黑帽')) return { cls: 'av-k', ch: '？', sub: '未知號碼', danger: true };
       if (speakerStr.includes('客服')) return { cls: 'av-k', ch: '服', sub: '陌生帳號', danger: true };
@@ -4303,14 +4349,26 @@
 
       qteTimeoutNext = timeoutNext;
       const start = Date.now();
-      const end = start + duration * 1000;
+      let end = start + duration * 1000;
+      let prevTick = start;
+
+      function overlayPausing() {
+        return ['inspect-overlay', 'handbook-overlay', 'confirm-165'].some(id => {
+          const el = document.getElementById(id);
+          return el && !el.classList.contains('hidden');
+        });
+      }
 
       function tick() {
         const now = Date.now();
+        const paused = overlayPausing();
+        if (paused) end += (now - prevTick);
+        prevTick = now;
+        container.classList.toggle('timer-paused', paused);
         const remaining = Math.max(0, end - now);
         const percentage = (remaining / (duration * 1000)) * 100;
         bar.style.width = percentage + '%';
-        frame.classList.toggle('ring-danger', remaining < duration * 1000 * 0.35);
+        frame.classList.toggle('ring-danger', !paused && remaining < duration * 1000 * 0.35);
 
         if (remaining > 0) {
           qteAnimationId = requestAnimationFrame(tick);
@@ -4492,6 +4550,9 @@
       renderActionChallenge(node);
       applyPressureUI();
       optionsArea.classList.remove('sheet-hidden');
+      optionsArea.classList.remove('peek');
+      const sheetToggle = document.getElementById('sheet-toggle');
+      if (sheetToggle) sheetToggle.textContent = '▼ 收合選項，先看對話';
       scrollToBottom();
 
       if (node.timeLimit) {
@@ -4674,6 +4735,15 @@
     function showIncomingCall() {
       setView('call-view');
       playSound('ringtone');
+
+      const caller = selectedScenario?.caller || { name: '阿杰', ch: '杰', cls: 'av-jie', relation: '同班好友' };
+      document.getElementById('call-name').textContent = caller.name;
+      const callAv = document.getElementById('call-avatar');
+      callAv.className = 'avatar xl ' + caller.cls;
+      callAv.textContent = caller.ch;
+      const callSub = document.getElementById('call-subtitle-text');
+      if (callSub) callSub.textContent = '行動電話 · ' + caller.relation;
+
       resetCallSlider(false);
 
       if (navigator.vibrate && window.__gameUserInteracted) {
@@ -4767,7 +4837,7 @@
       ];
 
       const rules = [
-        ['情感勒索', /情感勒索|最後一個希望|兄弟|拜託|阿杰/],
+        ['情感勒索', /情感勒索|最後一個希望|兄弟|拜託|阿杰|小廷|阿凱|小宇/],
         ['假截圖證明', /假截圖|截圖|合約|評價|交易畫面/],
         ['社會認同', /很多人|大家|群組|都做過|有借/],
         ['低門檻試用', /試用任務|小任務|只是回報|旁觀/],
@@ -4890,7 +4960,7 @@
       if (lastMistake) {
         message = `最接近掉進陷阱的一步是「${lastMistake.text}」。${lastMistake.hint || '這一步讓你更接近高風險流程。'}`;
       } else if (endingId.startsWith('SAFE_')) {
-        message = '你這一輪沒有明顯踩中高風險選項。關鍵是你沒有把判斷權交給阿杰或K哥。';
+        message = '你這一輪沒有明顯踩中高風險選項。關鍵是你沒有把判斷權交給朋友或K哥。';
       } else if (finalChoice) {
         message = `真正失控的一步是「${finalChoice.text}」。這一步讓事情從懷疑變成實際涉入。`;
       }
@@ -5107,6 +5177,13 @@
 
       document.getElementById('btn-165').addEventListener('click', open165Modal);
       document.getElementById('inspect-close').addEventListener('click', closeInspect);
+      document.getElementById('sheet-toggle').addEventListener('click', () => {
+        const area = document.getElementById('options-area');
+        const peeked = area.classList.toggle('peek');
+        document.getElementById('sheet-toggle').textContent =
+          peeked ? '▲ 顯示選項，繼續作答' : '▼ 收合選項，先看對話';
+        if (peeked) scrollToBottom();
+      });
       document.getElementById('handbook-open').addEventListener('click', openHandbook);
       document.getElementById('handbook-close').addEventListener('click', closeHandbook);
       document.getElementById('modal-cancel-btn').addEventListener('click', close165Modal);
