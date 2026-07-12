@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託 v29｜高中校園社群防詐互動遊戲</title>
+  <title>午夜委託 v30｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v29：主線解鎖、圖鑑與擬真截圖找破綻（單檔自足，雙主題）
+       午夜委託 v30：主線解鎖、圖鑑與擬真截圖找破綻（單檔自足，雙主題）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -535,6 +535,117 @@
       font-size: 12px; font-weight: 900;
       margin-top: 11px;
     }
+
+    /* ── 群組聊天轉傳畫面 ── */
+    .gf-wrap { padding: 9px 10px 10px; }
+    .gf-fwd { display: block; font-size: 10px; color: var(--dim); letter-spacing: 0.05em; margin-bottom: 7px; }
+    .gf-win {
+      background: #f4f6fa;
+      border: 1.5px solid rgba(35, 42, 60, 0.35);
+      border-radius: 9px;
+      overflow: hidden;
+      min-width: 212px;
+    }
+    .gf-head {
+      background: #e8ecf3;
+      color: #26304a;
+      font-size: 11px; font-weight: 900; letter-spacing: 0.04em;
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(35, 42, 60, 0.15);
+    }
+    .gf-row { display: flex; align-items: flex-start; gap: 7px; padding: 7px 10px 2px; }
+    .gf-row:last-child { padding-bottom: 10px; }
+    .gf-av {
+      width: 22px; height: 22px;
+      font-size: 10.5px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .gf-name { display: block; font-size: 10px; color: #7a8398; margin-bottom: 3px; }
+    .gf-bubble {
+      display: inline-block;
+      background: #ffffff;
+      border: 1px solid rgba(35, 42, 60, 0.14);
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 11.5px; color: #26304a; line-height: 1.6;
+    }
+    .gf-reacts { font-size: 10px; color: #7a8398; margin: 4px 0 2px 2px; }
+
+    /* ── 165 模擬通話 ── */
+    .c165-status {
+      font-size: 10.5px; font-weight: 900;
+      color: #0a8a63;
+      border: 1.5px dashed rgba(10, 138, 99, 0.65);
+      border-radius: 6px;
+      padding: 2px 8px;
+      transform: rotate(-3deg);
+    }
+    .c165-log {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 52dvh; overflow-y: auto;
+      margin: 6px 0 12px;
+    }
+    .c165-line {
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 11px;
+      font-size: 12.5px; line-height: 1.7;
+      animation: msg-pop 0.25s ease both;
+    }
+    .c165-line b {
+      display: block;
+      font-size: 10.5px; letter-spacing: 0.06em;
+      margin-bottom: 3px; opacity: 0.75;
+    }
+    .c165-line.op { background: #e7f6ee; color: #14532d; margin-right: 16px; }
+    .c165-line.me { background: #fffdf6; color: #26304a; margin-left: 16px; }
+    .c165-done {
+      display: block; width: 100%;
+      font-size: 13px; font-weight: 900;
+      border: 2px solid var(--line); border-radius: 9px;
+      background: #0e9f6e; color: #ffffff;
+      padding: 11px 0;
+      box-shadow: 3px 3px 0 var(--shadow-col);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .c165-done:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--shadow-col); }
+
+    /* ── 防詐 3C 對照 ── */
+    .c3-row {
+      display: flex; align-items: flex-start; gap: 11px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+    }
+    .c3-row + .c3-row { margin-top: 8px; }
+    .c3-stamp {
+      flex-shrink: 0;
+      width: 34px; height: 34px;
+      border: 2px dashed var(--border-strong);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 900;
+      color: var(--faint);
+      transform: rotate(-6deg);
+      margin-top: 2px;
+    }
+    .c3-row.ok .c3-stamp { color: #0a8a63; border-color: rgba(10, 138, 99, 0.65); }
+    .c3-t { font-size: 13px; font-weight: 900; display: flex; align-items: center; gap: 7px; }
+    .c3-t em {
+      font-style: normal;
+      font-size: 10px; font-weight: 900;
+      border-radius: 5px;
+      padding: 2px 6px;
+      border: 1.5px solid;
+      transform: rotate(-2deg);
+    }
+    .c3-row.ok .c3-t em { color: #0a8a63; border-color: rgba(10, 138, 99, 0.55); background: rgba(52, 211, 153, 0.12); }
+    .c3-row.miss .c3-t em { color: var(--dim); border-color: var(--border-strong); background: transparent; }
+    .c3-d { font-size: 12px; color: var(--dim); line-height: 1.7; margin-top: 4px; }
 
     /* ── 擬真假截圖（找破綻） ── */
     #inspect-notes { display: flex; flex-direction: column; gap: 7px; margin-top: 11px; }
@@ -1321,6 +1432,11 @@
     }
     .typing-bubble i:nth-child(1) { animation-delay: -0.3s; }
     .typing-bubble i:nth-child(2) { animation-delay: -0.15s; }
+    .typing-bubble em {
+      font-style: normal;
+      font-size: 10.5px; color: var(--dim);
+      margin-left: 7px; letter-spacing: 0.05em;
+    }
 
     #scroll-anchor { height: min(56dvh, 460px); flex-shrink: 0; width: 100%; }
 
@@ -1677,7 +1793,7 @@
             <button id="theme-toggle-float" class="theme-toggle" type="button" aria-label="切換淺色模式"></button>
           </div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v29</span>
+            <span class="ver-chip">v30</span>
             <div class="hero-badge">防</div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
@@ -1751,7 +1867,7 @@
         <div class="scroll-area">
           <div class="theme-slot"></div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v29</span>
+            <span class="ver-chip">v30</span>
             <div class="hero-badge">選</div>
             <p class="hero-kicker">選擇主線情境</p>
             <h1 class="hero-title">今晚要處理哪個情境？</h1>
@@ -1910,6 +2026,11 @@
             <div id="good-moves"></div>
           </div>
 
+          <div class="card" id="c3-container">
+            <h2>防詐 3C 對照</h2>
+            <div id="c3-grid"></div>
+          </div>
+
           <div class="card hidden" id="near-miss-container">
             <h2>最接近受騙的環節</h2>
             <p id="near-miss-text" class="end-body"></p>
@@ -2041,6 +2162,18 @@
         </div>
       </div>
 
+      <!-- ═══════════ 165 模擬通話 ═══════════ -->
+      <div id="call-165" class="overlay hidden">
+        <div class="inspect-sheet">
+          <div class="inspect-head">
+            <span>165 反詐騙諮詢專線</span>
+            <span class="c165-status">通話中</span>
+          </div>
+          <div id="call165-log" class="c165-log"></div>
+          <button id="call165-done" class="c165-done hidden" type="button">掛斷，照建議做</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -2161,6 +2294,15 @@
       S_CLASS_GROUP_PRESSURE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿杰 (LINE)',
+        groupFeed: {
+          title: '電競社二軍 ⚡ 小隊群（21）',
+          msgs: [
+            { name: '學長', ch: '學', cls: 'av-sr', text: '昨天申請的出金剛剛到帳，18,000 實拿 💰 截圖放這，要進的把握時間', reacts: '🔥 11　👍 7' },
+            { name: '阿樂', ch: '樂', cls: 'av-kai', text: '太神了吧🔥 我下個月的鍵盤有著落了' },
+            { name: '萱萱', ch: '萱', cls: 'av-yu', text: '（限時動態）這個平台比其他家好用，用過都知道 💯' },
+            { name: '糖糖', ch: '糖', cls: 'av-ting', text: '求連結 +1 +1' }
+          ]
+        },
         inspect: {
           label: '阿杰傳來一張「學長出金紀錄」的截圖',
           button: '檢視截圖',
@@ -2196,7 +2338,7 @@
           ]
         },
         instantTip: '警訊：截圖、限時動態與學長保證都只是他人說法，不能取代查證。',
-        text: '阿杰接連傳來三張截圖：社團小群裡，學長貼出「昨天剛出金」的入帳畫面，下面是一整排火焰表情；還有人發限時動態寫著「這個平台比其他家好用」。他補了一句：「大家都在用，你不要害我錯過這一筆。」',
+        text: '阿杰把社團小群的畫面直接轉傳過來，補了一句：「你自己看，學長都出金了，整個群都在+1。大家都在用，你不要害我錯過這一筆。」',
         options: [
           opt('學長都出金了，應該是真的吧，我看一下流程。', 'S_PHISHING_LINK', {
             effects: { trust: 2, awareness: -2, greed: 1 },
@@ -3973,6 +4115,55 @@
       document.getElementById('confirm-165').classList.add('hidden');
     }
 
+    /* 165 模擬通話：帶入情境與已保存的證據 */
+    const C165_SITUATION = {
+      phishing_link: '我朋友要賣遊戲帳號，買家傳來一個「平台驗證」連結，要我幫忙登入、還要輸入驗證碼……',
+      account_rental: '有人說要「租」我的銀行帳戶走帳，一天八百，還叫我把提款卡寄過去……',
+      sim_card: '朋友揪我去辦手機門號，說門號卡交給公司就能領錢，一張三千……',
+      cash_mule: '朋友要我半夜幫他跟陌生人收三萬現金，說是賣遊戲帳號的貨款……'
+    };
+
+    function start165Call() {
+      const log = document.getElementById('call165-log');
+      const done = document.getElementById('call165-done');
+      log.innerHTML = '';
+      done.classList.add('hidden');
+      document.getElementById('call-165').classList.remove('hidden');
+
+      const situ = C165_SITUATION[selectedScenarioType] || '我遇到一筆怪怪的網路交易，想確認是不是詐騙……';
+      const ev = gameState.collectedEvidence;
+      const evText = ev.length
+        ? ev.slice(0, 4).map(e => '✓ ' + e).join('<br>') + (ev.length > 4 ? `<br>……等 ${ev.length} 項` : '')
+        : '呃……我好像什麼都沒留下。（拿不出來）';
+      const evReply = ev.length
+        ? '很好，這些紀錄很關鍵。全部留著，之後查證或報案都用得上。'
+        : '沒關係，從現在開始補救：對話截圖、對方帳號都記下來，什麼都不要刪。';
+      const advice = getOfficialAdviceForNode();
+
+      const seq = [
+        { who: 'op', text: '165 您好，這裡是反詐騙諮詢專線，請說說你遇到的狀況。' },
+        { who: 'me', text: situ },
+        { who: 'op', text: '了解。你手上有沒有留下對方的帳號、對話紀錄或截圖？' },
+        { who: 'me', text: evText },
+        { who: 'op', text: evReply },
+        { who: 'op', text: advice.text }
+      ];
+
+      let delay = 300;
+      seq.forEach((line, i) => {
+        setTimeout(() => {
+          const div = document.createElement('div');
+          div.className = 'c165-line ' + line.who;
+          div.innerHTML = `<b>${line.who === 'op' ? '165 專員' : '你'}</b>${line.text}`;
+          log.appendChild(div);
+          log.scrollTop = log.scrollHeight;
+          playSound('message');
+          if (i === seq.length - 1) done.classList.remove('hidden');
+        }, delay);
+        delay += 850 + Math.min(line.text.length * 12, 1100);
+      });
+    }
+
     /* ============================================================
        時間與畫面切換
     ============================================================ */
@@ -4433,7 +4624,7 @@
         const layout = `
           <div id="${bubbleId}" class="msg-row in fade-in">
             ${avatarHTML(speaker, true)}
-            <div class="typing-bubble"><i></i><i></i><i></i></div>
+            <div class="typing-bubble"><i></i><i></i><i></i><em>${speaker.includes('(語音)') ? '正在錄音…' : '正在輸入…'}</em></div>
           </div>`;
 
         document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', layout);
@@ -4585,7 +4776,7 @@
       let prevTick = start;
 
       function overlayPausing() {
-        return ['inspect-overlay', 'handbook-overlay', 'confirm-165'].some(id => {
+        return ['inspect-overlay', 'handbook-overlay', 'confirm-165', 'call-165'].some(id => {
           const el = document.getElementById(id);
           return el && !el.classList.contains('hidden');
         });
@@ -4750,6 +4941,32 @@
         await showTypingIndicator(node.speaker);
       }
       appendBubble(node.speaker, node.text, 'incoming', node.isRealWorld);
+
+      if (node.groupFeed) {
+        const gf = node.groupFeed;
+        const rows = gf.msgs.map(m => `
+          <div class="gf-row">
+            <span class="avatar gf-av ${m.cls}">${m.ch}</span>
+            <div>
+              <span class="gf-name">${m.name}</span>
+              <div class="gf-bubble">${m.text}</div>
+              ${m.reacts ? `<div class="gf-reacts">${m.reacts}</div>` : ''}
+            </div>
+          </div>`).join('');
+        const gfHTML = `
+          <div class="msg-row in msg-pop">
+            ${avatarHTML(node.speaker, true)}
+            <div class="bubble in gf-wrap">
+              <span class="gf-fwd">↪ 轉傳的群組畫面</span>
+              <div class="gf-win">
+                <div class="gf-head">${gf.title}</div>
+                ${rows}
+              </div>
+            </div>
+          </div>`;
+        document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', gfHTML);
+        scrollToBottom();
+      }
 
       if (node.instantTip) {
         setTimeout(() => appendTipCard(node.instantTip, 'warning'), 350);
@@ -5183,6 +5400,50 @@
       });
     }
 
+    function renderC3() {
+      const grid = document.getElementById('c3-grid');
+      grid.innerHTML = '';
+      const verifyBits = [];
+      if (gameState.inspectFound > 0) verifyBits.push(`找出截圖破綻 ${gameState.inspectFound} 處`);
+      if (gameState.evidenceCount > 0) verifyBits.push(`保存證據 ${gameState.evidenceCount} 項`);
+      const helped = gameState.usedOfficialCheck ||
+        selectedOptionHistory.some(h => h.actionType === 'verifyOfficial') ||
+        playerPath.includes('S_ACCOUNT_MOM');
+
+      const items = [
+        {
+          word: '冷', title: '冷靜',
+          ok: gameState.qteTimeoutCount === 0,
+          okText: '所有限時關卡都及時做出判斷，沒有被催促帶著走。',
+          noText: `有 ${gameState.qteTimeoutCount} 次因為壓力而逾時。越急的要求，越要先停三秒再動作。`
+        },
+        {
+          word: '查', title: '查證',
+          ok: verifyBits.length > 0,
+          okText: verifyBits.join('、') + '。眼見不一定為憑，你有動手驗證。',
+          noText: '這一局沒有查證動作。下次可以點開截圖找破綻、保留對話和帳號當證據。'
+        },
+        {
+          word: '助', title: '求助',
+          ok: helped,
+          okText: '你向 165 或可信任的大人開口求助，把判斷交給更有經驗的人。',
+          noText: '這一局你全程一個人面對。記住：165、家人和老師隨時都是你的後盾。'
+        }
+      ];
+
+      items.forEach(it => {
+        const row = document.createElement('div');
+        row.className = 'c3-row ' + (it.ok ? 'ok' : 'miss');
+        row.innerHTML = `
+          <span class="c3-stamp">${it.word}</span>
+          <div>
+            <p class="c3-t">${it.title}<em>${it.ok ? '有做到' : '下次補上'}</em></p>
+            <p class="c3-d">${it.ok ? it.okText : it.noText}</p>
+          </div>`;
+        grid.appendChild(row);
+      });
+    }
+
     function renderNearMiss(endingId) {
       const container = document.getElementById('near-miss-container');
       const textEl = document.getElementById('near-miss-text');
@@ -5306,6 +5567,7 @@
       renderPathReplay();
       renderNearMiss(endingId);
       renderGoodMoves();
+      renderC3();
 
       try {
       if (SHEET_URL && !SHEET_URL.includes('請貼上')) {
@@ -5422,6 +5684,10 @@
       document.getElementById('modal-cancel-btn').addEventListener('click', close165Modal);
       document.getElementById('modal-confirm-btn').addEventListener('click', () => {
         close165Modal();
+        start165Call();
+      });
+      document.getElementById('call165-done').addEventListener('click', () => {
+        document.getElementById('call-165').classList.add('hidden');
         useOfficialAdvice();
       });
 
