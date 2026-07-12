@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託 v28｜高中校園社群防詐互動遊戲</title>
+  <title>午夜委託 v29｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v28：主線解鎖、圖鑑與擬真截圖找破綻（單檔自足，雙主題）
+       午夜委託 v29：主線解鎖、圖鑑與擬真截圖找破綻（單檔自足，雙主題）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -554,17 +554,19 @@
       outline: 1.5px dashed rgba(48, 79, 176, 0.5);
       outline-offset: 2px;
       border-radius: 3px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .ms-spot::after {
       content: '？';
-      position: absolute; top: -8px; right: -7px;
-      width: 15px; height: 15px;
+      position: absolute; top: -9px; right: -9px;
+      width: 19px; height: 19px;
       background: #fff;
       border: 1.5px dashed rgba(48, 79, 176, 0.65);
       border-radius: 50%;
       color: #3b5cd0;
-      font-size: 9.5px; font-weight: 900;
-      line-height: 13px; text-align: center;
+      font-size: 11px; font-weight: 900;
+      line-height: 16px; text-align: center;
       z-index: 3;
     }
     .ms-spot.hit-flaw { outline: 2px solid #be123c; background: rgba(255, 205, 214, 0.4); }
@@ -580,16 +582,16 @@
     /* 假截圖 1：出金紀錄 App */
     .ms-status { display: flex; justify-content: space-between; padding: 5px 12px 4px; font-size: 9.5px; color: #69707f; background: #ffffff; letter-spacing: 0.05em; }
     .ms-appbar { display: flex; align-items: center; gap: 9px; background: #ffffff; padding: 9px 12px 10px; border-bottom: 1px solid #e3e7ee; }
-    .ms-logo { display: inline-flex; }
+    .ms-logo { display: inline-flex; padding: 4px; }
     .ms-logo-img { width: 27px; height: 27px; border-radius: 7px; background: #4657d0; color: #fff; font-style: normal; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; filter: blur(1.7px); }
     .ms-appname { font-size: 13px; font-weight: 800; }
     .ms-hero { text-align: center; background: #ffffff; padding: 15px 12px 14px; margin: 10px 10px 0; border-radius: 10px 10px 0 0; }
     .ms-ok-ic { width: 34px; height: 34px; margin: 0 auto 8px; border-radius: 50%; background: #22a06b; color: #fff; font-size: 16px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
     .ms-hero-t { font-size: 12.5px; color: #5c667a; }
     .ms-amt { font-size: 22px; font-weight: 900; margin-top: 3px; }
-    .ms-time { display: inline-block; font-size: 10.5px; color: #8a93a6; margin-top: 8px; padding: 1px 5px; }
+    .ms-time { display: inline-block; font-size: 10.5px; color: #8a93a6; margin-top: 8px; padding: 6px 9px; }
     .ms-list { background: #ffffff; margin: 0 10px; padding: 3px 12px 5px; border-top: 1px dashed #e3e7ee; }
-    .ms-li { display: flex; justify-content: space-between; align-items: center; padding: 8px 3px; font-size: 11.5px; color: #5c667a; border-bottom: 1px solid #eef1f6; }
+    .ms-li { display: flex; justify-content: space-between; align-items: center; padding: 13px 4px; font-size: 11.5px; color: #5c667a; border-bottom: 1px solid #eef1f6; }
     .ms-li:last-child { border-bottom: 0; }
     .ms-li b { color: #232c42; font-weight: 800; }
     .ms-btn { margin: 12px 10px 14px; background: #4657d0; color: #fff; text-align: center; font-weight: 900; font-size: 12.5px; border-radius: 8px; padding: 9px 0; }
@@ -597,29 +599,30 @@
     /* 假截圖 2：被裁切的成交畫面 */
     .ms-cropwrap { background: #ffffff; padding: 17px 20px 7px 14px; }
     .ms-frag { border: 1px solid #dde1ea; background: #fbfcfe; box-shadow: 0 1px 4px rgba(35, 42, 60, 0.12); }
+    .ms-cuttap { display: block; padding: 10px 0 8px; }
     .ms-cut { height: 12px; overflow: hidden; background: #f0f2f7; }
     .ms-cut span { display: block; font-size: 11px; color: #8b93a5; padding: 0 10px; transform: translateY(-6px); }
     .ms-cut-b span { transform: translateY(6px); }
-    .ms-deal { padding: 5px 12px 11px; }
-    .ms-red { font-family: Georgia, 'Times New Roman', PMingLiU, serif; color: #d21f3c; font-size: 11.5px; line-height: 1.55; margin-top: 9px; padding: 2px 3px; }
-    .ms-edge { display: block; height: 15px; margin-top: 7px; }
+    .ms-deal { padding: 8px 12px 13px; }
+    .ms-red { font-family: Georgia, 'Times New Roman', PMingLiU, serif; color: #d21f3c; font-size: 11.5px; line-height: 1.55; margin-top: 11px; padding: 8px 4px 6px; }
+    .ms-edge { display: block; height: 30px; margin-top: 10px; }
     .ms-edge::after { top: -6px; right: 4px; }
 
     /* 假截圖 3：兼職建檔表 */
     .ms-doc { background: #fdfdfb; padding: 14px 14px 12px; }
     .ms-doc-head { display: flex; align-items: center; gap: 11px; border-bottom: 2px solid #2a3040; padding-bottom: 10px; }
-    .ms-logowrap { display: inline-flex; }
+    .ms-logowrap { display: inline-flex; padding: 4px; }
     .ms-doclogo { position: relative; width: 34px; height: 34px; border-radius: 5px; background: #2e5fb8; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .ms-doclogo i { font-style: normal; color: #fff; font-weight: 900; font-size: 16px; filter: blur(1.4px); }
     .ms-doclogo::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px); background-size: 4px 4px; }
     .ms-doc-t { font-size: 14.5px; font-weight: 900; letter-spacing: 0.12em; }
     .ms-doc-s { display: inline-block; font-size: 10.5px; color: #5c6478; margin-top: 4px; }
     .ms-form { padding: 11px 0 3px; }
-    .ms-f { display: flex; align-items: flex-end; gap: 8px; padding: 7px 0; font-size: 11.5px; color: #3c4356; }
+    .ms-f { display: flex; align-items: flex-end; gap: 8px; padding: 10px 0; font-size: 11.5px; color: #3c4356; }
     .ms-f i { flex: 1; border-bottom: 1px solid #9aa1b0; height: 14px; }
     .ms-req { background: #f4f6fa; border: 1px solid #dfe3ec; border-radius: 7px; padding: 9px 11px 10px; margin-top: 7px; }
     .ms-req-t { font-size: 11px; font-weight: 900; letter-spacing: 0.06em; color: #3c4356; margin-bottom: 5px; }
-    .ms-req-i { font-size: 11.5px; color: #3c4356; padding: 3px 2px; }
+    .ms-req-i { font-size: 11.5px; color: #3c4356; padding: 8px 2px; }
     .ms-doc-foot { font-size: 10px; color: #8a90a0; text-align: center; margin-top: 11px; }
 
     .attach-bubble { display: flex; flex-direction: column; gap: 9px; }
@@ -1151,6 +1154,7 @@
       transition: transform 0.15s ease, background 0.15s ease;
     }
     .btn-165:active { transform: scale(0.94); background: rgba(52, 211, 153, 0.2); }
+    .btn-165.locked { opacity: 0.45; filter: grayscale(0.5); }
 
     #chat-history {
       flex: 1;
@@ -1673,7 +1677,7 @@
             <button id="theme-toggle-float" class="theme-toggle" type="button" aria-label="切換淺色模式"></button>
           </div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v28</span>
+            <span class="ver-chip">v29</span>
             <div class="hero-badge">防</div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
@@ -1711,7 +1715,7 @@
               <li>四條主線依難度解鎖：完成一條，才能挑戰下一條。選好情境後，滑動接聽朋友的來電。</li>
               <li>在對話下方選擇你的回覆，每個選擇都會影響後續劇情。</li>
               <li>出現紅色壓力關卡時，依照提示長按按鈕，完成冷靜或停損動作。</li>
-              <li>發現情況可疑時，可按右上角「165」向反詐騙諮詢專線查證。</li>
+              <li>做出第一個選擇後，右上角的「165」查證鈕才會開啟；之後情況可疑時，隨時可以按它求助。</li>
             </ol>
           </div>
 
@@ -1747,7 +1751,7 @@
         <div class="scroll-area">
           <div class="theme-slot"></div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v28</span>
+            <span class="ver-chip">v29</span>
             <div class="hero-badge">選</div>
             <p class="hero-kicker">選擇主線情境</p>
             <h1 class="hero-title">今晚要處理哪個情境？</h1>
@@ -2240,7 +2244,7 @@
       S_PHISHING_OTP: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '系統',
-        timeLimit: 10,
+        timeLimit: 18,
         timeoutNext: 'BAD_ENDING_PHISHING',
         challenge: {
           title: '驗證碼防線',
@@ -2302,7 +2306,7 @@
       S_PHISHING_AFTER: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '系統',
-        timeLimit: 12,
+        timeLimit: 20,
         timeoutNext: 'BAD_ENDING_PHISHING',
         instantTip: '警訊：帳號遭盜用後，對方可能要求你配合其他行動。不要依照指示操作。',
         text: '兩分鐘後，你的遊戲帳號被登出，密碼已遭更改。接著，你的社群小帳收到一則來自「自己帳號」的訊息：「帳號在我們手上。想拿回來？幫我們發三十則廣告私訊給你的好友就歸還。不照做，你跟同學的聊天紀錄就等著被公開。」',
@@ -2394,7 +2398,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         effect: 'shake',
-        timeLimit: 12,
+        timeLimit: 20,
         timeoutNext: 'S_RENT_ACCOUNT_HALF_STEP',
         challenge: {
           title: '封鎖前先留證',
@@ -2528,7 +2532,7 @@
       S_SIM_CARD_STORE: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '系統',
-        timeLimit: 10,
+        timeLimit: 18,
         timeoutNext: 'BAD_ENDING_SIM_CARD',
         challenge: {
           title: '簽約前停手',
@@ -2663,7 +2667,7 @@
           mock: `
             <div class="mock-shot ms-cropwrap">
               <div class="ms-frag">
-                <div class="ms-spot" data-spot="2"><div class="ms-cut"><span>編號 TX-88341　狀態：交易成立</span></div></div>
+                <div class="ms-cuttap ms-spot" data-spot="2"><div class="ms-cut"><span>編號 TX-88341　狀態：交易成立</span></div></div>
                 <div class="ms-deal">
                   <div class="ms-li ms-spot" data-spot="4"><span>買家暱稱</span><b>收帳號-阿豪</b></div>
                   <div class="ms-li ms-spot" data-spot="5"><span>成交金額</span><b>NT$30,000</b></div>
@@ -2683,7 +2687,7 @@
             { kind: 'spot', flaw: false, text: '成交金額：NT$30,000', reveal: '金額誰都打得出來，這不是判斷點。' }
           ]
         },
-        timeLimit: 12,
+        timeLimit: 20,
         timeoutNext: 'S3',
         instantTip: '警訊：被裁切過的截圖，想給你看什麼、不想給你看什麼，都是對方決定的。',
         text: '截圖傳來了。買家暱稱是「收帳號-阿豪」，成交金額為 NT$30,000，另有一行紅字：「23:40 前未交付視同棄單，保證金沒收」。但畫面四邊都被裁掉，看不出是哪個平台。小宇在後面不斷催促：「看到沒！真的快來不及了啦！」',
@@ -2974,6 +2978,8 @@
       S5: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
+        timeLimit: 25,
+        timeoutNext: 'S5_AJIE',
         instantTip: '最高等級警訊：他人款項先進入你的帳戶，再由你提領轉交，正是車手常被要求執行的流程。',
         text: '「我們做遊戲幣和虛擬幣買賣。」K哥傳來一張流程圖：「平台會卡學生金流，所以客戶款項先匯進你的帳戶，你去 ATM 領出來交給專員。每一筆抽 3%，十萬就是三千，一個晚上跑個兩三筆，自己算。」',
         options: [
@@ -3014,6 +3020,8 @@
       S5_SMALL_TEST: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
+        timeLimit: 20,
+        timeoutNext: 'S7',
         instantTip: '警訊：「先跑一筆小額的」是設計好的，目的是讓你跨出第一步。',
         text: '「謹慎是好事，我欣賞。」K哥回得飛快：「先跑一筆兩萬的小案子，抽六百。流程熟了，之後要不要接大筆的你自己決定，我們不勉強。」小宇也私訊你：「先小額真的比較安心，幫我撐過這週就好 🙏」',
         options: [
@@ -3106,14 +3114,14 @@
             { kind: 'spot', flaw: false, text: '聯絡電話：＿＿＿＿＿', reveal: '這裡看起來正常。' }
           ]
         },
-        timeLimit: 12,
+        timeLimit: 20,
         timeoutNext: 'S8_FORCE',
         challenge: {
           title: '證件傳送前停手',
           subtitle: '防詐 3C：冷靜停手，再查證求助',
           label: '長按拒傳證件',
           icon: 'id-card',
-          holdMs: 1500,
+          holdMs: 2200,
           completeText: '停下來。截圖保留要求，證件一張都不傳。',
           completeNext: 'SAFE_EXIT_BLOCK3',
           completeEffects: { awareness: 4, fear: -1, risk: -2 },
@@ -3256,7 +3264,7 @@
       S9: {
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
-        timeLimit: 10,
+        timeLimit: 18,
         timeoutNext: 'S10_THREAT',
         challenge: {
           title: '謊言腳本中斷',
@@ -3294,7 +3302,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (語音)',
         effect: 'shake',
-        timeLimit: 8,
+        timeLimit: 14,
         timeoutNext: 'S11_SPIRAL',
         challenge: {
           title: '恐嚇語音停損',
@@ -3954,6 +3962,11 @@
 
     function open165Modal() {
       if (isTransitioning) return;
+      if (!selectedOptionHistory.length) {
+        playSound('warn');
+        appendTipCard('165 查證鈕會在你做出第一個選擇後開啟。先看看對方怎麼說，再決定要不要求助。');
+        return;
+      }
       document.getElementById('confirm-165').classList.remove('hidden');
     }
     function close165Modal() {
@@ -4719,6 +4732,7 @@
       }
 
       updateChatHeader(node.speaker);
+      document.getElementById('btn-165')?.classList.toggle('locked', selectedOptionHistory.length === 0);
       currentMinutesOffset += Math.floor(Math.random() * 3);
 
       const chatHeader = document.getElementById('chat-header');
