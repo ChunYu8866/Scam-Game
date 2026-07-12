@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>午夜委託 v27｜高中校園社群防詐互動遊戲</title>
+  <title>午夜委託 v28｜高中校園社群防詐互動遊戲</title>
   <meta name="description" content="午夜委託：高中校園防詐互動遊戲。在社群訊息、遊戲帳號交易與同儕壓力情境中，練習冷靜、查證、求助。" />
   <meta property="og:title" content="午夜委託｜高中校園社群防詐互動遊戲" />
   <meta property="og:description" content="在班群、限時動態與遊戲交易情境中，練習辨識可疑連結、帳戶要求與高報酬話術。" />
@@ -13,7 +13,7 @@
 
   <style>
     /* ============================================================
-       午夜委託 v27：主線解鎖、圖鑑與找破綻（單檔自足，雙主題）
+       午夜委託 v28：主線解鎖、圖鑑與擬真截圖找破綻（單檔自足，雙主題）
     ============================================================ */
     :root {
       --bg-page: #05060a;
@@ -535,6 +535,92 @@
       font-size: 12px; font-weight: 900;
       margin-top: 11px;
     }
+
+    /* ── 擬真假截圖（找破綻） ── */
+    #inspect-notes { display: flex; flex-direction: column; gap: 7px; margin-top: 11px; }
+    #inspect-notes:empty { display: none; }
+    .ins-note {
+      border: 1.5px solid var(--line); border-radius: 8px;
+      background: #ffe3e6; color: #8c2f42;
+      font-size: 11.5px; line-height: 1.65;
+      padding: 8px 11px;
+    }
+    .ins-note b { display: block; font-size: 12px; margin-bottom: 2px; }
+    .ins-note.ok { background: #f2f4f8; color: #636d82; }
+
+    .mock-shot { background: #f3f5f9; color: #232c42; font-size: 12px; }
+    .ms-spot {
+      position: relative; cursor: pointer;
+      outline: 1.5px dashed rgba(48, 79, 176, 0.5);
+      outline-offset: 2px;
+      border-radius: 3px;
+    }
+    .ms-spot::after {
+      content: '？';
+      position: absolute; top: -8px; right: -7px;
+      width: 15px; height: 15px;
+      background: #fff;
+      border: 1.5px dashed rgba(48, 79, 176, 0.65);
+      border-radius: 50%;
+      color: #3b5cd0;
+      font-size: 9.5px; font-weight: 900;
+      line-height: 13px; text-align: center;
+      z-index: 3;
+    }
+    .ms-spot.hit-flaw { outline: 2px solid #be123c; background: rgba(255, 205, 214, 0.4); }
+    .ms-spot.hit-flaw::after {
+      content: '破';
+      border: 1.5px solid #be123c; border-radius: 4px;
+      color: #be123c; background: #ffe3e6;
+      transform: rotate(-8deg);
+    }
+    .ms-spot.hit-ok { outline: 2px solid #a5adbd; }
+    .ms-spot.hit-ok::after { content: '－'; border-style: solid; border-color: #a5adbd; color: #7a8398; background: #f2f4f8; }
+
+    /* 假截圖 1：出金紀錄 App */
+    .ms-status { display: flex; justify-content: space-between; padding: 5px 12px 4px; font-size: 9.5px; color: #69707f; background: #ffffff; letter-spacing: 0.05em; }
+    .ms-appbar { display: flex; align-items: center; gap: 9px; background: #ffffff; padding: 9px 12px 10px; border-bottom: 1px solid #e3e7ee; }
+    .ms-logo { display: inline-flex; }
+    .ms-logo-img { width: 27px; height: 27px; border-radius: 7px; background: #4657d0; color: #fff; font-style: normal; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; filter: blur(1.7px); }
+    .ms-appname { font-size: 13px; font-weight: 800; }
+    .ms-hero { text-align: center; background: #ffffff; padding: 15px 12px 14px; margin: 10px 10px 0; border-radius: 10px 10px 0 0; }
+    .ms-ok-ic { width: 34px; height: 34px; margin: 0 auto 8px; border-radius: 50%; background: #22a06b; color: #fff; font-size: 16px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+    .ms-hero-t { font-size: 12.5px; color: #5c667a; }
+    .ms-amt { font-size: 22px; font-weight: 900; margin-top: 3px; }
+    .ms-time { display: inline-block; font-size: 10.5px; color: #8a93a6; margin-top: 8px; padding: 1px 5px; }
+    .ms-list { background: #ffffff; margin: 0 10px; padding: 3px 12px 5px; border-top: 1px dashed #e3e7ee; }
+    .ms-li { display: flex; justify-content: space-between; align-items: center; padding: 8px 3px; font-size: 11.5px; color: #5c667a; border-bottom: 1px solid #eef1f6; }
+    .ms-li:last-child { border-bottom: 0; }
+    .ms-li b { color: #232c42; font-weight: 800; }
+    .ms-btn { margin: 12px 10px 14px; background: #4657d0; color: #fff; text-align: center; font-weight: 900; font-size: 12.5px; border-radius: 8px; padding: 9px 0; }
+
+    /* 假截圖 2：被裁切的成交畫面 */
+    .ms-cropwrap { background: #ffffff; padding: 17px 20px 7px 14px; }
+    .ms-frag { border: 1px solid #dde1ea; background: #fbfcfe; box-shadow: 0 1px 4px rgba(35, 42, 60, 0.12); }
+    .ms-cut { height: 12px; overflow: hidden; background: #f0f2f7; }
+    .ms-cut span { display: block; font-size: 11px; color: #8b93a5; padding: 0 10px; transform: translateY(-6px); }
+    .ms-cut-b span { transform: translateY(6px); }
+    .ms-deal { padding: 5px 12px 11px; }
+    .ms-red { font-family: Georgia, 'Times New Roman', PMingLiU, serif; color: #d21f3c; font-size: 11.5px; line-height: 1.55; margin-top: 9px; padding: 2px 3px; }
+    .ms-edge { display: block; height: 15px; margin-top: 7px; }
+    .ms-edge::after { top: -6px; right: 4px; }
+
+    /* 假截圖 3：兼職建檔表 */
+    .ms-doc { background: #fdfdfb; padding: 14px 14px 12px; }
+    .ms-doc-head { display: flex; align-items: center; gap: 11px; border-bottom: 2px solid #2a3040; padding-bottom: 10px; }
+    .ms-logowrap { display: inline-flex; }
+    .ms-doclogo { position: relative; width: 34px; height: 34px; border-radius: 5px; background: #2e5fb8; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .ms-doclogo i { font-style: normal; color: #fff; font-weight: 900; font-size: 16px; filter: blur(1.4px); }
+    .ms-doclogo::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px); background-size: 4px 4px; }
+    .ms-doc-t { font-size: 14.5px; font-weight: 900; letter-spacing: 0.12em; }
+    .ms-doc-s { display: inline-block; font-size: 10.5px; color: #5c6478; margin-top: 4px; }
+    .ms-form { padding: 11px 0 3px; }
+    .ms-f { display: flex; align-items: flex-end; gap: 8px; padding: 7px 0; font-size: 11.5px; color: #3c4356; }
+    .ms-f i { flex: 1; border-bottom: 1px solid #9aa1b0; height: 14px; }
+    .ms-req { background: #f4f6fa; border: 1px solid #dfe3ec; border-radius: 7px; padding: 9px 11px 10px; margin-top: 7px; }
+    .ms-req-t { font-size: 11px; font-weight: 900; letter-spacing: 0.06em; color: #3c4356; margin-bottom: 5px; }
+    .ms-req-i { font-size: 11.5px; color: #3c4356; padding: 3px 2px; }
+    .ms-doc-foot { font-size: 10px; color: #8a90a0; text-align: center; margin-top: 11px; }
 
     .attach-bubble { display: flex; flex-direction: column; gap: 9px; }
     .attach-label { font-size: 12.5px; color: var(--dim); }
@@ -1587,7 +1673,7 @@
             <button id="theme-toggle-float" class="theme-toggle" type="button" aria-label="切換淺色模式"></button>
           </div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v27</span>
+            <span class="ver-chip">v28</span>
             <div class="hero-badge">防</div>
             <p class="hero-kicker">高中校園社群防詐互動遊戲</p>
             <h1 class="hero-title">午夜委託</h1>
@@ -1661,7 +1747,7 @@
         <div class="scroll-area">
           <div class="theme-slot"></div>
           <header class="guide-hero fade-in">
-            <span class="ver-chip">v27</span>
+            <span class="ver-chip">v28</span>
             <div class="hero-badge">選</div>
             <p class="hero-kicker">選擇主線情境</p>
             <h1 class="hero-title">今晚要處理哪個情境？</h1>
@@ -1919,8 +2005,9 @@
             <span id="inspect-title">截圖檢視</span>
             <button id="inspect-close" type="button" class="sheet-close">關閉</button>
           </div>
-          <p class="inspect-hint">點選可疑之處，找出圖片中的破綻。檢視期間，限時倒數會暫停。</p>
+          <p class="inspect-hint">截圖上有「？」記號的地方都可以點。點一下判斷：這裡是破綻，還是沒問題？檢視期間，限時倒數會暫停。</p>
           <div id="inspect-doc" class="inspect-doc"></div>
+          <div id="inspect-notes"></div>
           <p id="inspect-status" class="inspect-status">已找到破綻 0/3</p>
         </div>
       </div>
@@ -2074,6 +2161,27 @@
           label: '阿杰傳來一張「學長出金紀錄」的截圖',
           button: '檢視截圖',
           title: '社團群瘋傳的出金紀錄',
+          mock: `
+            <div class="mock-shot">
+              <div class="ms-status"><span>03:14</span><span>5G　▮▮▯　47%</span></div>
+              <div class="ms-appbar">
+                <span class="ms-logo ms-spot" data-spot="1"><i class="ms-logo-img">GT</i></span>
+                <span class="ms-appname">電競交易中心</span>
+              </div>
+              <div class="ms-hero">
+                <div class="ms-ok-ic">✓</div>
+                <p class="ms-hero-t">出金成功</p>
+                <p class="ms-amt">NT$18,000</p>
+                <p class="ms-time ms-spot" data-spot="2">2026/07/11 03:12</p>
+              </div>
+              <div class="ms-list">
+                <div class="ms-li ms-spot" data-spot="3"><span>收款人</span><b>user_8891</b></div>
+                <div class="ms-li ms-spot" data-spot="5"><span>出金方式</span><b>銀行轉帳</b></div>
+                <div class="ms-li ms-spot" data-spot="4"><span>手續費</span><b>NT$30</b></div>
+                <div class="ms-li"><span>單號</span><b>GT-2026071103312</b></div>
+              </div>
+              <div class="ms-btn">完成</div>
+            </div>`,
           rows: [
             { kind: 'header', text: '電競交易中心｜出金紀錄' },
             { kind: 'spot', flaw: true, text: '平台標誌：模糊不清', reveal: '官方介面的標誌通常清楚可辨；這種畫質可能是修圖或翻拍留下的痕跡。' },
@@ -2552,6 +2660,20 @@
           label: '小宇傳來成交畫面的截圖',
           button: '檢視截圖',
           title: '被裁切過的成交畫面',
+          mock: `
+            <div class="mock-shot ms-cropwrap">
+              <div class="ms-frag">
+                <div class="ms-spot" data-spot="2"><div class="ms-cut"><span>編號 TX-88341　狀態：交易成立</span></div></div>
+                <div class="ms-deal">
+                  <div class="ms-li ms-spot" data-spot="4"><span>買家暱稱</span><b>收帳號-阿豪</b></div>
+                  <div class="ms-li ms-spot" data-spot="5"><span>成交金額</span><b>NT$30,000</b></div>
+                  <div class="ms-li"><span>交付方式</span><b>現場面交</b></div>
+                  <p class="ms-red ms-spot" data-spot="3">⚠ 23:40 前未交付視同棄單，保證金沒收</p>
+                </div>
+                <div class="ms-cut ms-cut-b"><span>輸入回覆訊息…</span></div>
+              </div>
+              <div class="ms-edge ms-spot" data-spot="1"></div>
+            </div>`,
           rows: [
             { kind: 'header', text: '（一張四邊都被裁掉的交易截圖）' },
             { kind: 'spot', flaw: true, text: '圖片四邊：有明顯的白色裁切痕', reveal: '圖片四邊遭到裁切，平台名稱、網址與完整時間都無法確認。' },
@@ -2952,6 +3074,29 @@
           label: '對方傳來「兼職人員建檔表」',
           button: '檢視表格',
           title: '所謂的兼職建檔表',
+          mock: `
+            <div class="mock-shot ms-doc">
+              <div class="ms-doc-head">
+                <span class="ms-logowrap ms-spot" data-spot="3"><span class="ms-doclogo"><i>宏</i></span></span>
+                <div>
+                  <p class="ms-doc-t">兼職人員建檔表</p>
+                  <p class="ms-doc-s ms-spot" data-spot="2">宏達電商工作室</p>
+                </div>
+              </div>
+              <div class="ms-form">
+                <div class="ms-f ms-spot" data-spot="4"><span>姓名</span><i></i></div>
+                <div class="ms-f ms-spot" data-spot="5"><span>聯絡電話</span><i></i></div>
+                <div class="ms-f"><span>LINE ID</span><i></i></div>
+                <div class="ms-f"><span>可配合時段</span><i></i></div>
+              </div>
+              <div class="ms-req">
+                <p class="ms-req-t">需檢附文件</p>
+                <p class="ms-req-i">・身分證正反面照</p>
+                <p class="ms-req-i">・學生證照</p>
+                <p class="ms-req-i ms-spot" data-spot="1">・提款卡正面照</p>
+              </div>
+              <p class="ms-doc-foot">財務審核通過後 24 小時內撥款</p>
+            </div>`,
           rows: [
             { kind: 'header', text: '兼職人員建檔表' },
             { kind: 'spot', flaw: true, text: '需檢附：提款卡正面照', reveal: '一般工作申請不會要求提款卡照片，這項要求本身就是重大警訊。' },
@@ -3995,13 +4140,50 @@
     /* ── 假截圖找破綻 ── */
     let currentInspect = null;
 
+    function markSpot(el, row) {
+      el.classList.add(row.flaw ? 'hit-flaw' : 'hit-ok');
+      const note = document.createElement('div');
+      note.className = 'ins-note' + (row.flaw ? '' : ' ok');
+      note.innerHTML = `<b>${row.flaw ? '破綻' : '沒問題'}｜${row.text}</b>${row.reveal}`;
+      document.getElementById('inspect-notes').appendChild(note);
+    }
+
     function openInspect(nodeId) {
       const node = STORY[nodeId];
       if (!node || !node.inspect) return;
       currentInspect = { nodeId, cfg: node.inspect };
       document.getElementById('inspect-title').textContent = node.inspect.title || '截圖檢視';
       const doc = document.getElementById('inspect-doc');
+      const notes = document.getElementById('inspect-notes');
       doc.innerHTML = '';
+      notes.innerHTML = '';
+
+      if (node.inspect.mock) {
+        doc.innerHTML = node.inspect.mock;
+        doc.querySelectorAll('[data-spot]').forEach(el => {
+          const idx = parseInt(el.dataset.spot, 10);
+          const row = node.inspect.rows[idx];
+          if (!row || row.kind !== 'spot') return;
+          const key = nodeId + ':' + idx;
+          if (gameState.inspectDone.includes(key)) markSpot(el, row);
+          el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            if (gameState.inspectDone.includes(key)) return;
+            gameState.inspectDone.push(key);
+            if (row.flaw) {
+              gameState.inspectFound = (gameState.inspectFound || 0) + 1;
+              playSound('success');
+            } else {
+              playSound('click');
+            }
+            markSpot(el, row);
+            updateInspectStatus();
+          });
+        });
+        updateInspectStatus();
+        document.getElementById('inspect-overlay').classList.remove('hidden');
+        return;
+      }
 
       node.inspect.rows.forEach((row, idx) => {
         if (row.kind === 'header') {
