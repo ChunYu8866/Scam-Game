@@ -3036,8 +3036,7 @@
 
     #options-area.peek { max-height: none; }
 
-    #options-area.peek #timer-container,
-    #options-area.peek #skip-wait,
+    /* 收合時仍保留倒數條：限時節點若看不到剩餘時間會直接逾時 */
     #options-area.peek .sheet-inner {
       display: none !important;
     }
@@ -3989,7 +3988,8 @@
       [data-ui="retro-software"] .hdr-id .avatar,
       [data-ui="retro-software"] .hdr-meta span:last-child { display: none; }
       [data-ui="retro-software"] .hdr-progress { font-size: 9px; }
-      [data-ui="retro-software"] #sheet-toggle { display: none !important; }
+      /* 選項預設收合後，這顆是唯一的展開入口，短橫向也必須留著 */
+      [data-ui="retro-software"] #sheet-toggle { display: flex !important; }
       [data-ui="retro-software"] #options-area::before { height: 23px; }
       [data-ui="retro-software"] .sheet-inner { padding: 3px; }
       [data-ui="retro-software"] #options-container { max-height: 66px !important; }
@@ -4089,6 +4089,103 @@
     /* 功能表列：45px 按鈕在 47px 列裡會壓到下緣外框 */
     .retro-menu-bar { padding-top: 0; }
     /* ============== v38 對比修正 END ============== */
+
+    /* ================= v39 介面動態 =================
+       全部是裝飾性動畫。刻意不碰選項按鈕的出現方式——反應時間從
+       nodeReadyAt（選項渲染完）起算，動到那裡會讓每一題的 RT 都被墊高。
+       這些規則全部落在 [data-ui="retro-software"] 或 .retro-* 之下，
+       既有的 prefers-reduced-motion 規則會一併關掉。 */
+
+    /* --- 畫面切換：Win95 視窗開啟 --- */
+    @keyframes win95-window-open {
+      from { opacity: 0; transform: scale(0.985) translateY(4px); }
+      to   { opacity: 1; transform: none; }
+    }
+    [data-ui="retro-software"] .view:not(.hidden) > * {
+      animation: win95-window-open 0.14s ease-out both;
+    }
+
+    /* --- 對話框開啟：面板彈出 ＋ Win95 招牌的放大外框 --- */
+    @keyframes win95-panel-open {
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    [data-ui="retro-software"] .overlay:not(.hidden) > * {
+      animation: win95-panel-open 0.15s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+    }
+    @keyframes win95-zoomline {
+      from { opacity: 0.85; transform: scale(0.35); }
+      to   { opacity: 0;    transform: scale(1.02); }
+    }
+    [data-ui="retro-software"] .overlay:not(.hidden)::after {
+      content: "";
+      position: absolute; inset: 10px;
+      border: 2px dotted #ffffff;
+      pointer-events: none;
+      opacity: 0; /* 底線狀態要是隱形的，否則關掉動畫時外框會一直留在畫面上 */
+      animation: win95-zoomline 0.22s ease-out both;
+    }
+
+    /* --- 工作列按鈕閃爍：有新訊息時（Win95 的背景視窗求救訊號） --- */
+    @keyframes win95-task-flash {
+      0%, 49%   { background: var(--window-gray); color: #111111; }
+      50%, 100% { background: var(--title-blue);  color: #ffffff; }
+    }
+    [data-ui="retro-software"] .retro-task-current.is-flashing {
+      animation: win95-task-flash 0.6s 5;
+    }
+
+    /* --- 來電中：標題列與紅色標籤閃爍，補上被拿掉的擴散光圈 --- */
+    @keyframes win95-title-flash {
+      0%, 49%   { background: linear-gradient(90deg, var(--title-blue), var(--title-blue-light)); }
+      50%, 100% { background: linear-gradient(90deg, #6f6f6f, #a0a0a0); }
+    }
+    [data-ui="retro-software"] #call-view:not(.hidden) .call-card::before {
+      animation: win95-title-flash 1s infinite;
+    }
+    @keyframes win95-badge-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.25; } }
+    [data-ui="retro-software"] #call-view:not(.hidden) .call-badge {
+      animation: win95-badge-blink 1s infinite;
+    }
+
+    /* --- 桌面環境：星空閃爍、掃描線緩慢下移、月亮微光 --- */
+    @keyframes win95-twinkle-a { 0%, 100% { opacity: 0.65; } 50% { opacity: 0.32; } }
+    @keyframes win95-twinkle-b { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.72; } }
+    .retro-stars-far  { animation: win95-twinkle-a 5.5s ease-in-out infinite; }
+    .retro-stars-near { animation: win95-twinkle-b 8s ease-in-out infinite; }
+
+    @keyframes win95-scanline-drift { from { background-position: 0 0; } to { background-position: 0 4px; } }
+    .retro-scanline { animation: win95-scanline-drift 6s linear infinite; }
+
+    @keyframes win95-moon-glow {
+      0%, 100% { box-shadow: 0 0 18px rgba(255, 248, 200, 0.42); }
+      50%      { box-shadow: 0 0 27px rgba(255, 248, 200, 0.62); }
+    }
+    .retro-moon { animation: win95-moon-glow 7s ease-in-out infinite; }
+
+    /* --- 工作列時鐘：冒號閃爍 --- */
+    @keyframes win95-colon-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
+    .retro-clock .rc-colon { animation: win95-colon-blink 1.6s infinite; }
+
+    /* --- 桌面捷徑：目前所在位置的圖示輕輕浮動 --- */
+    @keyframes win95-icon-nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+    .retro-shortcut.is-active span { animation: win95-icon-nudge 2.4s ease-in-out infinite; }
+    /* ============== v39 介面動態 END ============== */
+
+    /* --- 回覆選項預設收合：展開鈕變成主要動作，要夠明顯 --- */
+    [data-ui="retro-software"] #sheet-toggle {
+      color: #000080;
+      font-weight: 900;
+    }
+    [data-ui="retro-software"] #options-area.peek #sheet-toggle {
+      background: #dfdfdf;
+    }
+    /* 基礎樣式在收合時把倒數條改成絕對定位，在這個皮膚會壓到「回覆選項」標題列上，
+       改回排版流：標題列 → 倒數條 → 展開鈕 */
+    [data-ui="retro-software"] #options-area.peek #timer-container {
+      position: relative;
+      top: auto; left: auto; right: auto;
+    }
   </style>
 </head>
 
@@ -4108,7 +4205,7 @@
 
       <header id="retro-program-bar" class="retro-program-bar">
         <span class="retro-program-icon" aria-hidden="true">🕵</span>
-        <strong>午夜委託 - MIDNIGHT COMMISSION v38</strong>
+        <strong>午夜委託 - MIDNIGHT COMMISSION v40</strong>
         <span class="retro-window-controls" aria-hidden="true"><i>_</i><i>□</i><i>×</i></span>
       </header>
 
@@ -4322,17 +4419,17 @@
         </div>
 
         <div id="play-flow">
-        <div id="chat-history">
+        <div id="chat-history" role="log" aria-live="polite" aria-relevant="additions" aria-label="對話訊息">
           <div id="scroll-anchor"></div>
         </div>
 
+        <button id="skip-wait" class="answer-fallback hidden" type="button">顯示完整訊息</button>
         <div id="options-area" class="sheet-hidden">
           <div id="timer-container" class="hidden">
             <div id="timer-bar-fill" style="width:100%"></div>
             <span id="timer-seconds">0 秒</span>
           </div>
           <button id="sheet-toggle" type="button">▼ 收合選項，先看對話</button>
-          <button id="skip-wait" class="answer-fallback hidden" type="button">顯示完整訊息</button>
           <div class="sheet-inner">
             <div id="state-consequence" role="status" aria-live="polite"></div>
             <div id="qte-alert" class="hidden pulse">
@@ -4548,7 +4645,7 @@
         </div>
       </section>
 
-      <div id="inspect-overlay" class="overlay hidden">
+      <div id="inspect-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="inspect-title">
         <div class="inspect-sheet">
           <div class="inspect-head">
             <span id="inspect-title">截圖檢視</span>
@@ -4562,10 +4659,10 @@
         </div>
       </div>
 
-      <div id="handbook-overlay" class="overlay hidden">
+      <div id="handbook-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="handbook-heading">
         <div class="inspect-sheet">
           <div class="inspect-head">
-            <span>詐騙手法圖鑑 <em id="handbook-count" class="hb-count">0/15</em></span>
+            <span id="handbook-heading">詐騙手法圖鑑 <em id="handbook-count" class="hb-count">0/15</em></span>
             <button id="handbook-close" type="button" class="sheet-close">關閉</button>
           </div>
           <p class="inspect-hint">劇情中出現的詐騙手法會自動收錄。選擇不同路徑，可收集更多項目。</p>
@@ -4595,10 +4692,10 @@
         </div>
       </div>
 
-      <div id="confirm-165" class="overlay hidden">
+      <div id="confirm-165" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-165-title">
         <div class="modal">
           <div class="modal-icon">165</div>
-          <h3>撥打 165 反詐騙專線？</h3>
+          <h3 id="confirm-165-title">撥打 165 反詐騙專線？</h3>
           <p>165 是警政署的反詐騙諮詢專線。撥打之後，你會把目前的狀況告訴專線人員，停下眼前的流程，並保留對話紀錄。</p>
           <div class="modal-actions">
             <button class="modal-cancel" id="modal-cancel-btn">再想想</button>
@@ -4607,10 +4704,22 @@
         </div>
       </div>
 
-      <div id="call-165" class="overlay hidden">
+      <div id="retro-confirm" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="retro-confirm-title" aria-describedby="retro-confirm-text">
+        <div class="modal">
+          <div class="modal-icon" id="retro-confirm-icon" aria-hidden="true">？</div>
+          <h3 id="retro-confirm-title">確認</h3>
+          <p id="retro-confirm-text"></p>
+          <div class="modal-actions">
+            <button class="modal-cancel" id="retro-confirm-cancel" type="button">取消</button>
+            <button class="modal-confirm" id="retro-confirm-ok" type="button">確定</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="call-165" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="call-165-title">
         <div class="inspect-sheet">
           <div class="inspect-head">
-            <span>165 反詐騙諮詢專線</span>
+            <span id="call-165-title">165 反詐騙諮詢專線</span>
             <span class="c165-status">通話中</span>
           </div>
           <div id="call165-log" class="c165-log"></div>
@@ -6570,8 +6679,8 @@
     /* ============================================================
        研究記錄設定（v34 UI：沿用 schema 2.0.0，可配對、可續玩、可重試、可匯出）
     ============================================================ */
-    const GAME_VERSION = 'v38';
-    const gameVersion = 'v38';
+    const GAME_VERSION = 'v40';
+    const gameVersion = 'v40';
     const SCHEMA_VERSION = '2.1.0';
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycby39S9dN4lQQ1_voJlX5Qh_xt0wn5cZF9e6GSLrCuOsokuuDIVybo6bO33p2ukebitXSQ/exec';
     const URL_PARAMS = new URLSearchParams(window.location.search);
@@ -6599,6 +6708,7 @@
     let currentAttemptNo = 0;
     let runStartedAt = '';
     let nodeReadyAt = 0;
+    let nodeReadyAwayMark = 0;
     let passiveWaitMs = 0;
     let pendingSafeEndingId = '';
     let currentHotlineNodeId = '';
@@ -6606,6 +6716,30 @@
     let soundEnabled = APP_CONFIG.mode !== 'study';
     let skipWaitResolve = null;
     let callFallbackTimer = null;
+    let taskFlashTimer = null;
+    // 分頁切到背景時 requestAnimationFrame 會停，但 Date.now() 照走。
+    // 不補償的話，玩家切出去再回來會在第一個 tick 就被判逾時。
+    let hiddenSince = 0;
+    let totalHiddenMs = 0;      // 整場累計的離開時間，用來校正反應時間
+    let pendingTimerExtendMs = 0;  // 尚未補進倒數的離開時間
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        hiddenSince = Date.now();
+        return;
+      }
+      if (!hiddenSince) return;
+      const away = Date.now() - hiddenSince;
+      hiddenSince = 0;
+      totalHiddenMs += away;
+      pendingTimerExtendMs += away;
+    }
+
+    function awayMsSince(mark) {
+      // 若此刻仍在背景，把還沒結算的那段也算進去
+      const live = hiddenSince ? Date.now() - hiddenSince : 0;
+      return Math.max(0, totalHiddenMs + live - mark);
+    }
 
     function safeJsonParse(raw, fallback) {
       try { return raw ? JSON.parse(raw) : fallback; } catch (e) { return fallback; }
@@ -6740,13 +6874,15 @@
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `午夜委託_研究資料_v38_${Date.now()}.json`;
+      link.download = `午夜委託_研究資料_v40_${Date.now()}.json`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(link.href), 1000);
     }
 
-    function clearResearchData() {
-      if (!window.confirm('確定清除這台裝置的研究紀錄、待送資料與遊戲進度？此動作無法復原。')) return;
+    async function clearResearchData() {
+      const go = await retroConfirm('確定清除這台裝置的研究紀錄、待送資料與遊戲進度？此動作無法復原。',
+        { title: '清除研究資料', ok: '確定清除', cancel: '取消', icon: '！' });
+      if (!go) return;
       [RESEARCH_QUEUE_KEY, RESEARCH_ARCHIVE_KEY, 'game_uid'].forEach(key => localStorage.removeItem(key));
       [ACTIVE_RUN_KEY, STUDY_IDENTITY_KEY, 'game_progress', 'game_handbook'].forEach(key => sessionStorage.removeItem(key));
       progressState = { scoreVersion: SCORE_MODEL.version, completed: {}, attempts: {} };
@@ -6987,10 +7123,17 @@
       try { sessionStorage.removeItem(ACTIVE_RUN_KEY); } catch (e) {}
     }
 
-    function resumeActiveRun() {
+    function hasActiveRun() {
+      const saved = safeJsonParse(sessionStorage.getItem(ACTIVE_RUN_KEY), null);
+      return Boolean(saved?.currentRunId && saved?.selectedScenarioType && STORY[saved.currentNodeId]);
+    }
+
+    async function resumeActiveRun() {
       const saved = safeJsonParse(sessionStorage.getItem(ACTIVE_RUN_KEY), null);
       if (!saved?.currentRunId || !saved?.selectedScenarioType || !STORY[saved.currentNodeId]) return false;
-      if (!window.confirm('偵測到未完成的遊戲。要從上次中斷的位置繼續嗎？')) {
+      const go = await retroConfirm('偵測到未完成的遊戲。要從上次中斷的位置繼續嗎？',
+        { title: '接續上次進度', ok: '繼續上次的', cancel: '重新開始', icon: '？' });
+      if (!go) {
         const incompletePayload = buildResearchPayload('', null, 'incomplete', saved);
         queueResearchRecord(incompletePayload);
         clearActiveRun();
@@ -7013,8 +7156,25 @@
       studyIdentity = saved.studyIdentity || studyIdentity;
       setView('playing-view');
       prepareChatView();
+      replayConversation();
       renderNode(currentNodeId);
       return true;
+    }
+
+    // 續玩時只 render 當前節點的話，玩家會看不到前文。用已存的選擇紀錄把對話補回來。
+    function replayConversation() {
+      if (!selectedOptionHistory.length) return;
+      const anchor = document.getElementById('scroll-anchor');
+      if (!anchor) return;
+      anchor.insertAdjacentHTML('beforebegin',
+        '<div class="sys-row"><div class="sys-msg">以下是你上次中斷前的對話</div></div>');
+      selectedOptionHistory.forEach(step => {
+        const node = STORY[step.from];
+        if (node?.text) appendBubble(node.speaker || '', node.text, 'incoming', Boolean(node.isRealWorld));
+        if (step.text) appendBubble('我', step.text, 'outgoing');
+      });
+      anchor.insertAdjacentHTML('beforebegin',
+        '<div class="sys-row"><div class="sys-msg">— 從這裡繼續 —</div></div>');
     }
 
     window.addEventListener('beforeunload', event => {
@@ -7359,10 +7519,12 @@
       currentHotlineNodeId = currentNodeId;
       recordEvent('hotline_open', { risk: gameState.risk });
       document.getElementById('confirm-165').classList.remove('hidden');
+      onDialogOpened('confirm-165');
     }
     function close165Modal(recordCancel = true) {
       if (recordCancel && !document.getElementById('confirm-165').classList.contains('hidden')) recordEvent('hotline_cancel', { risk: gameState.risk });
       document.getElementById('confirm-165').classList.add('hidden');
+      onDialogClosed('confirm-165');
     }
 
     const C165_SITUATION = {
@@ -7378,6 +7540,7 @@
       log.innerHTML = '';
       done.classList.add('hidden');
       document.getElementById('call-165').classList.remove('hidden');
+      onDialogOpened('call-165');
 
       const situ = C165_SITUATION[selectedScenarioType] || '我遇到一筆怪怪的網路交易，想確認是不是詐騙……';
       const ev = gameState.collectedEvidence;
@@ -7445,7 +7608,11 @@
       if (!clock) return;
       const now = new Date();
       const text = now.toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit', hour12:false });
-      clock.textContent = text;
+      clock.replaceChildren(
+        document.createTextNode(text.slice(0, text.indexOf(':'))),
+        Object.assign(document.createElement('span'), { className: 'rc-colon', textContent: ':' }),
+        document.createTextNode(text.slice(text.indexOf(':') + 1))
+      );
       clock.dateTime = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
     }
 
@@ -7712,6 +7879,7 @@
 
       updateInspectStatus();
       document.getElementById('inspect-overlay').classList.remove('hidden');
+      onDialogOpened('inspect-overlay');
     }
 
     function inspectFlawStats() {
@@ -7732,6 +7900,7 @@
 
     function closeInspect() {
       document.getElementById('inspect-overlay').classList.add('hidden');
+      onDialogClosed('inspect-overlay');
       if (!currentInspect) return;
       const st = inspectFlawStats();
       recordEvent('inspect_close', { found: st.found, total: st.total }, currentInspect.nodeId);
@@ -7745,10 +7914,87 @@
       currentInspect = null;
     }
 
-    function finishInspect() {
+    async function finishInspect() {
       const st = inspectFlawStats();
-      if (st.found < st.total && !window.confirm(`還有 ${st.total - st.found} 處破綻沒找到。確定要結束檢視嗎？`)) return;
+      if (st.found < st.total) {
+        const go = await retroConfirm(`還有 ${st.total - st.found} 處破綻沒找到。確定要結束檢視嗎？`,
+          { title: '截圖檢視', ok: '結束檢視', cancel: '再看一下', icon: '！' });
+        if (!go) return;
+      }
       closeInspect();
+    }
+
+    // 通用對話框處理：記住來源焦點、把焦點移進去、Tab 不跑出去、Esc 關閉。
+    // 原本只有「遊戲說明」有做，其餘四個 overlay 都沒有。
+    const DIALOGS = {
+      'inspect-overlay': { focus: 'inspect-close', close: () => finishInspect() },
+      'handbook-overlay': { focus: 'handbook-close', close: () => closeHandbook() },
+      'confirm-165': { focus: 'modal-cancel-btn', close: () => close165Modal() },
+      'call-165': { focus: 'call165-done', close: null },
+      'retro-confirm': { focus: 'retro-confirm-cancel', close: () => retroConfirmResolve?.(false) }
+    };
+    const dialogReturnFocus = {};
+
+    function focusableIn(root) {
+      return [...root.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+        .filter(el => !el.disabled && el.getClientRects().length);
+    }
+
+    function onDialogOpened(id) {
+      const el = document.getElementById(id);
+      if (!el || el.classList.contains('hidden')) return;
+      dialogReturnFocus[id] = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      const preferred = document.getElementById(DIALOGS[id]?.focus || '');
+      const target = (preferred && preferred.getClientRects().length) ? preferred : focusableIn(el)[0];
+      target?.focus();
+    }
+
+    function onDialogClosed(id) {
+      dialogReturnFocus[id]?.focus();
+      dialogReturnFocus[id] = null;
+    }
+
+    function handleDialogKeydown(event) {
+      if (event.key !== 'Escape' && event.key !== 'Tab') return;
+      const open = Object.keys(DIALOGS)
+        .map(id => document.getElementById(id))
+        .filter(el => el && !el.classList.contains('hidden'));
+      if (!open.length) return;
+      const dialog = open[open.length - 1];
+      if (event.key === 'Escape') {
+        const spec = DIALOGS[dialog.id];
+        if (!spec?.close) return;      // 通話中／確認框要玩家自己選，不給 Esc 逃走
+        event.preventDefault();
+        spec.close();
+        return;
+      }
+      const list = focusableIn(dialog);
+      if (!list.length) return;
+      const first = list[0], last = list[list.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+
+    // ---------- D. Win95 風格的確認框，取代原生 window.confirm ----------
+    let retroConfirmResolve = null;
+    function retroConfirm(text, { title = '確認', ok = '確定', cancel = '取消', icon = '？' } = {}) {
+      const overlay = document.getElementById('retro-confirm');
+      if (!overlay) return Promise.resolve(window.confirm(text));
+      document.getElementById('retro-confirm-title').textContent = title;
+      document.getElementById('retro-confirm-text').textContent = text;
+      document.getElementById('retro-confirm-icon').textContent = icon;
+      document.getElementById('retro-confirm-ok').textContent = ok;
+      document.getElementById('retro-confirm-cancel').textContent = cancel;
+      overlay.classList.remove('hidden');
+      onDialogOpened('retro-confirm');
+      return new Promise(resolve => {
+        retroConfirmResolve = answer => {
+          retroConfirmResolve = null;
+          overlay.classList.add('hidden');
+          onDialogClosed('retro-confirm');
+          resolve(answer);
+        };
+      });
     }
 
     function openGameGuideDialog() {
@@ -7803,10 +8049,12 @@
       });
       document.getElementById('handbook-count').textContent = `${handbookState.unlocked.length}/15`;
       document.getElementById('handbook-overlay').classList.remove('hidden');
+      onDialogOpened('handbook-overlay');
     }
 
     function closeHandbook() {
       document.getElementById('handbook-overlay').classList.add('hidden');
+      onDialogClosed('handbook-overlay');
     }
 
     function showSummary() {
@@ -7917,7 +8165,8 @@
       const playFlow = document.getElementById('play-flow');
       const history = document.getElementById('chat-history');
       const latestStimulus = [...history.children].filter(element => element.id !== 'scroll-anchor').at(-1);
-      const firstOption = document.querySelector('#options-container .opt-btn');
+      const collapsed = document.getElementById('options-area')?.classList.contains('peek');
+      const firstOption = collapsed ? null : document.querySelector('#options-container .opt-btn');
       requestAnimationFrame(() => {
         if (latestStimulus) playFlow.scrollTo({ top: Math.max(0, latestStimulus.offsetTop - 8), behavior: 'smooth' });
         firstOption?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -7933,6 +8182,15 @@
       notif.classList.remove('notify-anim');
       void notif.offsetWidth;
       notif.classList.add('notify-anim');
+
+      const task = document.querySelector('.retro-task-current');
+      if (task) {
+        task.classList.remove('is-flashing');
+        void task.offsetWidth;
+        task.classList.add('is-flashing');
+        clearTimeout(taskFlashTimer);
+        taskFlashTimer = setTimeout(() => task.classList.remove('is-flashing'), 3200);
+      }
 
       setTimeout(() => notif.classList.add('hidden'), 4000);
     }
@@ -8133,18 +8391,23 @@
       alertBox.classList.remove('hidden');
 
       qteTimeoutNext = timeoutNext;
+      pendingTimerExtendMs = 0;
       const start = Date.now();
       let end = start + duration * 1000;
       let prevTick = start;
 
       function overlayPausing() {
-        return ['inspect-overlay', 'handbook-overlay', 'confirm-165', 'call-165'].some(id => {
+        return ['inspect-overlay', 'handbook-overlay', 'confirm-165', 'call-165', 'retro-confirm'].some(id => {
           const el = document.getElementById(id);
           return el && !el.classList.contains('hidden');
         });
       }
 
       function tick() {
+        if (pendingTimerExtendMs) {
+          end += pendingTimerExtendMs;
+          pendingTimerExtendMs = 0;
+        }
         const now = Date.now();
         const paused = overlayPausing();
         if (paused) end += (now - prevTick);
@@ -8367,12 +8630,13 @@
       renderActionChallenge(node);
       applyPressureUI();
       optionsArea.classList.remove('sheet-hidden');
-      optionsArea.classList.remove('peek');
+      optionsArea.classList.add('peek');
       const sheetToggle = document.getElementById('sheet-toggle');
-      if (sheetToggle) sheetToggle.textContent = '▼ 收合選項，先看對話';
+      if (sheetToggle) sheetToggle.textContent = '▲ 顯示選項，繼續作答';
       scrollToDecision();
 
       nodeReadyAt = Date.now();
+      nodeReadyAwayMark = totalHiddenMs + (hiddenSince ? Date.now() - hiddenSince : 0);
       if (node.timeLimit) {
         const duration = gameState.fear >= 5 ? Math.max(5, node.timeLimit - 3) : node.timeLimit;
         if (gameState.fear >= 5) {
@@ -8429,10 +8693,13 @@
         ? { next: optionOrNextId, text: optionText, effects: {} }
         : optionOrNextId;
 
-      const decisionRt = nodeReadyAt ? Math.max(0, Date.now() - nodeReadyAt) : 0;
+      const decisionRtRaw = nodeReadyAt ? Math.max(0, Date.now() - nodeReadyAt) : 0;
+      const decisionAwayMs = nodeReadyAt ? Math.min(decisionRtRaw, awayMsSince(nodeReadyAwayMark)) : 0;
+      // decisionRt 只留「人真的在畫面前面」的時間；切出去的那段另外記，避免離開造成的極端值
+      const decisionRt = Math.max(0, decisionRtRaw - decisionAwayMs);
       gameState.decisionTimes.push(decisionRt);
       recordEvent('option_click', { text: option.text || '', isMistake: Boolean(option.isMistake), effects: option.effects || {} });
-      recordEvent('decision_rt', { ms: decisionRt });
+      recordEvent('decision_rt', { ms: decisionRt, rawMs: decisionRtRaw, awayMs: decisionAwayMs });
       scoreDecision(option, STORY[currentNodeId]);
       if (option.safeEndingId) pendingSafeEndingId = option.safeEndingId;
 
@@ -8905,7 +9172,7 @@
         deviceUid: getDeviceUid(),
         runId: snapshot?.currentRunId || currentRunId || makeRunId(),
         schemaVersion: SCHEMA_VERSION,
-        gameVersion: 'v38',
+        gameVersion: 'v40',
         consentAt: (snapshot?.studyIdentity || studyIdentity).consentAt || '',
         scenarioSet: [...SCENARIO_ORDER],
         scenarioType: snapshot?.selectedScenarioType || selectedScenarioType,
@@ -9094,8 +9361,10 @@
       recordEvent('sound_toggle', { enabled: soundEnabled });
     }
 
-    function withdrawFromStudy() {
-      if (!window.confirm('確定要結束並離開？你可以隨時退出，不影響任何權益。')) return;
+    async function withdrawFromStudy() {
+      const go = await retroConfirm('確定要結束並離開？你可以隨時退出，不影響任何權益。',
+        { title: '結束並離開', ok: '結束並離開', cancel: '繼續遊戲', icon: '！' });
+      if (!go) return;
       if (currentRunId && selectedScenarioType) {
         recordEvent('withdraw', { participantInitiated: true });
         queueResearchRecord(buildResearchPayload('', null, 'withdrawn'));
@@ -9157,7 +9426,7 @@
       });
     }
 
-    function showInitialView() {
+    async function showInitialView() {
       loadStudyIdentity();
       if (APP_CONFIG.researcher) {
         refreshResearcherStatus();
@@ -9167,7 +9436,7 @@
       if (APP_CONFIG.mode === 'study') {
         if (!studyIdentity.consentAt) { setView('consent-view'); return; }
         if (!studyIdentity.participantId) { setView('participant-view'); return; }
-        if (resumeActiveRun()) return;
+        if (hasActiveRun() && await resumeActiveRun()) return;
       }
       showGameGuide();
     }
@@ -9244,6 +9513,7 @@
           peeked ? '▲ 顯示選項，繼續作答' : '▼ 收合選項，先看對話';
         recordEvent('sheet_toggle', { collapsed: peeked });
         if (peeked) scrollToBottom();
+        else updateOptionsMoreHint();
       });
       document.getElementById('handbook-open').addEventListener('click', openHandbook);
       document.getElementById('handbook-close').addEventListener('click', closeHandbook);
@@ -9254,8 +9524,13 @@
       });
       document.getElementById('call165-done').addEventListener('click', () => {
         document.getElementById('call-165').classList.add('hidden');
+        onDialogClosed('call-165');
         useOfficialAdvice();
       });
+      document.getElementById('retro-confirm-ok').addEventListener('click', () => retroConfirmResolve?.(true));
+      document.getElementById('retro-confirm-cancel').addEventListener('click', () => retroConfirmResolve?.(false));
+      document.addEventListener('keydown', handleDialogKeydown);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
       document.querySelectorAll('[data-reflection]').forEach(button => {
         button.addEventListener('click', () => {
           integrationReflection = button.dataset.reflection;
