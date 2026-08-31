@@ -6877,7 +6877,9 @@
         keepalive: true
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return true;
+      const ack = await response.json();
+      if (ack.ok !== true || ack.runId !== payload.runId) throw new Error('ACK_MISMATCH');
+      return ack;
     }
 
     async function flushResearchQueue() {
