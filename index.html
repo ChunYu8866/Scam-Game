@@ -7134,7 +7134,9 @@
           : safeChoice && ((option.effects?.awareness || 0) > 0 || option.actionType === 'verifyOfficial' || Boolean(option.evidence));
         if (identifyHit) {
           gameState.subscores.identify.hits += 1;
-          addUnique(gameState.trapsIdentified, option.identifiedTraps.length ? option.identifiedTraps : encountered);
+          // QTE 完成與逾時是手工組的 option，沒經過 opt()，identifiedTraps 會是 undefined。
+          // 少了這個 ?. 會在每個 QTE 節點拋錯，isTransitioning 卡住、結局不跑、資料送不出去。
+          addUnique(gameState.trapsIdentified, option.identifiedTraps?.length ? option.identifiedTraps : encountered);
         }
       }
 
