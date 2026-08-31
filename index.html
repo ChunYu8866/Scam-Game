@@ -6729,9 +6729,9 @@
     /* ============================================================
        研究記錄設定（v34 UI：沿用 schema 2.0.0，可配對、可續玩、可重試、可匯出）
     ============================================================ */
-    const GAME_VERSION = 'v44';
-    const gameVersion = 'v44';
-    const SCHEMA_VERSION = '2.1.0';
+    const GAME_VERSION = 'v45';
+    const gameVersion = 'v45';
+    const SCHEMA_VERSION = '2.2.0';
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycby39S9dN4lQQ1_voJlX5Qh_xt0wn5cZF9e6GSLrCuOsokuuDIVybo6bO33p2ukebitXSQ/exec';
     const URL_PARAMS = new URLSearchParams(window.location.search);
     const RESEARCH_QUEUE_KEY = 'research_queue_v32';
@@ -6739,6 +6739,8 @@
     const ACTIVE_RUN_KEY = 'active_run_v32';
     const STUDY_IDENTITY_KEY = 'study_identity_v32';
     const SOUND_KEY = 'sound_enabled_v32';
+    const PLAYER_PROFILE_KEY = 'player_profile_v45';
+    const PLAYER_JOURNEY_MAX = 40;
     const RETRY_DELAYS = [2000, 5000, 15000];
     const APP_CONFIG = {
       mode: URL_PARAMS.get('mode') === 'study' ? 'study' : 'free',
@@ -6829,6 +6831,76 @@
       return generateUID();
     }
 
+    // progressState 存在 sessionStorage，關掉分頁就歸零，四關分數永遠湊不齊。
+    // 玩家檔案另外存 localStorage，跟 game_uid 同一個持久層，才算得出總分與總遊玩時間。
+    function loadPlayerProfile() {
+      const saved = safeJsonParse(localStorage.getItem(PLAYER_PROFILE_KEY), null);
+      const profile = Object.assign(
+        { firstSeenAt: '', totalPlayMs: 0, runCount: 0, bestStageScores: {}, journey: [] },
+        saved && typeof saved === 'object' ? saved : {}
+      );
+      if (!profile.firstSeenAt) profile.firstSeenAt = new Date().toISOString();
+      if (!profile.bestStageScores || typeof profile.bestStageScores !== 'object') profile.bestStageScores = {};
+      if (!Array.isArray(profile.journey)) profile.journey = [];
+      profile.totalPlayMs = Math.max(0, Number(profile.totalPlayMs) || 0);
+      profile.runCount = Math.max(0, Number(profile.runCount) || 0);
+      profile.deviceUid = getDeviceUid();
+      return profile;
+    }
+
+    function savePlayerProfile(profile) {
+      try { localStorage.setItem(PLAYER_PROFILE_KEY, JSON.stringify(profile)); } catch (e) {}
+    }
+
+    function playerProfileSummary(profile) {
+      const source = profile || loadPlayerProfile();
+      const stageScores = {};
+      ALL_SCENARIO_ORDER.forEach(type => {
+        const value = source.bestStageScores[type];
+        if (typeof value === 'number') stageScores[type] = value;
+      });
+      const done = Object.keys(stageScores);
+      return {
+        deviceUid: source.deviceUid,
+        firstSeenAt: source.firstSeenAt,
+        totalSec: Math.round(source.totalPlayMs / 1000),
+        runCount: source.runCount,
+        stageScores,
+        completedStages: done.length,
+        totalScore: done.reduce((sum, type) => sum + stageScores[type], 0),
+        allStagesDone: done.length === ALL_SCENARIO_ORDER.length,
+        journey: source.journey
+      };
+    }
+
+    function recordStageCompletion(entry) {
+      const profile = loadPlayerProfile();
+      const ms = Math.max(0, Number(entry.ms) || 0);
+      const score = Math.max(0, Math.min(SCORE_MODEL.stageMax, Math.round(Number(entry.score) || 0)));
+      const previous = profile.bestStageScores[entry.scenarioType];
+      profile.runCount += 1;
+      profile.totalPlayMs += ms;
+      profile.bestStageScores[entry.scenarioType] =
+        typeof previous === 'number' ? Math.max(previous, score) : score;
+      profile.journey.push({
+        n: profile.runCount,
+        scenarioType: entry.scenarioType,
+        attemptNo: entry.attemptNo || 1,
+        endingId: entry.endingId || '',
+        score,
+        rank: entry.rank || '',
+        sec: Math.round(ms / 1000),
+        startedAt: entry.startedAt || '',
+        endedAt: entry.endedAt || '',
+        path: entry.path || ''
+      });
+      if (profile.journey.length > PLAYER_JOURNEY_MAX) {
+        profile.journey = profile.journey.slice(-PLAYER_JOURNEY_MAX);
+      }
+      savePlayerProfile(profile);
+      return profile;
+    }
+
     function loadLocalList(key) {
       try {
         const value = safeJsonParse(localStorage.getItem(key), []);
@@ -6914,7 +6986,11 @@
       if (!status) return;
       if (APP_CONFIG.qa) { status.textContent = 'QA 模式：已擷取資料，未傳送正式工作表'; return; }
       const queue = loadLocalList(RESEARCH_QUEUE_KEY);
-      status.textContent = queue.length ? `等待重試（${queue.length}）` : '已上傳 ✓';
+      if (!queue.length) { status.textContent = '已上傳 ✓'; return; }
+      const lastError = queue.map(item => item.lastError).filter(Boolean).pop();
+      status.textContent = lastError
+        ? `等待重試（${queue.length}）：${lastError}`
+        : `等待重試（${queue.length}）`;
     }
 
     function exportResearchData() {
@@ -6926,7 +7002,7 @@
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `午夜委託_研究資料_v44_${Date.now()}.json`;
+      link.download = `午夜委託_研究資料_v45_${Date.now()}.json`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(link.href), 1000);
     }
@@ -6935,7 +7011,7 @@
       const go = await retroConfirm('確定清除這台裝置的研究紀錄、待送資料與遊戲進度？此動作無法復原。',
         { title: '清除研究資料', ok: '確定清除', cancel: '取消', icon: '！' });
       if (!go) return;
-      [RESEARCH_QUEUE_KEY, RESEARCH_ARCHIVE_KEY, 'game_uid'].forEach(key => localStorage.removeItem(key));
+      [RESEARCH_QUEUE_KEY, RESEARCH_ARCHIVE_KEY, PLAYER_PROFILE_KEY, 'game_uid'].forEach(key => localStorage.removeItem(key));
       [ACTIVE_RUN_KEY, STUDY_IDENTITY_KEY, 'game_progress', 'game_handbook'].forEach(key => sessionStorage.removeItem(key));
       progressState = { scoreVersion: SCORE_MODEL.version, completed: {}, attempts: {} };
       handbookState = { unlocked: [] };
@@ -9248,6 +9324,7 @@
         subscores: state.subscores || cloneState(INITIAL_GAME_STATE.subscores)
       };
       const scoreSummary = calculateFourStageTotal(progressState.completed);
+      const playerSummary = playerProfileSummary();
       const finalEnding = ENDINGS[endingId];
       return {
         participantId: (snapshot?.studyIdentity || studyIdentity).participantId || '',
@@ -9256,7 +9333,7 @@
         deviceUid: getDeviceUid(),
         runId: snapshot?.currentRunId || currentRunId || makeRunId(),
         schemaVersion: SCHEMA_VERSION,
-        gameVersion: 'v44',
+        gameVersion: 'v45',
         consentAt: (snapshot?.studyIdentity || studyIdentity).consentAt || '',
         scenarioSet: [...SCENARIO_ORDER],
         scenarioType: snapshot?.selectedScenarioType || selectedScenarioType,
@@ -9306,7 +9383,15 @@
         educationFlags: [...new Set(state.educationFlags || [])],
         integrationReflection,
         path: path.join(' -> '),
-        events: state.events || []
+        events: state.events || [],
+        playerTotalSec: playerSummary.totalSec,
+        playerTotalScore: playerSummary.totalScore,
+        playerStageScores: playerSummary.stageScores,
+        playerCompletedStages: playerSummary.completedStages,
+        playerAllStagesDone: playerSummary.allStagesDone,
+        playerRunCount: playerSummary.runCount,
+        playerFirstSeenAt: playerSummary.firstSeenAt,
+        playerJourney: playerSummary.journey
       };
     }
 
@@ -9388,6 +9473,19 @@
       renderC3();
 
       try {
+        if (selectedScenarioType) {
+          recordStageCompletion({
+            scenarioType: selectedScenarioType,
+            attemptNo: currentAttemptNo,
+            endingId,
+            score,
+            rank,
+            ms: Date.now() - (gameStartTime || Date.now()),
+            startedAt: runStartedAt,
+            endedAt: new Date().toISOString(),
+            path: playerPath.join(' -> ')
+          });
+        }
         const researchPayload = buildResearchPayload(endingId, result, 'completed', null, !wasFourStageComplete);
         queueResearchRecord(researchPayload);
         clearActiveRun();
