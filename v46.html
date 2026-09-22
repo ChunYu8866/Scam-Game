@@ -8648,11 +8648,13 @@
       const scope = V46_DATA_CORE.storageScope(APP_CONFIG.mode, v46Context());
       if (v46Repository?.scope === scope) return v46Repository;
       v46Repository = V46_DATA_CORE.createResearchRepository({ safeStorage: v46SafeStorage, scope, now: () => new Date().toISOString(), uuid: makeRunId });
-      v46Delivery = V46_DATA_CORE.createDeliveryController({
+      const controller = V46_DATA_CORE.createDeliveryController({
         repository: v46Repository, endpoint: SHEET_URL, now: () => Date.now(), retryMs: 2000,
         endpointReady: () => APP_CONFIG.mode !== 'study' || v46EndpointStatus.ok === true,
         fetchImpl: (endpoint, options) => fetch(endpoint, options)
       });
+      // 每次傳送結束都刷新畫面上的交付狀態，避免送達後仍顯示「等待重試」。
+      v46Delivery = { ...controller, requestFlush: () => controller.requestFlush().then(result => { updateUploadStatus(); return result; }) };
       return v46Repository;
     }
 
@@ -8919,7 +8921,7 @@
       const queued = repository.enqueue(v46EventInput(payload));
       if (!queued.ok) return Promise.resolve(queued);
       updateUploadStatus();
-      return v46Delivery.requestFlush().then(result => { updateUploadStatus(); return result; });
+      return v46Delivery.requestFlush();
     }
 
     async function flushResearchQueue() {
@@ -8929,7 +8931,21 @@
       return result;
     }
 
+    function refreshLifecycleDeliveryTexts() {
+      [['posttest-status', 'posttest-link', 'posttest-fallback'], ['interrupted-delivery-status', 'interrupted-posttest-link', 'interrupted-fallback']].forEach(([statusId, linkId, fallbackId]) => {
+        const link = document.getElementById(linkId);
+        if (!link || link.classList.contains('hidden') || link.getAttribute('href') === '#') return;
+        const status = document.getElementById(statusId);
+        if (status) status.textContent = lifecycleDeliveryText();
+        const needsFallback = !navigator.onLine || !v46SafeStorage.persistent || ensureV46Repository().list().some(item => item.delivery.state !== 'confirmed');
+        document.getElementById(fallbackId)?.classList.toggle('hidden', !needsFallback);
+      });
+      const summary = document.getElementById('summary-upload-status');
+      if (summary && summary.textContent) summary.textContent = lifecycleDeliveryText();
+    }
+
     function updateUploadStatus() {
+      refreshLifecycleDeliveryTexts();
       const status = document.getElementById('upload-status');
       if (!status) return;
       if (APP_CONFIG.qa) { status.textContent = 'QA 模式：已擷取資料，未傳送正式工作表'; return; }
