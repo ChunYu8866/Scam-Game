@@ -8747,19 +8747,29 @@
       if (submit) submit.disabled = errors.length > 0;
     }
 
-    async function verifyStudyEndpoint() {
+    async function verifyStudyEndpoint(attempt = 1) {
       if (APP_CONFIG.mode !== 'study') return v46EndpointStatus;
       if (!SHEET_URL) {
         v46EndpointStatus = { ok: false, code: 'endpoint_unconfigured' };
         renderStudyConfigState();
         return v46EndpointStatus;
       }
+      // 每次帶不同參數，避免瀏覽器對同一網址的請求排隊；逾時或連線失敗會自動重試，不讓同意鈕一直鎖住。
+      const controller = typeof AbortController === 'function' ? new AbortController() : null;
+      const abortTimer = controller ? setTimeout(() => controller.abort(), 12000) : null;
       try {
-        const response = await fetch(SHEET_URL, { method: 'GET', cache: 'no-store' });
+        const checkUrl = `${SHEET_URL}${SHEET_URL.includes('?') ? '&' : '?'}check=${Date.now()}`;
+        const response = await fetch(checkUrl, { method: 'GET', cache: 'no-store', signal: controller?.signal });
         if (!response.ok) throw new Error(`HTTP_${response.status}`);
         v46EndpointStatus = V46_DATA_CORE.validateEndpointReadiness(await response.json(), STUDY_PROTOCOL);
       } catch (error) {
         v46EndpointStatus = { ok: false, code: 'endpoint_check_failed', detail: String(error?.message || error) };
+      } finally {
+        if (abortTimer) clearTimeout(abortTimer);
+      }
+      if (v46EndpointStatus.code === 'endpoint_check_failed' && attempt < 5) {
+        v46EndpointStatus = { ok: false, code: 'endpoint_checking', attempt };
+        setTimeout(() => { void verifyStudyEndpoint(attempt + 1); }, 3000);
       }
       renderStudyConfigState();
       updateUploadStatus();
