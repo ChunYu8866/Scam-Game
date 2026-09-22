@@ -4383,13 +4383,13 @@
             <div class="hero-badge">碼</div>
             <p class="hero-kicker">資料配對</p>
             <h1 class="hero-title">輸入受試者代碼</h1>
-            <p class="hero-sub">請輸入研究者發放的一個英文字母與三位數字</p>
+            <p class="hero-sub">代碼已由施測入口自動帶入，請確認與入口頁顯示的相同</p>
           </header>
           <form id="participant-form" class="card research-form">
             <label>受試者代碼
               <input id="participant-id" type="text" inputmode="text" autocomplete="off" maxlength="8" placeholder="例如 G-ABC234" aria-describedby="participant-help participant-error" />
             </label>
-            <p id="participant-help" class="end-body">A 開頭為實驗組，B 開頭為對照組。請勿輸入姓名、學號或座號。</p>
+            <p id="participant-help" class="end-body">格式為 G- 加 6 碼（例如 G-7KQ2MX）。請勿輸入姓名、學號或座號。</p>
             <div id="participant-confirm" class="card hidden">
               <h2>請確認</h2>
               <p id="participant-confirm-text" class="end-body"></p>
@@ -8596,7 +8596,7 @@
     let pendingStoredContext = null;
     let storedContextChoice = '';
     let v46EndpointStatus = APP_CONFIG.mode === 'study'
-      ? { ok: false, code: SHEET_URL ? 'endpoint_not_verified' : 'endpoint_unconfigured' }
+      ? { ok: false, code: SHEET_URL ? 'endpoint_checking' : 'endpoint_unconfigured' }
       : { ok: true, code: 'not_applicable' };
     let currentRunId = '';
     let currentAttemptNo = 0;
@@ -8719,6 +8719,8 @@
       return V46_DATA_CORE.buildPosttestHandoffUrl(context, handoff, STUDY_PROTOCOL);
     }
 
+    const ENDPOINT_CHECKING_MESSAGE = '正在確認資料端點，請稍候幾秒…';
+
     function studyConfigErrors() {
       if (APP_CONFIG.mode !== 'study') return [];
       const errors = [];
@@ -8731,6 +8733,7 @@
         if (!preflight.ok && preflight.code !== 'stored_context_conflict') errors.push(`正式施測預檢失敗（${preflight.code}）。`);
       }
       if (!SHEET_URL) errors.push('候選版尚未設定已部署的 v46 資料端點。');
+      else if (v46EndpointStatus.code === 'endpoint_checking') errors.push(ENDPOINT_CHECKING_MESSAGE);
       else if (!v46EndpointStatus.ok) errors.push(`v46 資料端點尚未通過版本驗證（${v46EndpointStatus.code}）。`);
       return errors;
     }
@@ -8738,7 +8741,8 @@
     function renderStudyConfigState() {
       const errors = studyConfigErrors();
       const error = document.getElementById('consent-error');
-      if (error) error.textContent = errors.length ? `施測設定錯誤：${errors.join(' ')}` : '';
+      const onlyChecking = errors.length === 1 && errors[0] === ENDPOINT_CHECKING_MESSAGE;
+      if (error) error.textContent = !errors.length ? '' : onlyChecking ? ENDPOINT_CHECKING_MESSAGE : `施測設定錯誤：${errors.join(' ')}`;
       const submit = document.querySelector('#consent-form button[type="submit"]');
       if (submit) submit.disabled = errors.length > 0;
     }
@@ -8905,7 +8909,7 @@
       const queued = repository.enqueue(v46EventInput(payload));
       if (!queued.ok) return Promise.resolve(queued);
       updateUploadStatus();
-      return v46Delivery.requestFlush();
+      return v46Delivery.requestFlush().then(result => { updateUploadStatus(); return result; });
     }
 
     async function flushResearchQueue() {
@@ -11770,15 +11774,42 @@
       document.querySelector('#role-state-panel summary').textContent = '劇情角色狀態（非心理測量）';
     }
 
+    // 結局頁「本次可觀察行動」給受試者看的中文名稱；資料欄位仍存英文 key。
+    const ACTION_FACT_LABELS = Object.freeze({
+      phishingCredentials: '在釣魚頁輸入了帳號密碼',
+      phishingOtp: '交出了簡訊驗證碼',
+      bankBookPhoto: '傳出了存摺照片',
+      bankIdPhoto: '傳出了身分證照片',
+      bankCardHandedOver: '交出了提款卡',
+      bankPinHandedOver: '交出了提款卡密碼',
+      simContractSigned: '簽下了門號合約',
+      simPhoneHandedOver: '交出了手機',
+      simCardHandedOver: '交出了 SIM 卡',
+      cashTouched: '經手了現金',
+      cashWithdrawn: '幫忙提領了現金',
+      cashTransferred: '幫忙轉交了款項',
+      cashOperationalAssistance: '協助了取款流程',
+      identityOrCardPhotoSent: '傳出了證件或卡片照片',
+      recruitedOther: '介紹了其他同學加入',
+      stoppedBeforeExposure: '在交出資料前就停下來',
+      stopped: '立即停止後續操作',
+      evidencePreserved: '保存對話與交易證據',
+      officialContacted: '透過官方管道聯絡處理',
+      reported: '向 165 或警方報案',
+      contractCancelled: '處理合約解約',
+      credentialsReset: '更改密碼並重設帳號安全'
+    });
+
     function renderActionFacts(storyState = gameState.storyState) {
       const root = document.getElementById('action-facts-list');
       const facts = [];
       const exposures = storyState?.exposures || {};
       const prevention = storyState?.prevention || {};
       const remediation = storyState?.remediation || {};
-      Object.entries(exposures).filter(([, value]) => value === true).forEach(([key]) => facts.push(`已記錄暴露或交付：${key}`));
-      Object.entries(prevention).filter(([, value]) => value === true).forEach(([key]) => facts.push(`已完成預防行動：${key}`));
-      Object.entries(remediation).filter(([, value]) => value === true).forEach(([key]) => facts.push(`已完成補救行動：${key}`));
+      const label = key => ACTION_FACT_LABELS[key] || key;
+      Object.entries(exposures).filter(([, value]) => value === true).forEach(([key]) => facts.push(`已記錄暴露或交付：${label(key)}`));
+      Object.entries(prevention).filter(([, value]) => value === true).forEach(([key]) => facts.push(`已完成預防行動：${label(key)}`));
+      Object.entries(remediation).filter(([, value]) => value === true).forEach(([key]) => facts.push(`已完成補救行動：${label(key)}`));
       if ((gameState.assistanceEvents || []).some(event => event.eventType === 'assistance_completed')) facts.push('已閱讀模擬 165 諮詢內容。');
       if (!facts.length) facts.push('本關尚無可列出的暴露、交付、預防或補救事實。');
       root.replaceChildren(...facts.map(value => Object.assign(document.createElement('li'), { textContent: value })));
