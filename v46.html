@@ -8381,7 +8381,7 @@
           replaceForReload: () => createResearchRepository({ safeStorage, scope, now, uuid }), scope
         };
       }
-      function createDeliveryController({ repository, fetchImpl, endpoint, endpointReady = () => true, now = () => Date.now(), retryMs = 2000, requestTimeoutMs = 20000 }) {
+      function createDeliveryController({ repository, fetchImpl, endpoint, endpointReady = () => true, now = () => Date.now(), retryMs = 2000, requestTimeoutMs = 30000 }) {
         let flushPromise = null;
         const suppressed = !repository.scope.startsWith('v46:study:');
         async function flushNow() {
