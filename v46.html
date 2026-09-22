@@ -4389,7 +4389,7 @@
             <label>受試者代碼
               <input id="participant-id" type="text" inputmode="text" autocomplete="off" maxlength="8" placeholder="例如 G-ABC234" aria-describedby="participant-help participant-error" />
             </label>
-            <p id="participant-help" class="end-body">格式為 G- 加 6 碼（例如 G-7KQ2MX）。請勿輸入姓名、學號或座號。</p>
+            <p id="participant-help" class="end-body">格式為 P- 加 6 碼（例如 P-7KQ2MX），與前測使用的代碼相同。請勿輸入姓名、學號或座號。</p>
             <div id="participant-confirm" class="card hidden">
               <h2>請確認</h2>
               <p id="participant-confirm-text" class="end-body"></p>
@@ -8250,8 +8250,9 @@
           const assignedGroup = String(input?.group || input?.assignedGroup || '').trim();
           if (!['game', 'video'].includes(assignedGroup)) return { ok: false, code: 'missing_assigned_group', field: 'group' };
           const expectedPrefix = assignedGroup === 'game' ? 'G-' : 'V-';
-          if (!/^[GV]-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(participantCode)) return { ok: false, code: 'invalid_participant_code', field: 'participantCode' };
-          if (!participantCode.startsWith(expectedPrefix)) return { ok: false, code: 'participant_group_mismatch', field: 'participantCode' };
+          // P- 為前測後才由電腦亂數分組的中性代碼（組別另由 group 帶入）；G-/V- 為舊版抽籤代碼，前綴須與組別一致。
+          if (!/^[GVP]-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(participantCode)) return { ok: false, code: 'invalid_participant_code', field: 'participantCode' };
+          if (!participantCode.startsWith('P-') && !participantCode.startsWith(expectedPrefix)) return { ok: false, code: 'participant_group_mismatch', field: 'participantCode' };
           if (assignedGroup === 'video') return { ok: false, code: 'video_group_ineligible', field: 'group' };
           return { ok: true, value: Object.freeze({
             mode: 'study', studyId: protocol.studyId, sessionId: protocol.sessionId || 'S1',
@@ -12184,7 +12185,7 @@
         const participantId = (APP_CONFIG.mode === 'study' ? APP_CONFIG.participantId : input.value).trim().toUpperCase();
         const errorEl = document.getElementById('participant-error');
         const validParticipantCode = APP_CONFIG.mode === 'study'
-          ? /^G-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(participantId)
+          ? /^[GP]-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(participantId)
           : /^[AB]\d{3}$/.test(participantId);
         if (!validParticipantCode) {
           errorEl.textContent = APP_CONFIG.mode === 'study'

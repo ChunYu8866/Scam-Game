@@ -55,7 +55,7 @@
     validateAssignment(participantCode, group) {
       const code = String(participantCode || '').trim().toUpperCase();
       if (group !== 'video') throw new Error('video_group_required');
-      if (!/^V-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(code)) {
+      if (!/^[VP]-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(code)) {
         if (/^G-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(code)) throw new Error('participant_group_mismatch');
         throw new Error('invalid_participant_code');
       }
