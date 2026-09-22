@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>防詐學習研究｜施測入口</title>
+  <style>
+    :root { color-scheme: light; font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; background:#eef3f8; color:#172033; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; }
+    main { width:min(560px,100%); background:#fff; border:1px solid #d8e0ea; border-radius:20px; padding:28px; box-shadow:0 18px 48px rgba(35,52,78,.12); }
+    h1 { margin:0 0 8px; font-size:clamp(1.55rem,6vw,2rem); }
+    .lead { margin:0 0 24px; color:#526079; line-height:1.7; }
+    .card { border:1px solid #d8e0ea; border-radius:14px; padding:18px; background:#f8fafc; }
+    .label { margin:0 0 6px; color:#66738a; font-size:.9rem; }
+    .value { margin:0; font-weight:800; font-size:1.35rem; letter-spacing:.04em; overflow-wrap:anywhere; }
+    .code-row { display:flex; align-items:center; gap:12px; margin-top:18px; }
+    .code-row .card { flex:1; }
+    button, a.button { min-height:48px; border:0; border-radius:12px; padding:12px 18px; font:inherit; font-weight:800; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+    button.secondary { background:#e7edf5; color:#1b355c; }
+    a.primary { width:100%; margin-top:20px; color:#fff; background:#1557b0; }
+    a.primary[aria-disabled="true"] { pointer-events:none; background:#8c98aa; }
+    .notice { margin:18px 0 0; padding:14px 16px; border-radius:12px; background:#fff7df; color:#5d4300; line-height:1.6; }
+    .error { background:#ffebeb; color:#842323; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>防詐學習研究</h1>
+    <p class="lead">請確認組別與受試者代碼，再開始前測。全程請使用同一個瀏覽器。</p>
+
+    <section id="assignment" class="hidden" aria-live="polite">
+      <div class="card">
+        <p class="label">您的組別</p>
+        <p id="group-label" class="value"></p>
+      </div>
+      <div class="code-row">
+        <div class="card">
+          <p class="label">受試者代碼</p>
+          <p id="participant-code" class="value"></p>
+        </div>
+        <button id="copy-code" class="secondary" type="button">複製</button>
+      </div>
+      <a id="primary-action" class="button primary" href="#" aria-disabled="true">開始前測</a>
+      <p id="status" class="notice">完成前測後請返回本頁，再進入指定學習活動。</p>
+    </section>
+
+    <p id="error" class="notice error hidden" role="alert"></p>
+  </main>
+
+  <script>
+  /* STUDY_LAUNCHER_CORE_START */
+  const STUDY_LAUNCHER_CORE = Object.freeze({
+    alphabet: '23456789ABCDEFGHJKLMNPQRSTUVWXYZ',
+    storageKey: 'midnight-study-assignment-v1',
+    normalizeGroup(value) {
+      if (value === 'game' || value === 'video') return value;
+      throw new Error('invalid_group');
+    },
+    createParticipantCode(group, randomBytes) {
+      const normalized = this.normalizeGroup(group);
+      const source = randomBytes || (length => crypto.getRandomValues(new Uint8Array(length)));
+      const bytes = source(6);
+      if (!bytes || bytes.length !== 6) throw new Error('invalid_random_bytes');
+      const suffix = [...bytes].map(value => this.alphabet[Number(value) % this.alphabet.length]).join('');
+      return `${normalized === 'game' ? 'G' : 'V'}-${suffix}`;
+    },
+    readAssignment(storage) {
+      const raw = storage.getItem(this.storageKey);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        const expected = parsed.group === 'game' ? 'G-' : parsed.group === 'video' ? 'V-' : '';
+        if (!expected || !new RegExp(`^${expected}[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$`).test(parsed.participantCode || '')) {
+          throw new Error('invalid_assignment');
+        }
+        return Object.freeze({ participantCode: parsed.participantCode, group: parsed.group });
+      } catch (error) {
+        throw new Error('invalid_assignment');
+      }
+    },
+    claimAssignment(storage, group, randomBytes) {
+      const normalized = this.normalizeGroup(group);
+      const existing = this.readAssignment(storage);
+      if (existing && existing.group !== normalized) throw new Error('already_assigned');
+      if (existing) return existing;
+      const assignment = Object.freeze({ participantCode: this.createParticipantCode(normalized, randomBytes), group: normalized });
+      storage.setItem(this.storageKey, JSON.stringify(assignment));
+      return assignment;
+    },
+    buildPrefilledUrl(baseUrl, entryMap, assignment) {
+      const url = new URL(baseUrl);
+      if (url.protocol !== 'https:' || url.hostname !== 'docs.google.com' || !url.pathname.endsWith('/viewform')) throw new Error('invalid_form_url');
+      if (!entryMap.participantCode || !entryMap.group || entryMap.participantCode === entryMap.group) throw new Error('invalid_entry_map');
+      url.searchParams.set(entryMap.participantCode, assignment.participantCode);
+      url.searchParams.set(entryMap.group, assignment.group);
+      url.searchParams.set('usp', 'pp_url');
+      return url.toString();
+    }
+  });
+  /* STUDY_LAUNCHER_CORE_END */
+
+  const LAUNCH_CONFIG = Object.freeze({
+    pretestUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfWHqyVnSiS3t-Tt_TvDAET9O2Kun0rStciFl23rE7YcjOF4w/viewform',
+    pretestEntryMap: Object.freeze({ participantCode: 'entry.796152856', group: 'entry.128154823' }),
+    gameUrl: './v46.html',
+    videoUrl: './video-intervention.html'
+  });
+
+  (function init() {
+    const assignmentSection = document.getElementById('assignment');
+    const errorBox = document.getElementById('error');
+    const action = document.getElementById('primary-action');
+    const status = document.getElementById('status');
+    try {
+      const group = new URLSearchParams(location.search).get('group');
+      const assignment = STUDY_LAUNCHER_CORE.claimAssignment(localStorage, group);
+      document.getElementById('group-label').textContent = assignment.group === 'game' ? '遊戲組' : '影片組';
+      document.getElementById('participant-code').textContent = assignment.participantCode;
+      document.getElementById('copy-code').addEventListener('click', async event => {
+        await navigator.clipboard.writeText(assignment.participantCode);
+        event.currentTarget.textContent = '已複製';
+      });
+
+      const pretestUrl = STUDY_LAUNCHER_CORE.buildPrefilledUrl(LAUNCH_CONFIG.pretestUrl, LAUNCH_CONFIG.pretestEntryMap, assignment);
+      const interventionUrl = new URL(assignment.group === 'game' ? LAUNCH_CONFIG.gameUrl : LAUNCH_CONFIG.videoUrl, location.href);
+      interventionUrl.searchParams.set('mode', 'study');
+      interventionUrl.searchParams.set('participantCode', assignment.participantCode);
+      interventionUrl.searchParams.set('group', assignment.group);
+
+      const pretestOpened = sessionStorage.getItem('midnight-study-pretest-opened-v1') === 'yes';
+      action.href = pretestOpened ? interventionUrl.toString() : pretestUrl;
+      action.textContent = pretestOpened ? '我已完成前測，開始學習活動' : '開始前測';
+      action.setAttribute('aria-disabled', 'false');
+      action.addEventListener('click', () => {
+        if (!pretestOpened) sessionStorage.setItem('midnight-study-pretest-opened-v1', 'yes');
+      });
+      if (pretestOpened) status.textContent = '確認前測已送出後，再進入指定學習活動。';
+      assignmentSection.classList.remove('hidden');
+    } catch (error) {
+      const messages = {
+        invalid_group: 'QR Code 缺少正確組別，請向研究人員索取正確 QR Code。',
+        already_assigned: '此裝置已分配到另一組，請交由研究人員處理。',
+        invalid_assignment: '此裝置的研究代碼資料異常，請交由研究人員處理。',
+        invalid_form_url: '前測表單尚未設定完成，請通知研究人員。',
+        invalid_entry_map: '前測欄位尚未設定完成，請通知研究人員。'
+      };
+      errorBox.textContent = messages[error.message] || '無法啟動施測，請通知研究人員。';
+      errorBox.classList.remove('hidden');
+    }
+  })();
+  </script>
+</body>
+</html>
