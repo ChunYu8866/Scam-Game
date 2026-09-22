@@ -8381,27 +8381,33 @@
           replaceForReload: () => createResearchRepository({ safeStorage, scope, now, uuid }), scope
         };
       }
-      function createDeliveryController({ repository, fetchImpl, endpoint, endpointReady = () => true, now = () => Date.now(), retryMs = 2000 }) {
+      function createDeliveryController({ repository, fetchImpl, endpoint, endpointReady = () => true, now = () => Date.now(), retryMs = 2000, requestTimeoutMs = 20000 }) {
         let flushPromise = null;
         const suppressed = !repository.scope.startsWith('v46:study:');
         async function flushNow() {
           if (suppressed) return { suppressed: true, sent: 0 };
           if (!String(endpoint || '').trim()) return { suppressed: false, blocked: true, code: 'endpoint_unconfigured', sent: 0 };
           if (!endpointReady()) return { suppressed: false, blocked: true, code: 'endpoint_not_verified', sent: 0 };
+          // 只有 requestFlush 會呼叫這裡（同時只有一個 flush），所以此刻殘留的 sending 必定是上一個頁面送到一半就關掉的，要重送。
+          repository.list().filter(item => item.delivery.state === 'sending').forEach(item => repository.patchById(item.eventId, { delivery: { state: 'retry', nextRetryAt: 0 } }));
           let sent = 0;
           while (true) {
             const event = repository.list().find(item => ['pending', 'retry'].includes(item.delivery.state) && item.delivery.nextRetryAt <= now());
             if (!event) break;
             repository.patchById(event.eventId, { delivery: { state: 'sending' } });
+            const abort = typeof AbortController === 'function' ? new AbortController() : null;
+            const abortTimer = abort && typeof setTimeout === 'function' ? setTimeout(() => abort.abort(), requestTimeoutMs) : null;
             try {
               const transport = { recordId: event.recordId, eventId: event.eventId, eventType: event.eventType, runId: event.runId, createdAt: event.createdAt, context: event.context, payload: event.payload };
-              const response = await fetchImpl(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(transport), keepalive: true });
+              const response = await fetchImpl(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(transport), keepalive: true, ...(abort ? { signal: abort.signal } : {}) });
               if (!response?.ok) throw new Error(`HTTP ${response?.status || 0}`);
               let ack; try { ack = await response.json(); } catch (error) { throw new Error('ack_json_parse_error'); }
               const checked = validateAck(event, ack); if (!checked.ok) throw new Error(checked.code);
               repository.patchById(event.eventId, { delivery: { state: 'confirmed', ack, lastError: null } }); sent += 1;
             } catch (error) {
               const current = repository.get(event.eventId); repository.patchById(event.eventId, { delivery: { state: 'retry', attempts: (current?.delivery.attempts || 0) + 1, nextRetryAt: now() + retryMs, lastError: String(error.message || error) } });
+            } finally {
+              if (abortTimer !== null && typeof clearTimeout === 'function') clearTimeout(abortTimer);
             }
           }
           return { suppressed: false, sent, pending: repository.list().filter(item => ['pending', 'retry', 'sending'].includes(item.delivery.state)).length };
@@ -8653,8 +8659,17 @@
         endpointReady: () => APP_CONFIG.mode !== 'study' || v46EndpointStatus.ok === true,
         fetchImpl: (endpoint, options) => fetch(endpoint, options)
       });
-      // 每次傳送結束都刷新畫面上的交付狀態，避免送達後仍顯示「等待重試」。
-      v46Delivery = { ...controller, requestFlush: () => controller.requestFlush().then(result => { updateUploadStatus(); return result; }) };
+      // 每次傳送結束都刷新畫面上的交付狀態；還有待重試的事件就自動排下一次，不必等下一筆事件或重整頁面。
+      const repository = v46Repository;
+      let retryTimer = null;
+      const scheduleRetry = () => {
+        if (retryTimer) return;
+        const waiting = repository.list().filter(item => item.delivery.state === 'retry');
+        if (!waiting.length) return;
+        const nextAt = Math.min(...waiting.map(item => Number(item.delivery.nextRetryAt) || 0));
+        retryTimer = setTimeout(() => { retryTimer = null; void v46Delivery.requestFlush(); }, Math.max(1000, nextAt - Date.now() + 50));
+      };
+      v46Delivery = { ...controller, requestFlush: () => controller.requestFlush().then(result => { updateUploadStatus(); scheduleRetry(); return result; }) };
       return v46Repository;
     }
 
