@@ -61,6 +61,17 @@
       }
       return Object.freeze({ participantCode:code, group:'video' });
     },
+    // 影片獨立連結：網址沒帶代碼時，讀取同一支手機在問卷入口拿到的代碼與組別；要先在入口按過「我已送出前測」。
+    resolveAssignment(params, storage) {
+      const code = params.get('participantCode');
+      const group = params.get('group');
+      if (code || group) return this.validateAssignment(code, group);
+      let stored = null;
+      try { stored = JSON.parse(storage.getItem('midnight-study-assignment-v1') || 'null'); } catch (error) { stored = null; }
+      if (!stored || !stored.participantCode || !stored.group) throw new Error('missing_assignment');
+      if (storage.getItem('midnight-study-pretest-done-v1') !== 'yes') throw new Error('pretest_pending');
+      return this.validateAssignment(stored.participantCode, stored.group);
+    },
     buildPosttestUrl(assignment) {
       const valid = this.validateAssignment(assignment.participantCode, assignment.group);
       const url = new URL(this.posttestUrl);
@@ -128,7 +139,7 @@
   (function init() {
     try {
       const params = new URLSearchParams(location.search);
-      assignment = VIDEO_INTERVENTION_CORE.validateAssignment(params.get('participantCode'), params.get('group'));
+      assignment = VIDEO_INTERVENTION_CORE.resolveAssignment(params, localStorage);
       document.getElementById('participant-code').textContent = assignment.participantCode;
       const saved = readProgress();
       if (saved?.completed) { finishIntervention(); return; }
@@ -145,7 +156,12 @@
       api.src = 'https://www.youtube.com/iframe_api';
       document.head.appendChild(api);
     } catch (error) {
-      document.getElementById('error').textContent = '影片組連結無效，請向研究人員索取正確 QR Code。';
+      const messages = {
+        missing_assignment: '找不到這支手機的受試者代碼，請先掃描問卷 QR Code 並完成前測。',
+        pretest_pending: '請先完成前測，並在問卷入口頁按「我已送出前測」後再開啟影片。',
+        video_group_required: '你的組別不是影片組，請回到問卷入口頁，依畫面上的按鈕進入你的學習活動。'
+      };
+      document.getElementById('error').textContent = messages[error.message] || '影片組連結無效，請向研究人員索取正確 QR Code。';
       document.getElementById('error').classList.remove('hidden');
       document.querySelector('.player-shell').classList.add('hidden');
       document.getElementById('start').classList.add('hidden');

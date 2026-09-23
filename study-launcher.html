@@ -30,7 +30,7 @@
 <body>
   <main>
     <h1>防詐學習研究</h1>
-    <p class="lead">請先記下受試者代碼並完成前測。所有人前測完成後，由電腦亂數分組，再進入指定學習活動。全程請使用同一個瀏覽器。</p>
+    <p class="lead">請先記下受試者代碼並完成前測。系統已自動為你分組，送出前測後才會顯示組別，再依組別進入遊戲或影片。全程請使用同一個瀏覽器。</p>
 
     <section id="assignment" class="hidden" aria-live="polite">
       <div class="code-row">
@@ -41,11 +41,11 @@
         <button id="copy-code" class="secondary" type="button">複製</button>
       </div>
       <div id="group-card" class="card group-card hidden">
-        <p class="label">電腦分組結果</p>
+        <p class="label">你的組別</p>
         <p id="group-label" class="value"></p>
       </div>
       <a id="primary-action" class="button primary" href="#">開始前測</a>
-      <button id="pretest-done" class="primary hidden" type="button">我已送出前測，等待分組</button>
+      <button id="pretest-done" class="primary hidden" type="button">我已送出前測，查看我的組別</button>
       <a id="reopen-pretest" class="button secondary hidden" href="#" target="_blank" rel="noopener">重新開啟前測</a>
       <p id="status" class="notice">前測會在新分頁開啟。送出後請回到本頁。</p>
     </section>
@@ -69,7 +69,7 @@
       if (!bytes || bytes.length !== 6) throw new Error('invalid_random_bytes');
       return `P-${[...bytes].map(value => this.alphabet[Number(value) % this.alphabet.length]).join('')}`;
     },
-    // P- 為中性代碼（前測後才分組）；G-/V- 為舊版抽籤代碼，只在組別相符時沿用。
+    // P- 為中性代碼（組別另存，不寫在代碼裡）；G-/V- 為舊版抽籤代碼，只在組別相符時沿用。
     validAssignment(parsed) {
       const code = String(parsed?.participantCode || '');
       const group = parsed?.group ?? null;
@@ -101,13 +101,13 @@
       storage.setItem(this.storageKey, JSON.stringify(next));
       return next;
     },
-    parseAllocation(response) {
-      if (!response || response.ok !== true) return { status: 'error', group: null };
-      if (response.status === 'allocated') {
-        return ['game', 'video'].includes(response.group) ? { status: 'allocated', group: response.group } : { status: 'error', group: null };
-      }
-      if (response.status === 'pending' || response.status === 'not_in_roster') return { status: response.status, group: null };
+    parseAssignment(response) {
+      if (response && response.ok === true && response.status === 'assigned' && ['game', 'video'].includes(response.group)) return { status: 'assigned', group: response.group };
       return { status: 'error', group: null };
+    },
+    // 前測永遠帶「未分組」：組別在掃碼時已分好，但要等送出前測才揭露。
+    buildPretestUrl(config, assignment) {
+      return this.buildPrefilledUrl(config.pretestUrl, config.pretestEntryMap, { participantCode: assignment.participantCode, group: null });
     },
     buildPrefilledUrl(baseUrl, entryMap, assignment) {
       const url = new URL(baseUrl);
@@ -149,7 +149,7 @@
     const flag = key => { try { return localStorage.getItem(key) === 'yes'; } catch (error) { return false; } };
     const setFlag = key => { try { localStorage.setItem(key, 'yes'); } catch (error) {} };
     let assignment;
-    let pollTimer = null;
+    let assignTimer = null;
 
     function showError(code) {
       const messages = {
@@ -163,32 +163,31 @@
     }
 
     function render() {
-      const pretestUrl = STUDY_LAUNCHER_CORE.buildPrefilledUrl(LAUNCH_CONFIG.pretestUrl, LAUNCH_CONFIG.pretestEntryMap, assignment);
       el('participant-code').textContent = assignment.participantCode;
       [action, doneButton, reopen, el('group-card')].forEach(node => node.classList.add('hidden'));
       status.className = 'notice';
-      if (assignment.group) {
+      const pretestUrl = STUDY_LAUNCHER_CORE.buildPretestUrl(LAUNCH_CONFIG, assignment);
+      reopen.href = pretestUrl;
+      if (flag(PRETEST_DONE_KEY)) {
+        if (!assignment.group) {
+          reopen.classList.remove('hidden');
+          status.className = 'notice waiting';
+          status.textContent = '系統分組中，請稍候幾秒（請保持網路連線）。';
+          return;
+        }
         el('group-label').textContent = assignment.group === 'game' ? '遊戲組' : '影片組';
         el('group-card').classList.remove('hidden');
-        action.textContent = '開始學習活動';
+        action.textContent = assignment.group === 'game' ? '開始遊戲' : '開始觀看影片';
         action.removeAttribute('target');
         action.href = STUDY_LAUNCHER_CORE.buildInterventionUrl(location.href, LAUNCH_CONFIG, assignment);
         action.classList.remove('hidden');
-        status.textContent = '分組已完成。學習活動結束後，系統會帶你前往後測。';
-        return;
-      }
-      reopen.href = pretestUrl;
-      if (flag(PRETEST_DONE_KEY)) {
-        reopen.classList.remove('hidden');
-        status.className = 'notice waiting';
-        status.textContent = '等待研究者完成分組：所有人前測送出、名單鎖定後，由電腦亂數分派組別。請保持本頁開啟，分組完成後會自動顯示。';
-        startPolling();
+        status.textContent = '學習活動結束後，系統會帶你前往後測。';
         return;
       }
       if (flag(PRETEST_OPENED_KEY)) {
         doneButton.classList.remove('hidden');
         reopen.classList.remove('hidden');
-        status.textContent = '請確認前測已按下「提交」，再按上方按鈕。';
+        status.textContent = '請確認前測已按下「提交」，再按上方按鈕查看你的組別。';
         return;
       }
       action.textContent = '開始前測';
@@ -199,37 +198,27 @@
       status.textContent = '前測會在新分頁開啟。送出後請回到本頁。';
     }
 
-    async function checkAllocation() {
+    // 掃碼當下就向伺服器取得組別（依區組亂數序列），先存起來，送出前測後才顯示。
+    async function requestAssignment() {
+      assignTimer = null;
       const controller = typeof AbortController === 'function' ? new AbortController() : null;
-      const timer = controller ? setTimeout(() => controller.abort(), 12000) : null;
+      const timer = controller ? setTimeout(() => controller.abort(), 15000) : null;
+      let result = { status: 'error', group: null };
       try {
-        const url = `${LAUNCH_CONFIG.allocationEndpoint}?action=allocation&code=${encodeURIComponent(assignment.participantCode)}&t=${Date.now()}`;
+        const url = `${LAUNCH_CONFIG.allocationEndpoint}?action=assign&code=${encodeURIComponent(assignment.participantCode)}&t=${Date.now()}`;
         const response = await fetch(url, { cache: 'no-store', signal: controller?.signal });
-        return STUDY_LAUNCHER_CORE.parseAllocation(response.ok ? await response.json() : null);
+        result = STUDY_LAUNCHER_CORE.parseAssignment(response.ok ? await response.json() : null);
       } catch (error) {
-        return { status: 'error', group: null };
+        result = { status: 'error', group: null };
       } finally {
         if (timer) clearTimeout(timer);
       }
-    }
-
-    function startPolling() {
-      if (pollTimer) return;
-      const tick = async () => {
-        pollTimer = null;
-        const result = await checkAllocation();
-        if (result.status === 'allocated') {
-          try { assignment = STUDY_LAUNCHER_CORE.saveGroup(localStorage, assignment, result.group); render(); }
-          catch (error) { showError(error.message); }
-          return;
-        }
-        if (result.status === 'not_in_roster') {
-          status.className = 'notice error';
-          status.textContent = '已鎖定的前測名單中找不到你的代碼。請確認前測已送出，並把代碼告訴研究人員。';
-        }
-        pollTimer = setTimeout(tick, (result.status === 'not_in_roster' ? 30000 : 15000) + Math.floor(Math.random() * 3000));
-      };
-      pollTimer = setTimeout(tick, 0);
+      if (result.status === 'assigned') {
+        try { assignment = STUDY_LAUNCHER_CORE.saveGroup(localStorage, assignment, result.group); render(); }
+        catch (error) { showError(error.message); }
+        return;
+      }
+      assignTimer = setTimeout(requestAssignment, 5000 + Math.floor(Math.random() * 3000));
     }
 
     try {
@@ -237,11 +226,13 @@
       el('copy-code').addEventListener('click', async event => {
         try { await navigator.clipboard.writeText(assignment.participantCode); event.currentTarget.textContent = '已複製'; } catch (error) {}
       });
-      action.addEventListener('click', () => { if (!assignment.group) { setFlag(PRETEST_OPENED_KEY); setTimeout(render, 300); } });
+      action.addEventListener('click', () => { if (!flag(PRETEST_DONE_KEY)) { setFlag(PRETEST_OPENED_KEY); setTimeout(render, 300); } });
       reopen.addEventListener('click', () => setFlag(PRETEST_OPENED_KEY));
       doneButton.addEventListener('click', () => { setFlag(PRETEST_DONE_KEY); render(); });
       render();
       el('assignment').classList.remove('hidden');
+      // 錯開第一次請求（0–4 秒），避免整班同時掃碼時瞬間湧入伺服器。
+      if (!assignment.group) assignTimer = setTimeout(requestAssignment, Math.floor(Math.random() * 4000));
     } catch (error) {
       showError(error.message);
     }

@@ -8492,7 +8492,20 @@
         const pendingAfter = repository?.list().length || 0;
         return { ok: pendingBefore === pendingAfter, active, view, pendingBefore, pendingAfter };
       }
-      return Object.freeze({ resolveMode, storageScope, contextFingerprint, createSafeStorage, validateStudyIdentity, validatePosttestConfig, validateStudyEntry, validateFormalStart, buildPosttestHandoffUrl, resolveStoredContext, validateEndpointReadiness, makeEventEnvelope, validateAck, createResearchRepository, createDeliveryController, recordLifecycleEvent, completeStudyIfEligible: completeStudyIfEligibleCore, interruptStudy: interruptStudyCore, confirmWithdrawal: confirmWithdrawalCore, saveOptionalReflection: saveOptionalReflectionCore, prepareSharedDeviceHandoff: prepareSharedDeviceHandoffCore });
+      // 遊戲獨立連結：網址沒帶代碼時，讀取同一支手機在問卷入口拿到的代碼與組別；要先在入口按過「我已送出前測」才放行。
+      function resolveEntryIdentity(params, storage) {
+        const urlCode = String(params?.get?.('participantCode') || '').trim().toUpperCase();
+        const urlGroup = String(params?.get?.('group') || '').trim();
+        if (urlCode || urlGroup) return { participantCode: urlCode, group: urlGroup, source: 'url' };
+        let stored = null;
+        let pretestDone = false;
+        try { stored = JSON.parse(storage?.getItem('midnight-study-assignment-v1') || 'null'); } catch (error) { stored = null; }
+        try { pretestDone = storage?.getItem('midnight-study-pretest-done-v1') === 'yes'; } catch (error) { pretestDone = false; }
+        if (!stored || typeof stored.participantCode !== 'string' || !['game', 'video'].includes(stored.group)) return { participantCode: '', group: '', source: 'none' };
+        if (!pretestDone) return { participantCode: '', group: '', source: 'pretest_pending' };
+        return { participantCode: stored.participantCode.trim().toUpperCase(), group: stored.group, source: 'launcher' };
+      }
+      return Object.freeze({ resolveEntryIdentity, resolveMode, storageScope, contextFingerprint, createSafeStorage, validateStudyIdentity, validatePosttestConfig, validateStudyEntry, validateFormalStart, buildPosttestHandoffUrl, resolveStoredContext, validateEndpointReadiness, makeEventEnvelope, validateAck, createResearchRepository, createDeliveryController, recordLifecycleEvent, completeStudyIfEligible: completeStudyIfEligibleCore, interruptStudy: interruptStudyCore, confirmWithdrawal: confirmWithdrawalCore, saveOptionalReflection: saveOptionalReflectionCore, prepareSharedDeviceHandoff: prepareSharedDeviceHandoffCore });
     })();
     /* V46_DATA_CORE_END */
     const SCORE_MODEL = {
@@ -8567,6 +8580,7 @@
     const PLAYER_JOURNEY_MAX = 40;
     const RETRY_DELAYS = [2000, 5000, 15000];
     const FORMAL_POSTTEST_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfb16N0But4fDgb5dIEdN4uMF1yRNcg17sHB1emVecyvyg-sw/viewform';
+    const ENTRY_IDENTITY = V46_DATA_CORE.resolveEntryIdentity(URL_PARAMS, V46_DATA_CORE.resolveMode(window.location.search) === 'study' ? (() => { try { return window.localStorage; } catch (error) { return null; } })() : null);
     const APP_CONFIG = {
       mode: V46_DATA_CORE.resolveMode(window.location.search),
       qa: V46_DATA_CORE.resolveMode(window.location.search) === 'qa',
@@ -8574,9 +8588,9 @@
       researchContact: '請洽現場研究人員',
       dataRetention: '依研究計畫與研究倫理規範辦理',
       studyId: 'anti-fraud-2026',
-      assignedGroup: (URL_PARAMS.get('group') || '').trim(),
+      assignedGroup: ENTRY_IDENTITY.group,
       sessionId: 'S1',
-      participantId: (URL_PARAMS.get('participantCode') || '').trim().toUpperCase(),
+      participantId: ENTRY_IDENTITY.participantCode,
       posttestUrl: (URL_PARAMS.get('posttest') || FORMAL_POSTTEST_URL).trim(),
       requestedScenarios: (URL_PARAMS.get('scenarios') || '')
         .split(',').map(value => value.trim()).filter(value => ALL_SCENARIO_ORDER.includes(value))
@@ -8742,8 +8756,10 @@
     function studyConfigErrors() {
       if (APP_CONFIG.mode !== 'study') return [];
       const errors = [];
-      if (APP_CONFIG.assignedGroup !== 'game') errors.push('此遊戲入口僅接受遊戲組 QR Code。');
-      if (!APP_CONFIG.participantId) errors.push('正式施測網址缺少受試者代碼。');
+      if (ENTRY_IDENTITY.source === 'none') errors.push('找不到這支手機的受試者代碼，請先掃描問卷 QR Code 並完成前測。');
+      else if (ENTRY_IDENTITY.source === 'pretest_pending') errors.push('請先完成前測，並在問卷入口頁按「我已送出前測」後再開啟遊戲。');
+      else if (APP_CONFIG.assignedGroup !== 'game') errors.push('你的組別不是遊戲組，請回到問卷入口頁，依畫面上的按鈕進入你的學習活動。');
+      if (ENTRY_IDENTITY.source !== 'none' && ENTRY_IDENTITY.source !== 'pretest_pending' && !APP_CONFIG.participantId) errors.push('正式施測網址缺少受試者代碼。');
       if (!APP_CONFIG.posttestUrl) errors.push('正式施測網址缺少固定後測網址。');
       if (!SCENARIO_ORDER.length) errors.push('正式施測網址未指定有效主線。');
       if (APP_CONFIG.participantId && APP_CONFIG.posttestUrl) {
