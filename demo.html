@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>《午夜委託》防詐互動遊戲｜設計展示</title>
+  <style>
+    :root { font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif; color:#172033; background:#eef3f8; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; padding:24px; }
+    main { width:min(760px,100%); margin:auto; background:#fff; border:1px solid #d8e0ea; border-radius:20px; padding:28px 24px; box-shadow:0 18px 48px rgba(35,52,78,.12); }
+    h1 { margin:0 0 6px; font-size:26px; }
+    .sub { color:#53627a; margin:0 0 20px; line-height:1.6; }
+    h2 { font-size:18px; margin:26px 0 10px; }
+    p, li { line-height:1.75; }
+    ul { padding-left:20px; margin:8px 0; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:12px 0 0; }
+    .card { background:#f4f7fb; border:1px solid #dfe6ef; border-radius:12px; padding:12px 14px; }
+    .card b { display:block; font-size:22px; color:#1557b0; }
+    .card span { color:#53627a; font-size:14px; }
+    .play { display:block; width:100%; margin:26px 0 12px; padding:16px; border-radius:14px; background:#1557b0; color:#fff; font-weight:800; font-size:18px; text-align:center; text-decoration:none; }
+    .note { padding:14px 16px; border-radius:12px; background:#fff7df; color:#5d4300; line-height:1.7; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>《午夜委託》</h1>
+    <p class="sub">專科校園社群情境的防詐互動遊戲。玩家扮演學生，在深夜陸續接到四位朋友的求助，必須從訊息、截圖與來電中判斷風險，決定查證、拒絕或求助。</p>
+
+    <a class="play" href="v46.html">開始試玩</a>
+    <p class="note">這是設計展示版，不會蒐集任何資料，也不需要受試者代碼。正式施測使用另一個入口。</p>
+
+    <h2>四條主線</h2>
+    <ul>
+      <li><b>釣魚連結</b>：社群廣告導向的仿冒購物頁、包裹簡訊、假客服索取驗證碼</li>
+      <li><b>出租帳戶</b>：以打工與誠意金為由借用帳戶與提款卡</li>
+      <li><b>辦門號換現金</b>：學長掛保證、代辦門號換現金</li>
+      <li><b>車手面交</b>：同儕招募、面交取件與跑腿報酬</li>
+    </ul>
+
+    <h2>設計重點</h2>
+    <div class="grid">
+      <div class="card"><b>4</b><span>條主線，依難度逐條解鎖</span></div>
+      <div class="card"><b>19</b><span>種結局，依處置結果分級</span></div>
+      <div class="card"><b>15</b><span>條詐騙手法圖鑑，遇到即解鎖</span></div>
+      <div class="card"><b>100</b><span>分四關計分，附總結報告</span></div>
+    </div>
+
+    <h2>互動機制</h2>
+    <ul>
+      <li>模擬手機介面：聊天訊息、來電、限時動態與短影音留言</li>
+      <li>假截圖找破綻：在出金紀錄、成交畫面、兼職建檔表上點出可疑之處</li>
+      <li>長按「冷靜」：在對方催促時維持不回應，練習延遲決策</li>
+      <li>165 查證與求助選項貫穿全部情境</li>
+      <li>每個選擇都會顯示判斷結果與風險說明，結局後列出做對的事</li>
+    </ul>
+
+    <p class="sub" style="margin-top:22px">臺北市立大學資訊科學系碩士論文研究用教材。</p>
+  </main>
+</body>
+</html>
