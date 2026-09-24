@@ -766,7 +766,7 @@
       border-top: 1px dashed var(--border-strong);
       color: var(--dim);
     }
-    .hb-item.locked { opacity: 0.55; box-shadow: none; }
+    .hb-seen { display: inline-block; margin-left: 8px; padding: 1px 6px; border: 1px solid currentColor; font-size: 11px; font-weight: 800; color: #045020; }
     .hb-new {
       font-size: 12px; font-weight: 900;
       color: #1c3d63;
@@ -2407,7 +2407,6 @@
     }
     [data-ui="retro-software"] .ins-note:not(.ok) { border-color: var(--term-danger); color: #8a0f14; }
     [data-ui="retro-software"] .ins-note.ok { border-color: var(--term-cyan); color: #17191c; }
-    [data-ui="retro-software"] .hb-item.locked { opacity: 0.5; filter: grayscale(1); }
     [data-ui="retro-software"] .modal-icon {
       border-radius: 0;
       border-color: var(--term-cyan);
@@ -4418,7 +4417,7 @@
           <div id="scenario-progress" class="sp-bar">
             <span class="sp-count">主線進度 0/4</span>
             <span class="sp-dots"><i class="sp-dot"></i><i class="sp-dot"></i><i class="sp-dot"></i><i class="sp-dot"></i></span>
-            <button id="handbook-open" class="hb-btn" type="button">手法圖鑑 0/15</button>
+            <button id="handbook-open" class="hb-btn" type="button">手法圖鑑（遇到 0/15）</button>
           </div>
 
           <div class="card intro-card">
@@ -4736,10 +4735,10 @@
       <div id="handbook-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="handbook-heading">
         <div class="inspect-sheet">
           <div class="inspect-head">
-            <span id="handbook-heading">詐騙手法圖鑑 <em id="handbook-count" class="hb-count">0/15</em></span>
+            <span id="handbook-heading">詐騙手法圖鑑 <em id="handbook-count" class="hb-count">共 15 種</em></span>
             <button id="handbook-close" type="button" class="sheet-close">關閉</button>
           </div>
-          <p class="inspect-hint">劇情中出現的詐騙手法會自動收錄。選擇不同路徑，可收集更多項目。</p>
+          <p class="inspect-hint">15 種常見詐騙手法都可以直接查看；劇情裡遇到過的會標上「✓ 本次遇到」。</p>
           <div id="handbook-list" class="hb-list"></div>
         </div>
       </div>
@@ -9703,7 +9702,7 @@
         });
       }
       const hb = document.getElementById('handbook-open');
-      if (hb) hb.textContent = `手法圖鑑 ${handbookState.unlocked.length}/15`;
+      if (hb) hb.textContent = `手法圖鑑（遇到 ${handbookState.unlocked.length}/15）`;
     }
 
     function showScenarioSelect() {
@@ -9988,16 +9987,15 @@
       recordEvent('handbook_open', { unlocked: handbookState.unlocked.length });
       const root = document.getElementById('handbook-list');
       root.innerHTML = '';
+      // 15 種手法一開始就全部可以看；劇情裡遇到過的另外標記。
       Object.entries(HANDBOOK).forEach(([name, item]) => {
-        const got = handbookState.unlocked.includes(name);
+        const seen = handbookState.unlocked.includes(name);
         const div = document.createElement('div');
-        div.className = 'hb-item' + (got ? '' : ' locked');
-        div.innerHTML = got
-          ? `<h4>${name}</h4><p><b>怎麼運作：</b>${item.how}</p><p><b>怎麼破解：</b>${item.counter}</p><p class="hb-ex">${item.ex}</p>`
-          : '<h4>？？？</h4><p>在劇情裡遇到這個手法，就會自動收錄。</p>';
+        div.className = 'hb-item';
+        div.innerHTML = `<h4>${name}${seen ? '<span class="hb-seen">✓ 本次遇到</span>' : ''}</h4><p><b>怎麼運作：</b>${item.how}</p><p><b>怎麼破解：</b>${item.counter}</p><p class="hb-ex">${item.ex}</p>`;
         root.appendChild(div);
       });
-      document.getElementById('handbook-count').textContent = `${handbookState.unlocked.length}/15`;
+      document.getElementById('handbook-count').textContent = `共 15 種・本次遇到 ${handbookState.unlocked.length} 種`;
       document.getElementById('handbook-overlay').classList.remove('hidden');
       onDialogOpened('handbook-overlay');
     }
@@ -10219,7 +10217,7 @@
       document.getElementById('summary-avg').textContent = scoreSummary.totalScore;
       document.getElementById('summary-rank').textContent = scoreSummary.rank;
       const hbLine = document.getElementById('summary-handbook-line');
-      if (hbLine) hbLine.textContent = `本次手法圖鑑紀錄：${handbookState.unlocked.length}/15。`;
+      if (hbLine) hbLine.textContent = `本次遇到的詐騙手法：${handbookState.unlocked.length}/15 種（圖鑑可查看全部 15 種）。`;
       document.querySelector('#summary-view .hero-kicker').textContent = `${SCENARIO_ORDER.length} 通指定情境全部完成`;
       document.getElementById('completion-code').textContent = `受試者代碼：${studyIdentity.participantId || APP_CONFIG.participantId}`;
       const summaryStatus = document.getElementById('summary-upload-status');
@@ -11501,7 +11499,7 @@
       if (hbNew) {
         hbNew.classList.toggle('hidden', !newlyUnlocked.length);
         if (newlyUnlocked.length) {
-          hbNew.textContent = `手法圖鑑新收錄 +${newlyUnlocked.length}（目前 ${handbookState.unlocked.length}/15）`;
+          hbNew.textContent = `這一關新遇到 ${newlyUnlocked.length} 種手法，已在圖鑑標記（目前遇到 ${handbookState.unlocked.length}/15）`;
         }
       }
       renderPathReplay();
