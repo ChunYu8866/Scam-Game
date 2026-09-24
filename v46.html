@@ -8400,7 +8400,7 @@
             const abortTimer = abort && typeof setTimeout === 'function' ? setTimeout(() => abort.abort(), requestTimeoutMs) : null;
             try {
               const transport = { recordId: event.recordId, eventId: event.eventId, eventType: event.eventType, runId: event.runId, createdAt: event.createdAt, context: event.context, payload: event.payload };
-              const response = await fetchImpl(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(transport), keepalive: true, ...(abort ? { signal: abort.signal } : {}) });
+              const response = await fetchImpl(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(transport), ...(abort ? { signal: abort.signal } : {}) });
               if (!response?.ok) throw new Error(`HTTP ${response?.status || 0}`);
               let ack; try { ack = await response.json(); } catch (error) { throw new Error('ack_json_parse_error'); }
               const checked = validateAck(event, ack); if (!checked.ok) throw new Error(checked.code);
