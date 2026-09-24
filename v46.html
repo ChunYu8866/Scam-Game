@@ -4260,11 +4260,11 @@
     #fixed-call-progress li[data-status="current"] { border-color: #174fa0; background: #e5efff; font-weight: 900; }
     .guide-actions { display: grid; gap: 8px; margin: 12px 0; }
     #mechanics-tutorial-panel, .feedback-card, #action-facts, #role-state-panel { max-width: 100%; overflow-wrap: anywhere; }
-    #decision-ready-btn { width: 100%; margin-bottom: 8px; }
     #decision-status, #qte-status { min-height: 1.6em; margin: 4px 0; }
-    #decision-feedback { margin: 10px 0; padding: 12px; border: 2px solid #174fa0; background: #eef5ff; color: #111; }
-    #decision-feedback h3 { margin: 8px 0 2px; font-size: 16px; }
-    #feedback-continue { width: 100%; margin-top: 10px; }
+    .decision-review { margin: 0; padding-left: 22px; }
+    .decision-review li { margin: 0 0 10px; line-height: 1.6; }
+    .decision-review .review-mark { font-weight: 900; margin-right: 6px; }
+    .decision-review .review-note { display: block; color: #333; }
     .voice-transcript { display: block; padding: 10px; border-left: 4px solid #174fa0; background: #f4f6f8; color: #111; }
     .voice-transcript strong { display: block; margin-bottom: 4px; }
     #call165-summary { display: grid; grid-template-columns: minmax(88px, auto) 1fr; gap: 8px; margin: 0; }
@@ -4422,7 +4422,7 @@
           </div>
           <div id="mechanics-tutorial-panel" class="card hidden" aria-live="polite">
             <h2>選用操作說明</h2>
-            <p id="mechanics-tutorial-text">先閱讀材料，完成必要調查；按「開始回覆」後，才會啟動固定倒數。</p>
+            <p id="mechanics-tutorial-text">選項出現就可以作答；有倒數的題目，時間從選項出現時開始算。部分情境有「查證工具」，想查就打開，不查也沒關係。</p>
             <button id="mechanics-tutorial-done" class="btn-secondary" type="button">完成操作說明</button>
           </div>
           <div class="card"><p>對話框或頁面隱藏時，決策倒數會暫停；回到畫面後從原本剩餘時間繼續。</p></div>
@@ -4522,7 +4522,6 @@
 
         <button id="skip-wait" class="answer-fallback hidden" type="button">顯示完整訊息</button>
         <div id="options-area" class="sheet-hidden">
-          <button id="decision-ready-btn" class="btn-primary hidden" type="button" aria-describedby="decision-status">開始回覆</button>
           <p id="decision-status" role="status" aria-live="polite">請先閱讀情境材料。</p>
           <div id="timer-container" class="hidden" aria-label="作答剩餘時間">
             <div id="timer-bar-fill" style="width:100%"></div>
@@ -4552,13 +4551,6 @@
 
             <div id="options-container"></div>
             <p id="options-more" class="hidden">▼ 下方還有選項</p>
-            <section id="decision-feedback" class="feedback-card hidden" role="status" aria-live="polite">
-              <h2>本次決策回饋</h2>
-              <h3>實際做了什麼</h3><p id="feedback-action"></p>
-              <h3>依據</h3><p id="feedback-evidence"></p>
-              <h3>下一步</h3><p id="feedback-next"></p>
-              <button id="feedback-continue" class="btn-primary" type="button">繼續</button>
-            </section>
           </div>
         </div>
         </div>
@@ -4617,6 +4609,11 @@
               </div>
             </div>
             </details>
+          </div>
+
+          <div class="card" id="decision-review-card">
+            <h2>這一關你的每個選擇</h2>
+            <ol id="decision-review" class="decision-review"></ol>
           </div>
 
           <div class="card" id="c3-container">
@@ -6027,7 +6024,6 @@
           completed: false,
           feedbackRevealed: false,
           revisionMode: false,
-          rubricApplied: false,
           completionEventId: null,
           rewardEventId: null,
           rewardApplied: false
@@ -6054,7 +6050,7 @@
             missing: expected.filter(id => !selected.includes(id)),
             reasonValid: reasonLength >= 8
           };
-          passed = !diagnostics.falsePositives.length && !diagnostics.missing.length && diagnostics.reasonValid;
+          passed = !diagnostics.falsePositives.length && !diagnostics.missing.length;
         } else if (investigation.type === 'action_order') {
           diagnostics = { expectedOrder: [...investigation.config.correctOrder], submittedOrder: order };
           passed = sameOrder(order, investigation.config.correctOrder);
@@ -6144,21 +6140,6 @@
       function formalInvestigationResult(entry) { return entry.firstResult; }
       function isInvestigationGateOpen(investigation, entry) { return !investigation?.required || Boolean(entry?.firstResult && entry?.completed); }
 
-      function applyInvestigationResult(state, entry, meta = {}) {
-        if (!entry?.firstResult) throw new Error('investigation_not_submitted');
-        const sourceEventId = String(entry.firstResult.eventId || meta.eventId || '');
-        if (!sourceEventId) throw new Error('investigation_observation_missing_id');
-        const rubricOpportunityId = `investigation.${entry.id}`;
-        pushUniqueResult(state.rubricResults.verification, {
-          rubricOpportunityId,
-          opportunityId: `${rubricOpportunityId}@${sourceEventId}`,
-          result: entry.firstResult.result,
-          sourceEventId,
-          nodeId: entry.nodeId
-        });
-        return state;
-      }
-
       return Object.freeze({
         RUBRIC_VERSION,
         OPTION_TOKENS,
@@ -6186,8 +6167,7 @@
         beginInvestigationRevision,
         completeInvestigationEntry,
         formalInvestigationResult,
-        isInvestigationGateOpen,
-        applyInvestigationResult
+        isInvestigationGateOpen
       });
     })();
     /* V46_GAMEPLAY_CORE_END */
@@ -6294,16 +6274,6 @@
         return Boolean(materialVisible && optionsEnabled && (!investigationRequired || investigationComplete));
       }
 
-      function createFeedbackGate(nextNodeId) {
-        return { nextNodeId: nextNodeId || null, consumed: false };
-      }
-
-      function consumeFeedbackContinue(gate) {
-        if (!gate || gate.consumed) return { accepted: false, nextNodeId: null };
-        gate.consumed = true;
-        return { accepted: true, nextNodeId: gate.nextNodeId };
-      }
-
       function build165ContextSummary({ storyState = {}, history = [], evidence = [], scenarioType = '' } = {}) {
         const exposures = storyState.exposures || {};
         const prevention = storyState.prevention || {};
@@ -6339,7 +6309,7 @@
       return Object.freeze({
         createTimingState, markMaterialVisible, markDecisionReady, startDecision,
         pauseDecision, resumeDecision, submitDecision, timeoutDecision, timingMetrics,
-        canStartDecision, createFeedbackGate, consumeFeedbackContinue, build165ContextSummary, clone
+        canStartDecision, build165ContextSummary, clone
       });
     })();
     /* V46_UX_CORE_END */
@@ -6383,7 +6353,7 @@
         investigation: {
           id: 'phishing_url_audit',
           type: 'url_audit',
-          required: true,
+          required: false,
           prompt: '比較交易頁與官方入口，標記需要停止操作並進一步查證的警訊。',
           evidenceLabel: '可疑連結稽核紀錄',
           reward: { awareness: 2 },
@@ -6569,7 +6539,7 @@
         investigation: {
           id: 'account_action_order',
           type: 'action_order',
-          required: true,
+          required: false,
           prompt: '把發現帳戶出現不明款項後的處置排成安全順序。',
           evidenceLabel: '人頭帳戶安全處置清單',
           reward: { awareness: 2 },
@@ -6854,7 +6824,7 @@
         investigation: {
           id: 'sim_contract_audit',
           type: 'contract_audit',
-          required: true,
+          required: false,
           prompt: '閱讀固定合約摘要，找出五項責任資料，再判斷手機交付後責任是否轉移。',
           evidenceLabel: '門號合約責任稽核表',
           reward: { awareness: 2 },
@@ -7226,7 +7196,7 @@
         investigation: {
           id: 'cash_evidence_timeline',
           type: 'evidence_timeline',
-          required: true,
+          required: false,
           prompt: '從七項材料選出應保存的五項，並重建四個已發生事件的先後。',
           evidenceLabel: '現金代收證據時間線',
           reward: { awareness: 2 },
@@ -8632,7 +8602,6 @@
     let decisionTimerLastTick = 0;
     let decisionTimerTimeoutNext = '';
     let timerPauseReasons = new Set();
-    let feedbackGate = null;
     let qteTimeoutReporter = null;
     let currentHotlineNodeId = '';
     let soundEnabled = APP_CONFIG.mode !== 'study';
@@ -8985,11 +8954,8 @@
       if (APP_CONFIG.researcher) { status.textContent = '研究者模式：唯讀檢視，不自動傳送'; return; }
       if (!SHEET_URL || !v46EndpointStatus.ok) { status.textContent = 'v46 端點尚未設定或版本未驗證；研究事件保存在本機待送'; return; }
       const queue = ensureV46Repository().list().filter(item => item.delivery.state !== 'confirmed');
-      if (!queue.length) { status.textContent = v46SafeStorage.persistent ? '資料已收到嚴格 ACK' : '本機資料未持久化，請匯出交接碼'; return; }
-      const lastError = queue.map(item => item.delivery.lastError).filter(Boolean).pop();
-      status.textContent = lastError
-        ? `等待重試（${queue.length}）：${lastError}`
-        : `等待重試（${queue.length}）`;
+      if (!queue.length) { status.textContent = v46SafeStorage.persistent ? '資料已送出 ✓' : '這台裝置無法儲存資料，請通知施測人員'; return; }
+      status.textContent = `資料上傳中（還有 ${queue.length} 筆），網路恢復後會自動重送`;
     }
 
     function exportResearchData() {
@@ -9068,6 +9034,7 @@
       storyState: V46_GAMEPLAY_CORE.createStoryState(null),
       rubricResults: { decision: [], verification: [] },
       investigations: {},
+      decisionReview: [],
       assistanceEvents: [],
       frozenStageScore: null,
       appliedNodeEntryFacts: []
@@ -9308,6 +9275,7 @@
       gameState.storyState.scenarioType = selectedScenarioType;
       gameState.rubricResults ||= { decision: [], verification: [] };
       gameState.investigations ||= {};
+      gameState.decisionReview ||= [];
       gameState.assistanceEvents ||= [];
       gameState.appliedNodeEntryFacts ||= [];
       studyIdentity = saved.studyIdentity || studyIdentity;
@@ -9419,7 +9387,7 @@
       else if (pressure) labels.push('壓力升高：目前較容易在催促下決定');
       if (persuasionLabel) labels.push(persuasionLabel);
       if (inducementLabel) labels.push(inducementLabel);
-      if (guidanceAssist) labels.push('警覺提升：記得使用查證與蒐證行動');
+      if (guidanceAssist) labels.push('提醒：可以先查證，並截圖保存對話');
       return {
         pressure,
         urgent,
@@ -9445,9 +9413,9 @@
       if (option.tags?.includes('timeout_no_response')) {
         return {
           classification: 'timeout',
-          action: '本節點時間內未提交回覆。',
-          evidence: '依據固定倒數結束前未收到選項或長按完成事件。',
-          text: '系統只記錄未提交，不據此解讀參與者的情緒、人格或認知狀態。'
+          action: '時間到，這一步沒有回覆。',
+          evidence: '',
+          text: ''
         };
       }
       const policy = node?.feedbackPolicy || {};
@@ -9457,15 +9425,9 @@
         : classification === 'safe'
           ? policy.afterSafe
           : policy.afterIncomplete;
-      const text = policyText || option.hint || '已記錄本次情境行動。';
-      const evidence = option.evidence
-        ? `已保留：${option.evidence}`
-        : (option.rubric?.decision?.result === 'safe'
-          ? '依據本節點的安全行動準則。'
-          : option.rubric?.decision?.result === 'unsafe'
-            ? '依據本節點已記錄的風險行動。'
-            : '依據本節點的實際選擇紀錄。');
-      return { classification, evidence, text, action: option.text || '本節點時間內未提交回覆。' };
+      const text = policyText || option.hint || '';
+      const evidence = option.evidence ? `你保留了：${option.evidence}` : '';
+      return { classification, evidence, text, action: option.text || '這一步沒有回覆。' };
     }
 
     function appendStatePresentation(node) {
@@ -9581,15 +9543,17 @@
     function investigationFeedback(entry) {
       if (!entry.feedbackRevealed || !entry.attempts.length) return '';
       const attempt = entry.attempts[entry.attempts.length - 1];
-      const status = attempt.result === 'pass' ? '提交結果：完整符合查證規則。' : '提交結果：仍有漏選、誤選或順序不符。';
+      const status = attempt.result === 'pass' ? '全部找到了！' : '還差一點，看看下面的提示。';
       const d = attempt.diagnostics || {};
+      const cfg = STORY[entry.nodeId]?.investigation?.config || {};
+      const known = [...(cfg.items || []), ...(cfg.terms || []), ...(cfg.evidence || []), ...(cfg.actions || []), ...(cfg.events || [])];
+      const labelOf = id => known.find(item => item.id === id)?.label || id;
       const details = [];
-      if (d.falsePositives?.length) details.push(`不應選：${d.falsePositives.join('、')}`);
-      if (d.missing?.length) details.push(`尚未選：${d.missing.join('、')}`);
-      if (d.reasonValid === false) details.push('理由至少需 8 個非空白字元。');
-      if (d.responsibilityCorrect === false) details.push('手機交付不會轉移申辦人的合約與繳費責任。');
-      if (d.expectedOrder && !sameInvestigationOrder(d.expectedOrder, d.submittedOrder || [])) details.push(`安全順序：${d.expectedOrder.join(' → ')}`);
-      return `<div class="investigation-feedback ${attempt.result === 'pass' ? 'is-pass' : 'is-fail'}" role="status"><strong>${status}</strong>${details.length ? `<p>${details.join('；')}</p>` : ''}<p>這些答案是在送出後才揭示；修正答案只作學習紀錄，不覆蓋第一次結果。</p></div>`;
+      if (d.falsePositives?.length) details.push(`這些其實沒問題：${d.falsePositives.map(labelOf).join('、')}`);
+      if (d.missing?.length) details.push(`還漏了：${d.missing.map(labelOf).join('、')}`);
+      if (d.responsibilityCorrect === false) details.push('手機交給別人後，合約和月費還是由申辦人負責。');
+      if (d.expectedOrder && !sameInvestigationOrder(d.expectedOrder, d.submittedOrder || [])) details.push(`比較安全的順序：${d.expectedOrder.map(labelOf).join(' → ')}`);
+      return `<div class="investigation-feedback ${attempt.result === 'pass' ? 'is-pass' : 'is-fail'}" role="status"><strong>${status}</strong>${details.length ? `<p>${details.join('；')}</p>` : ''}</div>`;
     }
 
     function sameInvestigationOrder(a = [], b = []) {
@@ -9627,7 +9591,7 @@
           <fieldset><legend>勾選你要標記的警訊</legend>${investigation.config.items.map(item => `
             <label><input type="checkbox" value="${item.id}" ${entry.draft.selectedIds.includes(item.id) ? 'checked' : ''} ${disabled}
               onchange="toggleInvestigationSelection('${item.id}', this.checked)"> ${item.label}</label>`).join('')}</fieldset>
-          <label class="investigation-reason">判斷理由（至少 8 個非空白字元）
+          <label class="investigation-reason">你的想法（選填）
             <textarea maxlength="500" ${disabled} onchange="setInvestigationReason(this.value)">${escapeHtml(entry.draft.reason || '')}</textarea>
           </label>`;
       } else if (investigation.type === 'action_order') {
@@ -9653,17 +9617,18 @@
       }
       let actions = '';
       if (!entry.firstResult || entry.revisionMode) {
-        actions = `<button type="button" class="btn-primary investigation-submit" onclick="submitInvestigation()">送出這次調查</button>`;
+        actions = `<button type="button" class="btn-primary investigation-submit" onclick="submitInvestigation()">看答案</button>
+           <button type="button" class="btn-secondary" onclick="closeInvestigationTask()">先不查，回到對話</button>`;
       } else if (entry.revisedResult) {
-        actions = `<button type="button" class="btn-primary" onclick="completeCaseLab()">完成調查，進入情境</button>`;
+        actions = `<button type="button" class="btn-primary" onclick="completeCaseLab()">回到對話</button>`;
       } else {
-        actions = `<button type="button" class="btn-secondary" onclick="beginInvestigationRevision()">選擇性修正答案</button>
-           <button type="button" class="btn-primary" onclick="completeCaseLab()">完成調查，進入情境</button>`;
+        actions = `<button type="button" class="btn-secondary" onclick="beginInvestigationRevision()">再試一次</button>
+           <button type="button" class="btn-primary" onclick="completeCaseLab()">回到對話</button>`;
       }
       const html = `<section id="investigation-task" class="investigation-task" aria-labelledby="investigation-title">
-        <p class="investigation-kicker">作答前調查｜需明確送出</p>
+        <p class="investigation-kicker">查證工具（選用，不計分）</p>
         <h3 id="investigation-title">${investigation.prompt}</h3>
-        <p class="investigation-neutral">勾選、輸入或排序只會編輯草稿；未按「送出這次調查」不會計分，也不會揭示答案。</p>
+        <p class="investigation-neutral">照題目勾選或排好順序，再按「看答案」。不想查也可以直接回到對話。</p>
         ${controls}
         ${investigationFeedback(entry)}
         <div class="investigation-actions">${actions}</div>
@@ -9743,13 +9708,6 @@
       storedResult.eventId = submitEvent.eventId;
       storedResult.submittedAt = submitEvent.at;
       Object.assign(entry, updated);
-      if (attempt.first && !entry.rubricApplied) {
-        V46_GAMEPLAY_CORE.applyInvestigationResult(gameState, entry, {
-          eventId: submitEvent.eventId,
-          at: submitEvent.at
-        });
-        entry.rubricApplied = true;
-      }
       renderInvestigationTask(entry, investigation);
       saveActiveRun();
     }
@@ -9777,10 +9735,6 @@
       updated.completionEventId = completeEvent.eventId;
       updated.completedAt = completeEvent.at;
       Object.assign(entry, updated);
-      if (!entry.rubricApplied) {
-        V46_GAMEPLAY_CORE.applyInvestigationResult(gameState, entry, { eventId: entry.firstResult.eventId, at: entry.firstResult.submittedAt });
-        entry.rubricApplied = true;
-      }
       const rewardEvent = investigationEvent('investigation_reward', entry, { effects: cloneState(investigation.reward || {}), evidenceLabel: investigation.evidenceLabel || '' });
       entry.rewardEventId = rewardEvent?.eventId || null;
       if (investigation.reward && Object.keys(investigation.reward).length) applyEffects(investigation.reward);
@@ -9789,20 +9743,24 @@
       investigationEvent('investigation_exit', entry, { reason: 'completed' });
       document.getElementById('investigation-task')?.remove();
       document.getElementById('investigation-launch')?.remove();
-      renderCurrentNodeOptions(node);
-      renderActionChallenge(node);
-      const optionsArea = document.getElementById('options-area');
-      optionsArea.classList.remove('sheet-hidden', 'peek');
-      document.querySelectorAll?.('#options-container .opt-btn').forEach(button => button.setAttribute('aria-disabled', 'true'));
-      if (typeof V46_UX_CORE !== 'undefined' && typeof timingState !== 'undefined') {
-        timingState = V46_UX_CORE.markDecisionReady(timingState, performance.now());
+      document.getElementById('options-area').classList.remove('sheet-hidden', 'peek');
+      if (typeof timingState !== 'undefined' && timingState.phase === 'running') {
+        restoreDecisionContext({});
+      } else {
+        renderCurrentNodeOptions(node);
+        renderActionChallenge(node);
+        activateDecisionReady();
       }
-      const ready = document.getElementById('decision-ready-btn');
-      ready.classList.remove('hidden');
-      document.getElementById('decision-status').textContent = node.timeLimit ? `調查已完成。按開始回覆後，固定 ${node.timeLimit} 秒倒數才會啟動。` : '調查已完成。按開始回覆後即可提交。';
       saveActiveRun();
-      ready.focus();
-      ready.scrollIntoView?.({ block: 'center' });
+    }
+
+    // 查證工具是選用的：沒看答案也可以關掉，回到對話直接作答。
+    function closeInvestigationTask() {
+      const investigation = STORY[currentNodeId]?.investigation;
+      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
+      if (entry) investigationEvent('investigation_exit', entry, { reason: 'closed_without_submit' });
+      document.getElementById('investigation-task')?.remove();
+      restoreDecisionContext({});
     }
 
     function completeInvestigation() { return completeCaseLab(); }
@@ -10145,9 +10103,9 @@
     }
 
     const TUTORIAL_STEPS = Object.freeze([
-      '先完整閱讀情境材料與可用工具。',
-      '若節點要求調查，先完成調查，選項才會開放。',
-      '按「開始回覆」後才啟動固定倒數，再選擇回覆或完成長按操作。'
+      '先看完對話與材料，選項出現就可以作答。',
+      '部分情境有「查證工具」，想查就打開，不查也可以直接回覆。',
+      '有倒數的題目，時間從選項出現時開始算；遇到長按題就按住直到完成。'
     ]);
 
     function showMechanicsTutorial() {
@@ -10827,7 +10785,6 @@
       passiveWaitMs = 0;
       timingHistory = [];
       timingState = V46_UX_CORE.createTimingState();
-      feedbackGate = null;
       currentMinutesOffset = 0;
       currentSpeaker = '';
       currentNodeId = '';
@@ -10858,19 +10815,14 @@
       }, 50);
     }
 
-    function scrollToDecision() {
-      restoreDecisionContext({ trigger: document.getElementById('decision-ready-btn'), scrollTop: document.getElementById('play-flow')?.scrollTop || 0 });
-    }
-
     function restoreDecisionContext(origin) {
       origin = origin || {};
       const playFlow = document.getElementById('play-flow');
       if (playFlow && Number.isFinite(origin.scrollTop)) playFlow.scrollTop = origin.scrollTop;
-      const target = origin.trigger || document.getElementById('decision-ready-btn')
+      const target = origin.trigger
         || document.querySelector('#options-container .opt-btn') || document.getElementById('qte-action-btn');
       target?.focus();
-      const recoveryTarget = document.getElementById('decision-ready-btn')
-        || document.querySelector('#options-container .opt-btn') || document.getElementById('qte-action-btn');
+      const recoveryTarget = document.querySelector('#options-container .opt-btn') || document.getElementById('qte-action-btn');
       recoveryTarget?.scrollIntoView({ block: 'center' });
     }
 
@@ -11059,7 +11011,7 @@
       qteTimeoutReporter?.();
       stopTimer('timeout');
       recordEvent('timeout', { limitSec: STORY[currentNodeId]?.timeLimit || 0, timeoutNoResponse: true });
-      const factualReason = '本節點時間內未提交回覆。';
+      const factualReason = '時間到，這一步沒有回覆。';
       handleSystemTransition({
         next: timeoutNext,
         terminalEndingId: STORY[currentNodeId]?.timeoutTerminalEndingId || '',
@@ -11130,7 +11082,7 @@
         investigationComplete: !investigation?.required || V46_GAMEPLAY_CORE.isInvestigationGateOpen(investigation, investigationEntry)
       };
       if (!V46_UX_CORE.canStartDecision(gate)) {
-        document.getElementById('decision-status').textContent = '請先完成必要調查並確認所有回覆選項已顯示。';
+        document.getElementById('decision-status').textContent = '請先完成查證工具，再選擇回覆。';
         return;
       }
       if (timingState.phase === 'material') timingState = V46_UX_CORE.markDecisionReady(timingState, performance.now());
@@ -11138,10 +11090,7 @@
       if (timingState.phase !== 'running') return;
       nodeReadyAt = Date.now();
       nodeReadyAwayMark = totalHiddenMs + (hiddenSince ? Date.now() - hiddenSince : 0);
-      document.querySelectorAll('#options-container .opt-btn[aria-disabled="true"]').forEach(button => button.removeAttribute('aria-disabled'));
-      const ready = document.getElementById('decision-ready-btn');
-      ready.classList.add('hidden');
-      document.getElementById('decision-status').textContent = node.timeLimit ? `固定作答時間 ${node.timeLimit} 秒，倒數已開始。` : '現在可以提交回覆。';
+      document.getElementById('decision-status').textContent = node.timeLimit ? `請在 ${node.timeLimit} 秒內選擇回覆。` : '';
       if (node.timeLimit) startDecisionTimer(node.timeLimit * 1000, node.timeoutNext);
       const target = node.challenge ? document.getElementById('qte-action-btn') : document.querySelector('#options-container .opt-btn');
       target?.focus();
@@ -11228,7 +11177,7 @@
           text: challenge.completeText,
           effects: challenge.completeEffects || {},
           tags: ['qte_completed'],
-          hint: challenge.hint || '你已完成本節點要求的停損動作。',
+          hint: challenge.hint || '你成功停下來，沒有照對方的催促操作。',
           postTip: challenge.postTip || '',
           evidence: challenge.evidence || '',
           actionType: 'qte',
@@ -11270,7 +11219,7 @@
 
       qteTimeoutReporter = () => {
         recordEvent('qte_timeout', { timeoutNoResponse: true });
-        status.textContent = '本節點時間內未提交回覆。';
+        status.textContent = '時間到，這一步沒有回覆。';
       };
       btn.onpointerdown = event => { try { btn.setPointerCapture(event.pointerId); } catch (error) {} beginHold('pointer'); };
       btn.onpointerup = () => abortHold('pointer');
@@ -11358,35 +11307,20 @@
       timingState = V46_UX_CORE.createTimingState({ nodeId, durationMs: (node.timeLimit || 0) * 1000 });
       timingState = V46_UX_CORE.markMaterialVisible(timingState, performance.now());
       recordEvent('material_visible', { nodeId, durationMs: timingState.durationMs });
-      const ready = document.getElementById('decision-ready-btn');
-      const status = document.getElementById('decision-status');
-      ready.classList.add('hidden');
-      document.getElementById('decision-feedback').classList.add('hidden');
-      feedbackGate = null;
       const optionsArea = document.getElementById('options-area');
       optionsArea.classList.remove('peek');
       const investigationEntry = node.investigation ? gameState.investigations[node.investigation.id] : null;
-      if (node.investigation?.required && !V46_GAMEPLAY_CORE.isInvestigationGateOpen(node.investigation, investigationEntry)) {
-        optionsArea.classList.add('sheet-hidden');
-        const label = investigationEntry?.firstResult ? '繼續調查並完成' : '開始作答前調查';
-        document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', `<section class="investigation-launch" id="investigation-launch"><strong>此情境必須先完成一項調查</strong><p>${node.investigation.prompt}</p><button type="button" onclick="openInvestigation()">${label}</button></section>`);
-        status.textContent = '請先完成必要調查；調查完成後才會開放開始回覆。';
-        recordEvent('node_enter', { optionCount: getOptionsForNode(node).length, investigationRequired: true, optionsBlocked: true });
-        saveActiveRun();
-        isTransitioning = false;
-        return;
+      if (node.investigation && !investigationEntry?.completed) {
+        document.getElementById('investigation-launch')?.remove();
+        document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', `<section class="investigation-launch" id="investigation-launch"><strong>想先查證一下嗎？（選用）</strong><p>${node.investigation.prompt}</p><button type="button" onclick="openInvestigation()">打開查證工具</button></section>`);
       }
       renderCurrentNodeOptions(node);
       renderActionChallenge(node);
       applyPressureUI();
       optionsArea.classList.remove('sheet-hidden');
-      document.querySelectorAll('#options-container .opt-btn').forEach(button => button.setAttribute('aria-disabled', 'true'));
-      timingState = V46_UX_CORE.markDecisionReady(timingState, performance.now());
-      ready.classList.remove('hidden');
-      status.textContent = node.timeLimit ? `材料與選項已顯示。按開始回覆後，固定 ${node.timeLimit} 秒倒數才會啟動。` : '材料與選項已顯示。按開始回覆後即可提交。';
-      scrollToDecision();
       recordEvent('decision_ready', { nodeId, investigationRequired: Boolean(node.investigation?.required) });
       recordEvent('node_enter', { optionCount: getOptionsForNode(node).length });
+      activateDecisionReady();
       saveActiveRun();
       isTransitioning = false;
     }
@@ -11405,14 +11339,13 @@
       if (option.effects) applyEffects(option.effects);
       if (option.evidence) collectEvidence(option.evidence);
       if (option.tags?.length) gameState.educationFlags.push(...option.tags);
-      if (option.isMistake) gameState.mistakes.push({ nodeId: currentNodeId, text: option.text || '本節點時間內未提交回覆。', hint: option.hint || '', educationalType: option.educationalType || '' });
+      if (option.isMistake) gameState.mistakes.push({ nodeId: currentNodeId, text: option.text || '時間到，這一步沒有回覆。', hint: option.hint || '', educationalType: option.educationalType || '' });
       selectedOptionHistory.push({ from: currentNodeId, to: nextNodeId, text: option.text || '', effects: option.effects || {}, hint: option.hint || '', isMistake: Boolean(option.isMistake), educationalType: option.educationalType || '', actionType: option.actionType || 'system', evidence: option.evidence || '', rubric: cloneState(option.rubric) });
       document.getElementById('options-area').classList.add('sheet-hidden');
       if (option.text) appendBubble('我', option.text, 'outgoing');
       saveActiveRun(nextNodeId);
-      if (typeof showDecisionFeedback === 'function') {
-        showDecisionFeedback(appendDecisionFeedback(STORY[currentNodeId], option), nextNodeId);
-      }
+      recordDecisionReview(STORY[currentNodeId], option);
+      advanceToNode(nextNodeId);
     }
 
     function handleOptionSelect(optionOrNextId, optionText = null) {
@@ -11441,36 +11374,32 @@
       selectedOptionHistory.push({ from: currentNodeId, to: nextNodeId, text: option.text, effects: option.effects || {}, hint: option.hint || '', isMistake: Boolean(option.isMistake), educationalType: option.educationalType || '', actionType: option.actionType || 'normal', evidence: option.evidence || '', optionEventId: optionEvent?.eventId || '', assistanceEventIds: scoring.assistanceEventIds, rubric: cloneState(option.rubric) });
       if (option.text) appendBubble('我', option.text, 'outgoing');
       saveActiveRun(nextNodeId);
-      if (typeof showDecisionFeedback === 'function') {
-        showDecisionFeedback(appendDecisionFeedback(STORY[currentNodeId], option), nextNodeId);
-      }
+      recordDecisionReview(STORY[currentNodeId], option);
+      advanceToNode(nextNodeId);
     }
 
-    function showDecisionFeedback(result = {}, nextNodeId = '') {
-      feedbackGate = V46_UX_CORE.createFeedbackGate(nextNodeId);
-      document.getElementById('options-area').classList.remove('sheet-hidden');
-      const panel = document.getElementById('decision-feedback');
-      document.getElementById('feedback-action').textContent = result.action || '已記錄本次行動。';
-      document.getElementById('feedback-evidence').textContent = result.evidence || '依據本節點的事件紀錄。';
-      document.getElementById('feedback-next').textContent = result.text || '確認後進入下一段情境。';
-      panel.classList.remove('hidden');
-      const button = document.getElementById('feedback-continue');
-      button.disabled = false;
-      button.focus();
-      button.scrollIntoView({ block: 'center' });
+    function recordDecisionReview(node, option = {}) {
+      gameState.decisionReview ||= [];
+      gameState.decisionReview.push({ nodeId: currentNodeId, ...appendDecisionFeedback(node, option) });
     }
 
-    function continueAfterFeedback() {
-      const result = V46_UX_CORE.consumeFeedbackContinue(feedbackGate);
-      if (!result.accepted) return;
-      const button = document.getElementById('feedback-continue');
-      button.disabled = true;
-      document.getElementById('decision-feedback').classList.add('hidden');
+    function advanceToNode(nextNodeId) {
+      document.getElementById('investigation-task')?.remove();
+      document.getElementById('investigation-launch')?.remove();
       isTransitioning = false;
-      Promise.resolve(renderNode(result.nextNodeId)).catch(error => {
-        console.error('renderNode failed:', result.nextNodeId, error);
+      Promise.resolve(renderNode(nextNodeId)).catch(error => {
+        console.error('renderNode failed:', nextNodeId, error);
         isTransitioning = false;
       });
+    }
+
+    function renderDecisionReview(rows = []) {
+      const list = document.getElementById('decision-review');
+      if (!list) return;
+      const marks = { safe: '✓ 做得好', mistake: '✗ 有風險', incomplete: '△ 還可以更好', timeout: '⏱ 時間到' };
+      list.innerHTML = rows.length
+        ? rows.map(row => `<li><span class="review-mark">${marks[row.classification] || '・'}</span>${escapeHtml(row.action || '')}${row.text ? `<span class="review-note">${escapeHtml(row.text)}</span>` : ''}${row.evidence ? `<span class="review-note">${escapeHtml(row.evidence)}</span>` : ''}</li>`).join('')
+        : '<li>這一關沒有需要回顧的選擇。</li>';
     }
 
 
@@ -12025,6 +11954,7 @@
       document.getElementById('ending-title').innerText = ending.title;
       document.getElementById('ending-content').innerText = ending.content;
       document.getElementById('ending-analysis').innerText = ending.analysis;
+      renderDecisionReview(gameState.decisionReview || []);
 
       const adviceContainer = document.getElementById('advice-container');
       adviceContainer.classList.add('hidden');
@@ -12318,8 +12248,6 @@
       document.getElementById('inspect-close').addEventListener('click', closeInspect);
       document.getElementById('inspect-finish').addEventListener('click', finishInspect);
       document.getElementById('answer-fallback').addEventListener('click', acceptCall);
-      document.getElementById('decision-ready-btn').addEventListener('click', activateDecisionReady);
-      document.getElementById('feedback-continue').addEventListener('click', continueAfterFeedback);
       document.getElementById('start-fixed-sequence').addEventListener('click', startFixedSequence);
       document.getElementById('mechanics-tutorial').addEventListener('click', showMechanicsTutorial);
       document.getElementById('mechanics-tutorial-done').addEventListener('click', completeMechanicsTutorial);
