@@ -4212,35 +4212,6 @@
       top: auto; left: auto; right: auto;
     }
 
-    .investigation-launch,
-    .investigation-task {
-      margin: 10px 8px;
-      padding: 12px;
-      border: 2px solid #000080;
-      background: #f4f4f4;
-      color: #111;
-      box-shadow: 2px 2px 0 #000;
-    }
-    .investigation-task h3 { margin: 4px 0 8px; font-size: 16px; line-height: 1.55; }
-    .investigation-kicker { color: #000080; font-weight: 900; }
-    .investigation-neutral,
-    .investigation-material { margin: 6px 0; line-height: 1.55; }
-    .investigation-task fieldset { margin: 10px 0; padding: 8px; border: 1px solid #666; }
-    .investigation-task legend { padding: 0 4px; font-weight: 900; }
-    .investigation-task label { display: block; padding: 5px 2px; line-height: 1.5; cursor: pointer; }
-    .investigation-task input { margin-right: 6px; }
-    .investigation-task textarea { width: 100%; min-height: 76px; margin-top: 5px; padding: 7px; border: 2px inset #fff; background: #fff; color: #111; resize: vertical; user-select: text; }
-    .investigation-order { display: grid; gap: 5px; margin: 8px 0 8px 20px; }
-    .investigation-order li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px; border: 1px solid #777; background: #fff; }
-    .order-buttons { display: inline-flex; gap: 4px; flex: 0 0 auto; }
-    .order-buttons button,
-    .investigation-actions button { min-width: 44px; min-height: 44px; padding: 6px 9px; border: 2px outset #fff; background: #d8d8d8; color: #111; font-weight: 800; }
-    .order-buttons button:disabled { opacity: .45; cursor: not-allowed; }
-    .investigation-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .investigation-actions .btn-primary { background: #000080; color: #fff; }
-    .investigation-feedback { margin: 10px 0; padding: 8px; border: 2px solid #8a0f14; background: #ffe1e1; line-height: 1.5; }
-    .investigation-feedback.is-pass { border-color: #045020; background: #d8f2df; }
-    .investigation-launch button { width: 100%; min-height: 48px; margin-top: 8px; padding: 8px; border: 2px outset #fff; background: #000080; color: #fff; font-weight: 900; }
     /* V46_UX_STYLES_START */
     #playing-view { min-height: 0; overflow: hidden; }
     #play-flow { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: clip; overscroll-behavior: contain; }
@@ -4423,7 +4394,7 @@
           </div>
           <div id="mechanics-tutorial-panel" class="card hidden" aria-live="polite">
             <h2>選用操作說明</h2>
-            <p id="mechanics-tutorial-text">選項出現就可以作答，選完會馬上說明這一步做得好還是有風險；有倒數的題目，時間從選項出現時開始算。部分情境有「查證工具」，想查就打開，不查也沒關係。每一關結束後可以重新挑戰。</p>
+            <p id="mechanics-tutorial-text">選項出現就可以作答，選完會馬上說明這一步做得好還是有風險；有倒數的題目，時間從選項出現時開始算。每一關結束後可以重新挑戰。</p>
             <button id="mechanics-tutorial-done" class="btn-secondary" type="button">完成操作說明</button>
           </div>
           <div class="card"><p>對話框或頁面隱藏時，決策倒數會暫停；回到畫面後從原本剩餘時間繼續。</p></div>
@@ -5631,7 +5602,6 @@
 
       const clone = value => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
       const unique = values => [...new Set((values || []).filter(Boolean))];
-      const sameSet = (a, b) => a.length === b.length && a.every(value => b.includes(value));
       const sameOrder = (a, b) => a.length === b.length && a.every((value, index) => value === b[index]);
 
       function tokenParts(token) {
@@ -6001,147 +5971,6 @@
       function freezeStageScore(score) { return deepFreeze(score); }
       function projectFrozenScore(score) { return { ui: score, progress: score, eventPayload: score, export: score }; }
 
-      function initialDraft(investigation) {
-        if (investigation.type === 'url_audit') return { selectedIds: [], reason: '' };
-        if (investigation.type === 'action_order') return { order: [...investigation.config.initialOrder] };
-        if (investigation.type === 'contract_audit') return { selectedIds: [], responsibilityId: '' };
-        if (investigation.type === 'evidence_timeline') return { selectedIds: [], order: [...investigation.config.initialOrder] };
-        throw new Error(`unknown_investigation_type:${investigation.type}`);
-      }
-
-      function createInvestigationEntry(investigation, nodeId, runId, openedAt) {
-        return {
-          id: investigation.id,
-          type: investigation.type,
-          nodeId,
-          runId,
-          state: 'open_neutral',
-          openedAt,
-          completedAt: null,
-          draft: initialDraft(investigation),
-          attempts: [],
-          firstResult: null,
-          revisedResult: null,
-          assistanceEventIds: [],
-          completed: false,
-          feedbackRevealed: false,
-          revisionMode: false,
-          completionEventId: null,
-          rewardEventId: null,
-          rewardApplied: false
-        };
-      }
-
-      function updateInvestigationDraft(entry, patch) {
-        const next = clone(entry);
-        next.draft = { ...next.draft, ...clone(patch) };
-        next.state = next.firstResult ? 'revising' : 'editing';
-        return next;
-      }
-
-      function scoreInvestigationAttempt(investigation, input = {}) {
-        const selected = unique(input.selectedIds || []);
-        const order = [...(input.order || [])];
-        let passed = false;
-        let diagnostics = {};
-        if (investigation.type === 'url_audit') {
-          const expected = ['domain', 'countdown', 'credentials', 'otp'];
-          const reasonLength = String(input.reason || '').replace(/\s/g, '').length;
-          diagnostics = {
-            falsePositives: selected.filter(id => !expected.includes(id)),
-            missing: expected.filter(id => !selected.includes(id)),
-            reasonValid: reasonLength >= 8
-          };
-          passed = !diagnostics.falsePositives.length && !diagnostics.missing.length;
-        } else if (investigation.type === 'action_order') {
-          diagnostics = { expectedOrder: [...investigation.config.correctOrder], submittedOrder: order };
-          passed = sameOrder(order, investigation.config.correctOrder);
-        } else if (investigation.type === 'contract_audit') {
-          const expected = investigation.config.terms.filter(term => term.required).map(term => term.id);
-          diagnostics = {
-            falsePositives: selected.filter(id => !expected.includes(id)),
-            missing: expected.filter(id => !selected.includes(id)),
-            responsibilityCorrect: input.responsibilityId === 'applicant_keeps'
-          };
-          passed = sameSet(selected, expected) && diagnostics.responsibilityCorrect;
-        } else if (investigation.type === 'evidence_timeline') {
-          const expected = investigation.config.evidence.filter(item => item.keep).map(item => item.id);
-          diagnostics = {
-            falsePositives: selected.filter(id => !expected.includes(id)),
-            missing: expected.filter(id => !selected.includes(id)),
-            expectedOrder: [...investigation.config.correctOrder],
-            submittedOrder: order
-          };
-          passed = sameSet(selected, expected) && sameOrder(order, investigation.config.correctOrder);
-        } else {
-          throw new Error(`unknown_investigation_type:${investigation.type}`);
-        }
-        return { result: passed ? 'pass' : 'fail', diagnostics };
-      }
-
-      function submitInvestigationEntry(entry, investigation, input, meta = {}) {
-        if (entry.completed) throw new Error('investigation_already_completed');
-        if (entry.attempts.length >= 2) throw new Error('submit_limit');
-        if (entry.firstResult && !entry.revisionMode) throw new Error('revision_not_open');
-        const next = clone(entry);
-        const boundedInput = clone(input);
-        if (investigation.type === 'url_audit') {
-          boundedInput.reason = String(boundedInput.reason || '').slice(0, 500);
-        }
-        const scored = scoreInvestigationAttempt(investigation, boundedInput);
-        const first = !next.firstResult;
-        const attempt = {
-          attemptNo: next.attempts.length + 1,
-          submittedAt: String(meta.submittedAt || ''),
-          eventId: String(meta.eventId || ''),
-          input: boundedInput,
-          first,
-          result: scored.result,
-          diagnostics: clone(scored.diagnostics)
-        };
-        next.attempts.push(attempt);
-        const compact = {
-          result: attempt.result,
-          input: clone(attempt.input),
-          submittedAt: attempt.submittedAt,
-          eventId: attempt.eventId,
-          diagnostics: clone(attempt.diagnostics)
-        };
-        if (first) next.firstResult = compact;
-        else next.revisedResult = compact;
-        next.feedbackRevealed = true;
-        next.revisionMode = false;
-        next.state = first ? 'feedback' : 'submitted_revised';
-        return next;
-      }
-
-      function beginInvestigationRevision(entry) {
-        if (!entry.firstResult) throw new Error('revision_before_first_submit');
-        if (entry.completed) throw new Error('revision_after_completion');
-        if (entry.revisionMode || entry.revisedResult || entry.attempts.length >= 2) {
-          throw new Error('revision_already_used');
-        }
-        const next = clone(entry);
-        next.revisionMode = true;
-        next.feedbackRevealed = false;
-        next.state = 'revising';
-        return next;
-      }
-
-      function completeInvestigationEntry(entry, meta = {}) {
-        if (!entry.firstResult) throw new Error('complete_before_first_submit');
-        const next = clone(entry);
-        next.completed = true;
-        next.completedAt = String(meta.completedAt || '');
-        next.completionEventId = String(meta.eventId || '');
-        next.state = 'completed';
-        next.feedbackRevealed = true;
-        return next;
-      }
-
-      function formalInvestigationResult(entry) { return entry.firstResult; }
-      function isInvestigationGateOpen(investigation, entry) { return !investigation?.required || Boolean(entry?.firstResult && entry?.completed); }
-
       return Object.freeze({
         RUBRIC_VERSION,
         OPTION_TOKENS,
@@ -6161,15 +5990,7 @@
         deriveEnding,
         calculateStageScoreV46,
         freezeStageScore,
-        projectFrozenScore,
-        createInvestigationEntry,
-        updateInvestigationDraft,
-        scoreInvestigationAttempt,
-        submitInvestigationEntry,
-        beginInvestigationRevision,
-        completeInvestigationEntry,
-        formalInvestigationResult,
-        isInvestigationGateOpen
+        projectFrozenScore
       });
     })();
     /* V46_GAMEPLAY_CORE_END */
@@ -6272,8 +6093,8 @@
         };
       }
 
-      function canStartDecision({ materialVisible, optionsEnabled, investigationRequired, investigationComplete }) {
-        return Boolean(materialVisible && optionsEnabled && (!investigationRequired || investigationComplete));
+      function canStartDecision({ materialVisible, optionsEnabled }) {
+        return Boolean(materialVisible && optionsEnabled);
       }
 
       function build165ContextSummary({ storyState = {}, history = [], evidence = [], scenarioType = '' } = {}) {
@@ -6352,26 +6173,6 @@
 
       SCN_PHISHING_START: {
         feedbackPolicy: { preDecision: 'none', afterSafe: '你先確認來源或保留紀錄，再決定是否繼續。', afterIncomplete: '你注意到部分疑點，但仍需停止操作並改用獨立管道查證。', afterMistake: '你順著對方設定的流程繼續行動。請立即停止、保存紀錄並求助。' },
-        investigation: {
-          id: 'phishing_url_audit',
-          type: 'url_audit',
-          required: false,
-          prompt: '比較交易頁與官方入口，標記需要停止操作並進一步查證的警訊。',
-          evidenceLabel: '可疑連結稽核紀錄',
-          reward: { awareness: 2 },
-          config: {
-            officialEntry: '官方示例入口：https://trade.example.com/account',
-            suspiciousEntry: '訊息連結：https://trade-example.verify-now.cc/login',
-            items: [
-              { id: 'official', label: '官方示例入口可由平台首頁自行找到', suspicious: false },
-              { id: 'domain', label: '訊息連結的主網域是 verify-now.cc，與官方 example.com 不一致', suspicious: true, required: true },
-              { id: 'https', label: '網址列顯示 HTTPS 鎖頭', suspicious: false },
-              { id: 'countdown', label: '頁面用 08:59 倒數要求立刻完成驗證', suspicious: true, required: true },
-              { id: 'credentials', label: '頁面要求輸入遊戲帳密與社群小帳', suspicious: true },
-              { id: 'otp', label: '頁面索取手機簡訊驗證碼', suspicious: true, required: true }
-            ]
-          }
-        },
         bg: SCENE_IMAGES.STREET_NIGHT,
         speaker: '阿杰 (語音)',
         instantTip: '警訊：高價收購、限時完成，還要求你代為操作。這是常見的遊戲帳號詐騙開場。',
@@ -6538,24 +6339,6 @@
 
       SCN_ACCOUNT_START: {
         feedbackPolicy: { preDecision: 'none', afterSafe: '你拒絕交付帳戶，並準備處理已發生的金融風險。', afterIncomplete: '你開始詢問用途，但仍需停止交付並聯絡銀行與可信任大人。', afterMistake: '你進入對方安排的租用步驟。請停止並保存招募紀錄。' },
-        investigation: {
-          id: 'account_action_order',
-          type: 'action_order',
-          required: false,
-          prompt: '把發現帳戶出現不明款項後的處置排成安全順序。',
-          evidenceLabel: '人頭帳戶安全處置清單',
-          reward: { awareness: 2 },
-          config: {
-            actions: [
-              { id: 'stop', label: '停止操作，不轉出、不提領、不交付帳戶或卡片' },
-              { id: 'preserve', label: '保存招募對話、對方帳號與入帳通知' },
-              { id: 'bank', label: '聯絡銀行官方客服，說明帳戶有不明款項' },
-              { id: 'help', label: '向可信任大人、警方或 165 求助' }
-            ],
-            initialOrder: ['bank', 'help', 'preserve', 'stop'],
-            correctOrder: ['stop', 'preserve', 'bank', 'help']
-          }
-        },
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '小廷 (語音)',
         instantTip: '警訊：「租帳戶」「掛帳戶」「學生帳戶乾淨」都是人頭帳戶招募的話術。',
@@ -6823,29 +6606,6 @@
 
       SCN_SIM_START: {
         feedbackPolicy: { preDecision: 'none', afterSafe: '你先確認合約、月租與裝置責任，再拒絕替他人掛名。', afterIncomplete: '你願意了解方案，但仍應先向電信業者官方客服核對。', afterMistake: '你被現領報酬帶往現場。請在簽名前停止並獨立查證。' },
-        investigation: {
-          id: 'sim_contract_audit',
-          type: 'contract_audit',
-          required: false,
-          prompt: '閱讀固定合約摘要，找出五項責任資料，再判斷手機交付後責任是否轉移。',
-          evidenceLabel: '門號合約責任稽核表',
-          reward: { awareness: 2 },
-          config: {
-            summary: '學生專案摘要｜申辦人：林同學；月租費：每月 1,399 元；綁約：36 個月；提前解約：依剩餘期間計算，最高 12,000 元；手機：辦妥後交給「合作收購人」；所有帳單與違約責任仍記在申辦人名下。',
-            terms: [
-              { id: 'applicant', label: '申辦人：林同學', required: true },
-              { id: 'monthly', label: '每月費用：1,399 元', required: true },
-              { id: 'term', label: '綁約期間：36 個月', required: true },
-              { id: 'penalty', label: '提前解約成本：最高 12,000 元', required: true },
-              { id: 'handoff', label: '手機交付對象：合作收購人', required: true }
-            ],
-            responsibilityOptions: [
-              { id: 'applicant_keeps', label: '手機交給別人，不會轉移申辦人的合約、月租與違約責任。', correct: true },
-              { id: 'receiver_takes', label: '手機交給收購人後，所有合約責任會自動轉給收購人。', correct: false },
-              { id: 'shop_takes', label: '只要店員知情，電信業者就不能向申辦人收費。', correct: false }
-            ]
-          }
-        },
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '阿凱 (語音)',
         instantTip: '警訊：以你的名義申辦門號、領取手機後再轉交第三人，合約與帳單責任仍由申辦人承擔。',
@@ -7195,33 +6955,6 @@
 
       SCN_CASH_MULE_START: {
         feedbackPolicy: { preDecision: 'none', afterSafe: '你先追問交易性質或拒絕接觸來路不明的現金。', afterIncomplete: '你仍需明確拒絕並保存委託紀錄。', afterMistake: '你因跑腿費或人情答應前往。請在接觸款項前停止並查證。' },
-        investigation: {
-          id: 'cash_evidence_timeline',
-          type: 'evidence_timeline',
-          required: false,
-          prompt: '從七項材料選出應保存的五項，並重建四個已發生事件的先後。',
-          evidenceLabel: '現金代收證據時間線',
-          reward: { awareness: 2 },
-          config: {
-            evidence: [
-              { id: 'recruit_chat', label: '原始招募訊息與承諾報酬', keep: true },
-              { id: 'account', label: '對方既有帳號名稱與公開頁面', keep: true },
-              { id: 'place_time', label: '對方指定的地點與時間訊息', keep: true },
-              { id: 'handoff_rule', label: '交收暗號、紙袋與不得說話的要求', keep: true },
-              { id: 'threat', label: '威脅、催促與限時完成的訊息', keep: true },
-              { id: 'approach_photo', label: '再去現場接近可疑人物並偷拍', keep: false },
-              { id: 'extra_private', label: '設法蒐集陌生人的身分證號與住址', keep: false }
-            ],
-            events: [
-              { id: 'recruit', label: '收到招募訊息' },
-              { id: 'location', label: '收到指定地點與時間' },
-              { id: 'handoff', label: '收到交收要求與暗號' },
-              { id: 'pressure', label: '收到威脅或催促' }
-            ],
-            initialOrder: ['handoff', 'recruit', 'pressure', 'location'],
-            correctOrder: ['recruit', 'location', 'handoff', 'pressure']
-          }
-        },
         bg: SCENE_IMAGES.STREET_NIGHT,
         speaker: '小宇 (語音)',
         instantTip: '警訊：路邊交收現金、明顯偏高的跑腿費，加上當晚完成的急迫要求，都是高風險訊號。',
@@ -9499,80 +9232,6 @@
       updateOptionsMoreHint();
     }
 
-    function scoreInvestigationAttempt(investigation, input) {
-      return V46_GAMEPLAY_CORE.scoreInvestigationAttempt(investigation, input);
-    }
-
-    function ensureInvestigationEntry(investigation, nodeId = currentNodeId) {
-      if (!investigation?.id) return null;
-      if (gameState.investigations[investigation.id]) return gameState.investigations[investigation.id];
-      const created = V46_GAMEPLAY_CORE.createInvestigationEntry(
-        investigation,
-        nodeId,
-        currentRunId,
-        new Date().toISOString()
-      );
-      gameState.investigations[investigation.id] = created;
-      return created;
-    }
-
-    function investigationEvent(type, entry, detail = {}, explicitEventId = '') {
-      return recordEvent(type, {
-        investigationId: entry.id,
-        investigationType: entry.type,
-        runId: entry.runId,
-        ...detail
-      }, entry.nodeId, explicitEventId);
-    }
-
-    function openCaseLab() {
-      const investigation = STORY[currentNodeId]?.investigation;
-      if (!investigation) return;
-      stopTimer();
-      resetActionChallenge();
-      const entry = ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry.openEventId) {
-        const event = investigationEvent('investigation_open', entry, { neutralMaterials: true });
-        entry.openEventId = event?.eventId || makeRunId();
-        entry.openedAt = event?.at || entry.openedAt;
-      }
-      renderInvestigationTask(entry, investigation);
-      saveActiveRun();
-    }
-
-    function openInvestigation() { return openCaseLab(); }
-
-    function investigationFeedback(entry) {
-      if (!entry.feedbackRevealed || !entry.attempts.length) return '';
-      const attempt = entry.attempts[entry.attempts.length - 1];
-      const status = attempt.result === 'pass' ? '全部找到了！' : '還差一點，看看下面的提示。';
-      const d = attempt.diagnostics || {};
-      const cfg = STORY[entry.nodeId]?.investigation?.config || {};
-      const known = [...(cfg.items || []), ...(cfg.terms || []), ...(cfg.evidence || []), ...(cfg.actions || []), ...(cfg.events || [])];
-      const labelOf = id => known.find(item => item.id === id)?.label || id;
-      const details = [];
-      if (d.falsePositives?.length) details.push(`這些其實沒問題：${d.falsePositives.map(labelOf).join('、')}`);
-      if (d.missing?.length) details.push(`還漏了：${d.missing.map(labelOf).join('、')}`);
-      if (d.responsibilityCorrect === false) details.push('手機交給別人後，合約和月費還是由申辦人負責。');
-      if (d.expectedOrder && !sameInvestigationOrder(d.expectedOrder, d.submittedOrder || [])) details.push(`比較安全的順序：${d.expectedOrder.map(labelOf).join(' → ')}`);
-      return `<div class="investigation-feedback ${attempt.result === 'pass' ? 'is-pass' : 'is-fail'}" role="status"><strong>${status}</strong>${details.length ? `<p>${details.join('；')}</p>` : ''}</div>`;
-    }
-
-    function sameInvestigationOrder(a = [], b = []) {
-      return a.length === b.length && a.every((value, index) => value === b[index]);
-    }
-
-    function renderOrderControls(order = [], labels = {}, kind = 'order') {
-      return `<ol class="investigation-order">${order.map((id, index) => `
-        <li data-item-id="${id}">
-          <span>${index + 1}. ${labels[id] || id}</span>
-          <span class="order-buttons">
-            <button type="button" onclick="moveInvestigationItem('${kind}', ${index}, -1)" ${index === 0 ? 'disabled' : ''} aria-label="${labels[id] || id} 上移">上移</button>
-            <button type="button" onclick="moveInvestigationItem('${kind}', ${index}, 1)" ${index === order.length - 1 ? 'disabled' : ''} aria-label="${labels[id] || id} 下移">下移</button>
-          </span>
-        </li>`).join('')}</ol>`;
-    }
-
     function escapeHtml(value = '') {
       return String(value ?? '')
         .replaceAll('&', '&amp;')
@@ -9581,191 +9240,6 @@
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#39;');
     }
-
-    function renderInvestigationTask(entry, investigation) {
-      document.getElementById('investigation-task')?.remove();
-      const disabled = entry.firstResult && !entry.revisionMode ? 'disabled' : '';
-      let controls = '';
-      if (investigation.type === 'url_audit') {
-        controls = `
-          <p class="investigation-material">${investigation.config.officialEntry}</p>
-          <p class="investigation-material">${investigation.config.suspiciousEntry}</p>
-          <fieldset><legend>勾選你要標記的警訊</legend>${investigation.config.items.map(item => `
-            <label><input type="checkbox" value="${item.id}" ${entry.draft.selectedIds.includes(item.id) ? 'checked' : ''} ${disabled}
-              onchange="toggleInvestigationSelection('${item.id}', this.checked)"> ${item.label}</label>`).join('')}</fieldset>
-          <label class="investigation-reason">你的想法（選填）
-            <textarea maxlength="500" ${disabled} onchange="setInvestigationReason(this.value)">${escapeHtml(entry.draft.reason || '')}</textarea>
-          </label>`;
-      } else if (investigation.type === 'action_order') {
-        const labels = Object.fromEntries(investigation.config.actions.map(item => [item.id, item.label]));
-        controls = `<p class="investigation-material">請用上移／下移排出處置順序。</p>${renderOrderControls(entry.draft.order, labels, 'order')}`;
-      } else if (investigation.type === 'contract_audit') {
-        controls = `
-          <p class="investigation-material">${investigation.config.summary}</p>
-          <fieldset><legend>勾選所有由申辦人承擔的條款資料</legend>${investigation.config.terms.map(term => `
-            <label><input type="checkbox" value="${term.id}" ${entry.draft.selectedIds.includes(term.id) ? 'checked' : ''} ${disabled}
-              onchange="toggleInvestigationSelection('${term.id}', this.checked)"> ${term.label}</label>`).join('')}</fieldset>
-          <fieldset><legend>手機交付後，責任由誰承擔？</legend>${investigation.config.responsibilityOptions.map(item => `
-            <label><input type="radio" name="investigation-responsibility" value="${item.id}" ${entry.draft.responsibilityId === item.id ? 'checked' : ''} ${disabled}
-              onchange="setInvestigationResponsibility(this.value)"> ${item.label}</label>`).join('')}</fieldset>`;
-      } else if (investigation.type === 'evidence_timeline') {
-        const labels = Object.fromEntries(investigation.config.events.map(item => [item.id, item.label]));
-        controls = `
-          <fieldset><legend>勾選應保存的材料</legend>${investigation.config.evidence.map(item => `
-            <label><input type="checkbox" value="${item.id}" ${entry.draft.selectedIds.includes(item.id) ? 'checked' : ''} ${disabled}
-              onchange="toggleInvestigationSelection('${item.id}', this.checked)"> ${item.label}</label>`).join('')}</fieldset>
-          <p class="investigation-material">再用上移／下移重建事件時間線。</p>
-          ${renderOrderControls(entry.draft.order, labels, 'timeline')}`;
-      }
-      let actions = '';
-      if (!entry.firstResult || entry.revisionMode) {
-        actions = `<button type="button" class="btn-primary investigation-submit" onclick="submitInvestigation()">看答案</button>
-           <button type="button" class="btn-secondary" onclick="closeInvestigationTask()">先不查，回到對話</button>`;
-      } else if (entry.revisedResult) {
-        actions = `<button type="button" class="btn-primary" onclick="completeCaseLab()">回到對話</button>`;
-      } else {
-        actions = `<button type="button" class="btn-secondary" onclick="beginInvestigationRevision()">再試一次</button>
-           <button type="button" class="btn-primary" onclick="completeCaseLab()">回到對話</button>`;
-      }
-      const html = `<section id="investigation-task" class="investigation-task" aria-labelledby="investigation-title">
-        <p class="investigation-kicker">查證工具（選用，不計分）</p>
-        <h3 id="investigation-title">${investigation.prompt}</h3>
-        <p class="investigation-neutral">照題目勾選或排好順序，再按「看答案」。不想查也可以直接回到對話。</p>
-        ${controls}
-        ${investigationFeedback(entry)}
-        <div class="investigation-actions">${actions}</div>
-      </section>`;
-      document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', html);
-      document.getElementById('investigation-task')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-
-    function mutateInvestigationDraft(patch, action, detail = {}) {
-      const investigation = STORY[currentNodeId]?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry || (entry.firstResult && !entry.revisionMode)) return;
-      Object.assign(entry, V46_GAMEPLAY_CORE.updateInvestigationDraft(entry, patch));
-      const recordedDraftActions = gameState.events.filter(event =>
-        event.type === 'investigation_action' &&
-        event.detail?.investigationId === entry.id
-      ).length;
-      if (recordedDraftActions < 64) {
-        investigationEvent('investigation_action', entry, { action, ...detail });
-      }
-      saveActiveRun();
-    }
-
-    function toggleInvestigationSelection(id, checked) {
-      const investigation = STORY[currentNodeId]?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry) return;
-      const selected = new Set(entry.draft.selectedIds || []);
-      if (checked) selected.add(id); else selected.delete(id);
-      mutateInvestigationDraft({ selectedIds: [...selected] }, 'toggle', { itemId: id, selected: Boolean(checked) });
-    }
-
-    function setInvestigationReason(reason) {
-      const bounded = String(reason || '').slice(0, 500);
-      mutateInvestigationDraft({ reason: bounded }, 'reason_edit', { length: bounded.length });
-    }
-    function setInvestigationResponsibility(responsibilityId) { mutateInvestigationDraft({ responsibilityId }, 'responsibility', { responsibilityId }); }
-
-    function moveInvestigationItem(kind, index, delta) {
-      const investigation = STORY[currentNodeId]?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry || (entry.firstResult && !entry.revisionMode)) return;
-      const order = [...(entry.draft.order || [])];
-      const target = index + delta;
-      if (index < 0 || target < 0 || index >= order.length || target >= order.length) return;
-      [order[index], order[target]] = [order[target], order[index]];
-      mutateInvestigationDraft({ order }, 'move', { kind, itemId: order[target], from: index, to: target });
-      renderInvestigationTask(entry, investigation);
-      document.querySelector(`#investigation-task [data-item-id="${order[target]}"] button`)?.focus();
-    }
-
-    function submitInvestigation() {
-      const investigation = STORY[currentNodeId]?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry || (entry.firstResult && !entry.revisionMode)) return;
-      const eventId = makeRunId();
-      const submittedAt = new Date().toISOString();
-      const updated = V46_GAMEPLAY_CORE.submitInvestigationEntry(
-        entry,
-        investigation,
-        entry.draft,
-        { eventId, submittedAt }
-      );
-      const attempt = updated.attempts[updated.attempts.length - 1];
-      const submitEvent = investigationEvent('investigation_submit', entry, {
-        submitEventId: eventId,
-        attemptNo: attempt.attemptNo,
-        first: attempt.first,
-        result: attempt.result,
-        input: cloneState(attempt.input),
-        diagnostics: cloneState(attempt.diagnostics)
-      }, eventId);
-      if (!submitEvent) return;
-      attempt.eventId = submitEvent.eventId;
-      attempt.submittedAt = submitEvent.at;
-      const storedResult = attempt.first ? updated.firstResult : updated.revisedResult;
-      storedResult.eventId = submitEvent.eventId;
-      storedResult.submittedAt = submitEvent.at;
-      Object.assign(entry, updated);
-      renderInvestigationTask(entry, investigation);
-      saveActiveRun();
-    }
-
-    function beginInvestigationRevision() {
-      const investigation = STORY[currentNodeId]?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry?.firstResult) return;
-      Object.assign(entry, V46_GAMEPLAY_CORE.beginInvestigationRevision(entry));
-      investigationEvent('investigation_action', entry, { action: 'begin_revision' });
-      renderInvestigationTask(entry, investigation);
-      saveActiveRun();
-    }
-
-    function completeCaseLab() {
-      const node = STORY[currentNodeId];
-      const investigation = node?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (!entry?.firstResult || entry.completed) return;
-      const eventId = makeRunId();
-      const completedAt = new Date().toISOString();
-      const updated = V46_GAMEPLAY_CORE.completeInvestigationEntry(entry, { eventId, completedAt });
-      const completeEvent = investigationEvent('investigation_complete', entry, { completionEventId: eventId, firstResult: cloneState(updated.firstResult), revisedResult: cloneState(updated.revisedResult) }, eventId);
-      if (!completeEvent) return;
-      updated.completionEventId = completeEvent.eventId;
-      updated.completedAt = completeEvent.at;
-      Object.assign(entry, updated);
-      const rewardEvent = investigationEvent('investigation_reward', entry, { effects: cloneState(investigation.reward || {}), evidenceLabel: investigation.evidenceLabel || '' });
-      entry.rewardEventId = rewardEvent?.eventId || null;
-      if (investigation.reward && Object.keys(investigation.reward).length) applyEffects(investigation.reward);
-      entry.rewardApplied = true;
-      if (investigation.evidenceLabel) collectEvidence(investigation.evidenceLabel);
-      investigationEvent('investigation_exit', entry, { reason: 'completed' });
-      document.getElementById('investigation-task')?.remove();
-      document.getElementById('investigation-launch')?.remove();
-      document.getElementById('options-area').classList.remove('sheet-hidden', 'peek');
-      if (typeof timingState !== 'undefined' && timingState.phase === 'running') {
-        restoreDecisionContext({});
-      } else {
-        renderCurrentNodeOptions(node);
-        renderActionChallenge(node);
-        activateDecisionReady();
-      }
-      saveActiveRun();
-    }
-
-    // 查證工具是選用的：沒看答案也可以關掉，回到對話直接作答。
-    function closeInvestigationTask() {
-      const investigation = STORY[currentNodeId]?.investigation;
-      const entry = investigation && ensureInvestigationEntry(investigation, currentNodeId);
-      if (entry) investigationEvent('investigation_exit', entry, { reason: 'closed_without_submit' });
-      document.getElementById('investigation-task')?.remove();
-      restoreDecisionContext({});
-    }
-
-    function completeInvestigation() { return completeCaseLab(); }
 
     function updateOptionsMoreHint() {
       const root = document.getElementById('options-container');
@@ -10106,7 +9580,6 @@
 
     const TUTORIAL_STEPS = Object.freeze([
       '先看完對話與材料，選項出現就可以作答；每次選完，對話裡會馬上說明這一步做得好還是有風險。',
-      '部分情境有「查證工具」，想查就打開，不查也可以直接回覆。',
       '有倒數的題目，時間從選項出現時開始算；遇到長按題就按住直到完成。',
       '每一關結束後可以重新挑戰；四關總分以第一次完成的分數計算。'
     ]);
@@ -10819,17 +10292,6 @@
       }, 50);
     }
 
-    function restoreDecisionContext(origin) {
-      origin = origin || {};
-      const playFlow = document.getElementById('play-flow');
-      if (playFlow && Number.isFinite(origin.scrollTop)) playFlow.scrollTop = origin.scrollTop;
-      const target = origin.trigger
-        || document.querySelector('#options-container .opt-btn') || document.getElementById('qte-action-btn');
-      target?.focus();
-      const recoveryTarget = document.querySelector('#options-container .opt-btn') || document.getElementById('qte-action-btn');
-      recoveryTarget?.scrollIntoView({ block: 'center' });
-    }
-
 
     function showPushNotification(name, text) {
       const notif = document.getElementById('push-notification');
@@ -11076,19 +10538,8 @@
     function activateDecisionReady() {
       const node = STORY[currentNodeId];
       if (!node) return;
-      const investigation = node.investigation;
-      const investigationEntry = investigation ? gameState.investigations[investigation.id] : null;
       const optionsEnabled = Boolean(node.challenge || document.querySelector('#options-container .opt-btn'));
-      const gate = {
-        materialVisible: timingState.materialVisibleAt !== null,
-        optionsEnabled,
-        investigationRequired: Boolean(investigation?.required),
-        investigationComplete: !investigation?.required || V46_GAMEPLAY_CORE.isInvestigationGateOpen(investigation, investigationEntry)
-      };
-      if (!V46_UX_CORE.canStartDecision(gate)) {
-        document.getElementById('decision-status').textContent = '請先完成查證工具，再選擇回覆。';
-        return;
-      }
+      if (!V46_UX_CORE.canStartDecision({ materialVisible: timingState.materialVisibleAt !== null, optionsEnabled })) return;
       if (timingState.phase === 'material') timingState = V46_UX_CORE.markDecisionReady(timingState, performance.now());
       timingState = V46_UX_CORE.startDecision(timingState, performance.now());
       if (timingState.phase !== 'running') return;
@@ -11313,16 +10764,11 @@
       recordEvent('material_visible', { nodeId, durationMs: timingState.durationMs });
       const optionsArea = document.getElementById('options-area');
       optionsArea.classList.remove('peek');
-      const investigationEntry = node.investigation ? gameState.investigations[node.investigation.id] : null;
-      if (node.investigation && !investigationEntry?.completed) {
-        document.getElementById('investigation-launch')?.remove();
-        document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', `<section class="investigation-launch" id="investigation-launch"><strong>想先查證一下嗎？（選用）</strong><p>${node.investigation.prompt}</p><button type="button" onclick="openInvestigation()">打開查證工具</button></section>`);
-      }
       renderCurrentNodeOptions(node);
       renderActionChallenge(node);
       applyPressureUI();
       optionsArea.classList.remove('sheet-hidden');
-      recordEvent('decision_ready', { nodeId, investigationRequired: Boolean(node.investigation?.required) });
+      recordEvent('decision_ready', { nodeId });
       recordEvent('node_enter', { optionCount: getOptionsForNode(node).length });
       activateDecisionReady();
       saveActiveRun();
@@ -11405,8 +10851,6 @@
     }
 
     function advanceToNode(nextNodeId) {
-      document.getElementById('investigation-task')?.remove();
-      document.getElementById('investigation-launch')?.remove();
       isTransitioning = false;
       Promise.resolve(renderNode(nextNodeId)).catch(error => {
         console.error('renderNode failed:', nextNodeId, error);
