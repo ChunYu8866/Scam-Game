@@ -1738,6 +1738,7 @@
     }
     .btn-restart:hover { background: var(--opt-bg-hover); }
     .btn-restart:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow-col); }
+    .btn-retry-stage { margin-top: 10px; font-weight: 700; letter-spacing: 0.04em; box-shadow: none; }
 
     .overlay {
       position: absolute; inset: 0; z-index: 160;
@@ -4414,15 +4415,15 @@
           <div class="card intro-card">
             <p id="home-progress">今晚進度 0/4</p>
             <ol id="fixed-call-progress" aria-label="今晚固定流程">
-              <li data-scenario="phishing_link" data-status="current">第 1 通：遊戲帳號連結｜本通</li>
-              <li data-scenario="rent_account" data-status="locked">第 2 通：出租帳戶｜待接聽</li>
-              <li data-scenario="sim_card" data-status="locked">第 3 通：代辦門號｜待接聽</li>
-              <li data-scenario="cash_mule" data-status="locked">第 4 通：代收現金｜待接聽</li>
+              <li data-scenario="phishing_link" data-status="current">第 1 通：釣魚連結與帳號盜用（難度 ★）｜本通</li>
+              <li data-scenario="rent_account" data-status="locked">第 2 通：人頭帳戶與提款卡（難度 ★★）｜待接聽，完成第 1 通後解鎖</li>
+              <li data-scenario="sim_card" data-status="locked">第 3 通：辦門號換現金（難度 ★★）｜待接聽，完成第 2 通後解鎖</li>
+              <li data-scenario="cash_mule" data-status="locked">第 4 通：現金代收與車手招募（難度 ★★★）｜待接聽，完成第 3 通後解鎖</li>
             </ol>
           </div>
           <div id="mechanics-tutorial-panel" class="card hidden" aria-live="polite">
             <h2>選用操作說明</h2>
-            <p id="mechanics-tutorial-text">選項出現就可以作答；有倒數的題目，時間從選項出現時開始算。部分情境有「查證工具」，想查就打開，不查也沒關係。</p>
+            <p id="mechanics-tutorial-text">選項出現就可以作答，選完會馬上說明這一步做得好還是有風險；有倒數的題目，時間從選項出現時開始算。部分情境有「查證工具」，想查就打開，不查也沒關係。每一關結束後可以重新挑戰。</p>
             <button id="mechanics-tutorial-done" class="btn-secondary" type="button">完成操作說明</button>
           </div>
           <div class="card"><p>對話框或頁面隱藏時，決策倒數會暫停；回到畫面後從原本剩餘時間繼續。</p></div>
@@ -4691,6 +4692,7 @@
           <button id="btn-restart-main" class="btn-restart" type="button">
             挑戰下一條主線 ▶
           </button>
+          <button id="btn-retry-stage" class="btn-restart btn-retry-stage" type="button">重新挑戰這一關（選用）</button>
         </div>
       </section>
 
@@ -10103,9 +10105,10 @@
     }
 
     const TUTORIAL_STEPS = Object.freeze([
-      '先看完對話與材料，選項出現就可以作答。',
+      '先看完對話與材料，選項出現就可以作答；每次選完，對話裡會馬上說明這一步做得好還是有風險。',
       '部分情境有「查證工具」，想查就打開，不查也可以直接回覆。',
-      '有倒數的題目，時間從選項出現時開始算；遇到長按題就按住直到完成。'
+      '有倒數的題目，時間從選項出現時開始算；遇到長按題就按住直到完成。',
+      '每一關結束後可以重新挑戰；四關總分以第一次完成的分數計算。'
     ]);
 
     function showMechanicsTutorial() {
@@ -10130,9 +10133,10 @@
       const rows = [...document.querySelectorAll('#fixed-call-progress li')];
       rows.forEach((row, index) => {
         const status = index < completed ? 'completed' : index === completed ? 'current' : 'locked';
-        const label = status === 'completed' ? '已完成' : status === 'current' ? '本通' : '待接聽';
+        const label = status === 'completed' ? '已完成' : status === 'current' ? '本通' : `待接聽，完成第 ${index} 通後解鎖`;
+        const scenario = SCENARIOS[row.dataset.scenario];
         row.dataset.status = status;
-        row.textContent = `第 ${index + 1} 通：${SCENARIOS[row.dataset.scenario]?.shortTitle || row.dataset.scenario}｜${label}`;
+        row.textContent = `第 ${index + 1} 通：${scenario?.title || row.dataset.scenario}（難度 ${scenario?.stars || ''}）｜${label}`;
       });
       document.getElementById('home-progress').textContent = `今晚進度 ${completed}/4`;
       const start = document.getElementById('start-fixed-sequence');
@@ -10768,9 +10772,9 @@
       showScenarioSelect();
     }
 
-    function startGame(scenarioType) {
+    function startGame(scenarioType, options = {}) {
       const scenario = SCENARIOS[scenarioType];
-      if (!scenario || !STORY[scenario.startNode] || !isScenarioUnlocked(scenarioType) || (APP_CONFIG.mode === 'study' && progressState.completed[scenarioType])) {
+      if (!scenario || !STORY[scenario.startNode] || !isScenarioUnlocked(scenarioType) || (APP_CONFIG.mode === 'study' && progressState.completed[scenarioType] && !options.retry)) {
         showScenarioSelect();
         return;
       }
@@ -11378,9 +11382,26 @@
       advanceToNode(nextNodeId);
     }
 
+    const DECISION_FEEDBACK_MARKS = { safe: '✓ 做得好', mistake: '✗ 有風險', incomplete: '△ 還可以更好', timeout: '⏱ 時間到' };
+    const DECISION_FEEDBACK_TIPS = { safe: 'tip-success', mistake: 'tip-danger', incomplete: 'tip-warning', timeout: 'tip-warning' };
+
     function recordDecisionReview(node, option = {}) {
+      const row = { nodeId: currentNodeId, ...appendDecisionFeedback(node, option) };
       gameState.decisionReview ||= [];
-      gameState.decisionReview.push({ nodeId: currentNodeId, ...appendDecisionFeedback(node, option) });
+      gameState.decisionReview.push(row);
+      showInlineDecisionFeedback(row);
+    }
+
+    // 論文第三章：作答後立即呈現正誤與風險說明。回饋直接接在對話裡，不用按鍵，下一則訊息照常出現。
+    function showInlineDecisionFeedback(row) {
+      const note = row.text || (row.classification === 'timeout' ? row.action : row.classification === 'safe' ? '這一步沒有增加風險。' : '');
+      document.getElementById('scroll-anchor')?.insertAdjacentHTML('beforebegin', `
+        <div class="tip ${DECISION_FEEDBACK_TIPS[row.classification] || 'tip-info'} msg-pop decision-inline">
+          <div class="tip-head"><b class="tip-dot"></b><span>${DECISION_FEEDBACK_MARKS[row.classification] || '回饋'}</span></div>
+          ${note ? `<p>${escapeHtml(note)}</p>` : ''}
+          ${row.evidence ? `<p>${escapeHtml(row.evidence)}</p>` : ''}
+        </div>`);
+      scrollToBottom();
     }
 
     function advanceToNode(nextNodeId) {
@@ -11396,9 +11417,8 @@
     function renderDecisionReview(rows = []) {
       const list = document.getElementById('decision-review');
       if (!list) return;
-      const marks = { safe: '✓ 做得好', mistake: '✗ 有風險', incomplete: '△ 還可以更好', timeout: '⏱ 時間到' };
       list.innerHTML = rows.length
-        ? rows.map(row => `<li><span class="review-mark">${marks[row.classification] || '・'}</span>${escapeHtml(row.action || '')}${row.text ? `<span class="review-note">${escapeHtml(row.text)}</span>` : ''}${row.evidence ? `<span class="review-note">${escapeHtml(row.evidence)}</span>` : ''}</li>`).join('')
+        ? rows.map(row => `<li><span class="review-mark">${DECISION_FEEDBACK_MARKS[row.classification] || '・'}</span>${escapeHtml(row.action || '')}${row.text ? `<span class="review-note">${escapeHtml(row.text)}</span>` : ''}${row.evidence ? `<span class="review-note">${escapeHtml(row.evidence)}</span>` : ''}</li>`).join('')
         : '<li>這一關沒有需要回顧的選擇。</li>';
     }
 
@@ -11966,8 +11986,10 @@
       const result = calculateFinalScore(endingId);
       const { score, rank, breakdown, subscores } = result;
       const wasFourStageComplete = calculateFourStageTotal(progressState.completed).complete;
+      // 研究模式可重新挑戰，但四關總分固定採每關第一次完成的成績；重玩紀錄仍以 attemptNo 上傳。
+      const firstResultKept = APP_CONFIG.mode === 'study' && Boolean(progressState.completed[selectedScenarioType]);
 
-      if (selectedScenarioType) {
+      if (selectedScenarioType && !firstResultKept) {
         progressState.completed[selectedScenarioType] = {
           endingId,
           endingRuleId: derived.endingRuleId,
@@ -12002,11 +12024,15 @@
           nextBtn.onclick = returnToScenarioSelect;
         }
       }
+      const retryType = selectedScenarioType;
+      const retryBtn = document.getElementById('btn-retry-stage');
+      if (retryBtn) retryBtn.onclick = () => startGame(retryType, { retry: true });
 
       document.getElementById('ending-score').innerText = score;
       document.getElementById('ending-rank').innerText = rank;
       document.getElementById('ending-score-breakdown').innerText =
-        `決策品質 ${breakdown.decision}/15・查證行動 ${breakdown.verification}/5・結局處置 ${breakdown.outcome}/5`;
+        `決策品質 ${breakdown.decision}/15・查證行動 ${breakdown.verification}/5・結局處置 ${breakdown.outcome}/5`
+        + (firstResultKept ? '\n這次是重新挑戰，四關總分仍以第一次完成的分數計算。' : '');
       document.getElementById('ending-takeaway').innerText = gameState.mistakes.length
         ? `這一局最該記住：${gameState.mistakes[gameState.mistakes.length - 1].hint || '越急迫的要求，越要先停下來查證。'}`
         : '這一局最該記住：安全判斷之後，仍要完成蒐證、求助與提醒他人的處置。';
@@ -12055,7 +12081,7 @@
         }
         const researchPayload = buildResearchPayload(endingId, result, 'completed', null, !wasFourStageComplete);
         queueResearchRecord(researchPayload);
-        if (completedCount() >= SCENARIO_ORDER.length) lastFinalStageRunId = currentRunId;
+        if (completedCount() >= SCENARIO_ORDER.length && !firstResultKept) lastFinalStageRunId = currentRunId;
         clearActiveRun();
       } catch (e) { console.error('research log failed', e); }
 
