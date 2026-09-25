@@ -4549,6 +4549,15 @@
     html[data-visual="midnight"] .tip-danger { background: var(--tip-danger-bg) !important; color: var(--tip-danger-text) !important; border-color: #ab6371 !important; }
     html[data-visual="midnight"] .tip-success { background: var(--tip-success-bg) !important; color: var(--tip-success-text) !important; border-color: #7ca68c !important; }
     html[data-visual="midnight"] .tip-info { background: var(--tip-info-bg) !important; color: var(--tip-info-text) !important; border-color: #6397b8 !important; }
+    html[data-visual="midnight"] .quick-feedback {
+      position: absolute; left: 50%; z-index: 20; width: min(calc(100% - 24px), 480px); transform: translateX(-50%);
+      display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; border: 1px solid; border-radius: 10px;
+      font-size: 14px; line-height: 1.6; box-shadow: 0 8px 24px #0006; cursor: pointer; animation: qf-in .18s ease-out;
+    }
+    html[data-visual="midnight"] .qf-safe { background: var(--tip-success-bg); color: var(--tip-success-text); border-color: #7ca68c; }
+    html[data-visual="midnight"] .qf-mistake { background: var(--tip-danger-bg); color: var(--tip-danger-text); border-color: #ab6371; }
+    html[data-visual="midnight"] :is(.qf-incomplete, .qf-timeout) { background: var(--tip-warning-bg); color: var(--tip-warning-text); border-color: #a58b55; }
+    @keyframes qf-in { from { opacity: 0; transform: translate(-50%, -6px); } to { opacity: 1; transform: translate(-50%, 0); } }
     html[data-visual="midnight"] .overlay { inset: 72px 0 49px !important; padding: 20px; background: #050c14c9 !important; backdrop-filter: blur(9px); }
     html[data-visual="midnight"] :is(.modal,.inspect-sheet,.hb-sheet,.c165-card,.game-guide-window) { width: min(100%, 560px); max-height: 100%; }
     html[data-visual="midnight"] :is(.inspect-head,.hb-head,.c165-head,.game-guide-titlebar) { background: #243b42; color: var(--paper); padding: 15px 18px; border: 0; border-bottom: 1px solid #486068; font-weight: 600; }
@@ -4837,7 +4846,7 @@
           </div>
           <div id="mechanics-tutorial-panel" class="card hidden" aria-live="polite">
             <h2>選用操作說明</h2>
-            <p id="mechanics-tutorial-text">選項出現就可以作答；遊玩中不會提示對錯，每一關結束後會列出你每一步的選擇與說明。有倒數的題目，時間從選項出現時開始算。每一關結束後可以重新挑戰。</p>
+            <p id="mechanics-tutorial-text">選項出現就可以作答；選完會短暫提示這一步做得好還是有風險，每一關結束後再列出完整說明。有倒數的題目，時間從選項出現時開始算。每一關結束後可以重新挑戰。</p>
             <button id="mechanics-tutorial-done" class="btn-secondary" type="button">完成操作說明</button>
           </div>
           <div class="guide-actions">
@@ -10125,7 +10134,7 @@
     }
 
     const TUTORIAL_STEPS = Object.freeze([
-      '先看完對話與材料，選項出現就可以作答；遊玩中不會提示對錯，每一關結束後會列出你每一步的選擇與說明。',
+      '先看完對話與材料，選項出現就可以作答；選完會短暫提示這一步做得好還是有風險，每一關結束後再列出完整說明。',
       '有倒數的題目，時間從選項出現時開始算；遇到長按題就按住直到完成。',
       '每一關結束後可以重新挑戰；四關總分以第一次完成的分數計算。'
     ]);
@@ -11506,11 +11515,33 @@
 
     const DECISION_FEEDBACK_MARKS = { safe: '✓ 做得好', mistake: '✗ 有風險', incomplete: '△ 還可以更好', timeout: '⏱ 時間到' };
 
-    // 遊玩中不顯示對錯；每一步的判定與說明只記下來，留到該關結局頁的「這一關你的每個選擇」統一列出。
     function recordDecisionReview(node, option = {}) {
       const row = { nodeId: currentNodeId, ...appendDecisionFeedback(node, option) };
       gameState.decisionReview ||= [];
       gameState.decisionReview.push(row);
+      showQuickFeedback(row);
+    }
+
+    // 論文第三章：作答後立即呈現正誤與風險說明。只浮出對錯加一句說明，幾秒後自動消失（點一下也可關），
+    // 不插進對話、不擋選項，也不等玩家按鍵；完整說明留到該關結局頁的「這一關你的每個選擇」。
+    let quickFeedbackTimer = 0;
+    function showQuickFeedback(row) {
+      const view = document.getElementById('playing-view');
+      const flow = document.getElementById('play-flow');
+      if (!view || !flow) return;
+      const full = row.classification === 'timeout' ? '' : String(row.text || (row.classification === 'safe' ? '這一步沒有增加風險。' : ''));
+      const note = (full.match(/^[^。！？]*[。！？]?/) || [''])[0];
+      clearTimeout(quickFeedbackTimer);
+      document.getElementById('quick-feedback')?.remove();
+      const box = document.createElement('div');
+      box.id = 'quick-feedback';
+      box.className = `quick-feedback qf-${row.classification}`;
+      box.setAttribute('role', 'status');
+      box.innerHTML = `<b>${DECISION_FEEDBACK_MARKS[row.classification] || '回饋'}</b>${note ? `<span>${escapeHtml(note)}</span>` : ''}`;
+      box.style.top = `${flow.offsetTop + 8}px`;
+      box.addEventListener('click', () => box.remove());
+      view.appendChild(box);
+      quickFeedbackTimer = setTimeout(() => box.remove(), Math.min(4500, 2000 + note.length * 60));
     }
 
     function advanceToNode(nextNodeId) {
