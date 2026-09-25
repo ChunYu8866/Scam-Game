@@ -4323,9 +4323,12 @@
     }
     html[data-visual="midnight"] .retro-menu-bar button {
       height: 44px; min-height: 44px; padding: 0 12px; border: 1px solid transparent;
-      color: var(--muted); border-radius: 8px; font-size: 13px !important; background: transparent;
+      color: var(--muted); border-radius: 8px; font-size: 13px !important; background: transparent; text-align: center;
     }
-    html[data-visual="midnight"] .retro-menu-bar button:hover { color: var(--paper); background: var(--panel-raised); }
+    /* 手機點過後 :hover 會黏住，看起來像「被選取」；只在有滑鼠的裝置顯示。 */
+    @media (hover: hover) {
+      html[data-visual="midnight"] .retro-menu-bar button:hover { color: var(--paper); background: var(--panel-raised); }
+    }
     html[data-visual="midnight"] .edition-tag { display: none; }
     html[data-visual="midnight"] .retro-desktop-shortcuts {
       display: flex; top: 100px; left: 12px; bottom: 65px; width: 84px; padding: 0;
@@ -4525,6 +4528,7 @@
     html[data-visual="midnight"] #options-area { width: auto !important; margin: 4px 20px 0; padding: 18px; background: #14222c !important; border: 1px solid #3b515b !important; border-radius: 12px !important; box-shadow: none !important; }
     html[data-visual="midnight"] #options-area::before { color: var(--mint); background: none; height: auto; padding: 0 0 8px; font-size: 12px; font-weight: 500; letter-spacing: .12em; }
     html[data-visual="midnight"] #decision-status { color: var(--muted); font-size: 13px; line-height: 1.7; }
+    html[data-visual="midnight"] #decision-status:empty { min-height: 0; margin: 0; padding: 0; }
     html[data-visual="midnight"] .sheet-inner { padding: 8px 0 0; }
     html[data-visual="midnight"] #options-container { gap: 10px; }
     html[data-visual="midnight"] #options-container .opt-btn {
@@ -4578,8 +4582,12 @@
     html[data-visual="midnight"] .decision-review :is(.review-incomplete,.review-timeout) { color: #efd49c; }
     html[data-visual="midnight"] .upload-status { padding: 12px 16px; color: #b7d9e8; background: #1d3444; border: 1px solid #45657b; border-radius: 9px; }
     html[data-visual="midnight"] :is(input,textarea,select) { background: #0f1a23; color: var(--paper); border: 1px solid #5b717a; border-radius: 8px; padding: 12px; }
+    /* 蓋掉 Win95 皮膚的灰底亮綠字（代碼框對比不足）。 */
+    html[data-visual="midnight"] .research-form :is(input[type="text"], input[type="url"], select, textarea) { background: #0f1a23; color: var(--paper); border: 1px solid #5b717a; border-radius: 8px; box-shadow: none; }
+    html[data-visual="midnight"] .research-form input[readonly] { background: var(--panel-raised); letter-spacing: .08em; }
     html[data-visual="midnight"] input[type="checkbox"] { min-width: 22px; min-height: 22px; accent-color: #b7e4ce; }
     html[data-visual="midnight"] .form-error { color: #ffb4b4; }
+    html[data-visual="midnight"] .form-error:empty { min-height: 0; margin: 0; }
     html[data-visual="midnight"] .sp-bar { color: var(--paper); background: var(--panel); border: 1px solid var(--hairline); border-radius: 10px; }
     html[data-visual="midnight"] .scenario-card { padding: 24px; }
     html[data-visual="midnight"] .scenario-card.is-next { outline: 1px solid #8ac9a8; box-shadow: none; }
@@ -4633,22 +4641,33 @@
     @media (max-width: 759px) {
       html[data-visual="midnight"] #app { padding: 0 !important; }
       html[data-visual="midnight"] #app #phone-frame { width: 100% !important; height: 100dvh !important; max-height: none !important; border: 0; border-radius: 0; }
-      html[data-visual="midnight"] .retro-program-bar { padding: 0 18px; height: calc(65px + env(safe-area-inset-top, 0px)) !important; padding-top: env(safe-area-inset-top, 0px); font-size: 17px; }
-      html[data-visual="midnight"] .retro-menu-bar { top: calc(65px + env(safe-area-inset-top, 0px)); left: 0; right: 0; width: 100%; height: 47px; justify-content: space-around; padding: 0 10px; border-bottom: 1px solid var(--hairline); }
-      html[data-visual="midnight"] .retro-menu-bar button { flex: 1; min-width: 0; padding-inline: 5px; font-size: 12px !important; white-space: nowrap; letter-spacing: 0; }
+      html[data-visual="midnight"] .retro-program-bar { justify-content: center; text-align: center; padding: 0 18px; height: calc(56px + env(safe-area-inset-top, 0px)) !important; padding-top: env(safe-area-inset-top, 0px); font-size: 17px; }
+      html[data-visual="midnight"] .retro-program-icon { width: 30px; height: 30px; font-size: 16px; }
+      html[data-visual="midnight"] .retro-menu-bar { top: calc(56px + env(safe-area-inset-top, 0px)); left: 0; right: 0; width: 100%; height: 46px; justify-content: space-around; align-items: center; padding: 0 8px; gap: 4px; border-bottom: 1px solid var(--hairline); }
+      html[data-visual="midnight"] .retro-menu-bar button { flex: 1 1 0; min-width: 0; height: 40px; min-height: 40px; padding-inline: 4px; font-size: 13px !important; white-space: nowrap; letter-spacing: 0; text-align: center; }
       html[data-visual="midnight"] .retro-desktop-shortcuts { display: none !important; }
-      html[data-visual="midnight"] .view { inset: calc(112px + env(safe-area-inset-top, 0px)) 0 calc(49px + env(safe-area-inset-bottom, 0px)) 0 !important; padding: 20px 18px 12px !important; }
+      html[data-visual="midnight"] .view { inset: calc(102px + env(safe-area-inset-top, 0px)) 0 calc(49px + env(safe-area-inset-bottom, 0px)) 0 !important; padding: 18px 16px 12px !important; }
+      html[data-visual="midnight"] .view > .scroll-area { padding: 0 0 12px !important; }
+      /* 手機的捲軸本來就是浮在內容上、會自動隱藏；不另外畫出來，左右留白才會對稱。 */
+      html[data-visual="midnight"] :is(.view > .scroll-area, #play-flow) { scrollbar-width: none; }
+      html[data-visual="midnight"] :is(.view > .scroll-area, #play-flow)::-webkit-scrollbar { display: none; }
       html[data-visual="midnight"] .retro-taskbar { height: calc(49px + env(safe-area-inset-bottom, 0px)); padding: 2px 17px calc(2px + env(safe-area-inset-bottom, 0px)); gap: 7px; }
-      html[data-visual="midnight"] .retro-task-current { display: flex; font-size: 9px !important; letter-spacing: .09em; }
-      html[data-visual="midnight"] #guide-view .guide-hero { min-height: 254px; padding: 27px 23px; margin-bottom: 24px; }
+      html[data-visual="midnight"] .retro-task-current { display: flex; flex: 1; justify-content: center; font-size: 11px !important; letter-spacing: .09em; }
+      html[data-visual="midnight"] #guide-view .guide-hero { min-height: 300px; padding: 28px 20px 118px; margin-bottom: 22px; text-align: center; }
       html[data-visual="midnight"] #guide-view .hero-title { font-size: clamp(28px, 6.4vw, 39px); letter-spacing: .03em; }
-      html[data-visual="midnight"] #guide-view .hero-kicker { max-width: 100%; font-size: 10px; }
-      html[data-visual="midnight"] #guide-view .hero-sub { max-width: 76%; font-size: 13px; }
+      html[data-visual="midnight"] #guide-view .hero-kicker { max-width: 100%; font-size: 11px; }
+      html[data-visual="midnight"] #guide-view .hero-sub { max-width: 100%; margin-inline: auto; font-size: 14px; }
       html[data-visual="midnight"] .hero-edition { font-size: 8px; margin-top: 23px; letter-spacing: .16em; }
-      html[data-visual="midnight"] .midnight-art { width: 60%; }
+      html[data-visual="midnight"] .midnight-art { width: 100%; height: 58%; top: auto; bottom: 0; opacity: .8; }
+      html[data-visual="midnight"] .hero-art-shade { background: linear-gradient(180deg, #1c343c 0, #1b3138f0 45%, transparent 78%); }
+      html[data-visual="midnight"] :is(.guide-hero, .end-hero),
+      html[data-visual="midnight"] #ending-view .scroll-area::before { text-align: center; }
+      html[data-visual="midnight"] #home-progress { justify-content: center; }
+      html[data-visual="midnight"] #home-progress::after { display: none; }
+      html[data-visual="midnight"] .guide-note { text-align: center; }
       html[data-visual="midnight"] #fixed-call-progress li { padding: 13px; column-gap: 10px; }
       html[data-visual="midnight"] #fixed-call-progress .call-title { font-size: 15px; }
-      html[data-visual="midnight"] .overlay { inset: calc(112px + env(safe-area-inset-top, 0px)) 0 calc(49px + env(safe-area-inset-bottom, 0px)) !important; padding: 12px; }
+      html[data-visual="midnight"] .overlay { inset: calc(102px + env(safe-area-inset-top, 0px)) 0 calc(49px + env(safe-area-inset-bottom, 0px)) !important; padding: 12px; }
       html[data-visual="midnight"] #playing-view { padding: 12px 10px !important; }
       html[data-visual="midnight"] #chat-header { padding: 10px; gap: 8px; }
       html[data-visual="midnight"] .hdr-progress { flex-basis: 100%; }
@@ -4658,7 +4677,7 @@
       html[data-visual="midnight"] #chat-history { padding: 16px 10px; }
       html[data-visual="midnight"] .bubble { padding: 11px 13px; }
       html[data-visual="midnight"] #options-area { margin: 4px 9px 0; padding: 13px; }
-      html[data-visual="midnight"] #push-notification { top: calc(122px + env(safe-area-inset-top, 0px)); right: 12px; width: calc(100% - 24px); }
+      html[data-visual="midnight"] #push-notification { top: calc(112px + env(safe-area-inset-top, 0px)); right: 12px; width: calc(100% - 24px); }
       html[data-visual="midnight"] .call-card { padding: 22px; }
     }
     @media (max-width: 359px) {
@@ -4818,7 +4837,7 @@
           </div>
           <div id="mechanics-tutorial-panel" class="card hidden" aria-live="polite">
             <h2>選用操作說明</h2>
-            <p id="mechanics-tutorial-text">選項出現就可以作答，選完會馬上說明這一步做得好還是有風險；有倒數的題目，時間從選項出現時開始算。每一關結束後可以重新挑戰。</p>
+            <p id="mechanics-tutorial-text">選項出現就可以作答；遊玩中不會提示對錯，每一關結束後會列出你每一步的選擇與說明。有倒數的題目，時間從選項出現時開始算。每一關結束後可以重新挑戰。</p>
             <button id="mechanics-tutorial-done" class="btn-secondary" type="button">完成操作說明</button>
           </div>
           <div class="guide-actions">
@@ -10106,7 +10125,7 @@
     }
 
     const TUTORIAL_STEPS = Object.freeze([
-      '先看完對話與材料，選項出現就可以作答；每次選完，對話裡會馬上說明這一步做得好還是有風險。',
+      '先看完對話與材料，選項出現就可以作答；遊玩中不會提示對錯，每一關結束後會列出你每一步的選擇與說明。',
       '有倒數的題目，時間從選項出現時開始算；遇到長按題就按住直到完成。',
       '每一關結束後可以重新挑戰；四關總分以第一次完成的分數計算。'
     ]);
@@ -10879,24 +10898,97 @@
 
     // 語音訊息：按播放鍵用裝置內建的中文語音（speechSynthesis）實際念出來；文字稿一律顯示，
     // 沒戴耳機或裝置沒有中文語音的人照樣看得到內容。波形高度由文字決定，不是隨機數。
-    const VOICE_PITCH = { '阿杰': 1, '小廷': 1.1, '阿凱': 0.85, '小宇': 1.15, 'K哥': 0.7, '學長': 0.8, '媽媽': 1.25 };
+    // 念法盡量像真人：優先挑臺灣華語的自然語音、依角色性別挑聲音、旁白不念只念台詞、
+    // 逐句念並依問句／驚嘆句微調語速與音高；不再用大幅變調（會變成機器感）。
+    const VOICE_CAST = {
+      '阿杰': { gender: 'male', rate: 1.08, pitch: 1 },
+      '小廷': { gender: 'male', rate: 1.02, pitch: 1.02 },
+      '阿凱': { gender: 'male', rate: 1.06, pitch: 0.96 },
+      '小宇': { gender: '', rate: 1.1, pitch: 1.04 },
+      'K哥': { gender: 'male', rate: 0.9, pitch: 0.9 },
+      '學長': { gender: 'male', rate: 0.98, pitch: 0.94 },
+      '媽媽': { gender: 'female', rate: 0.98, pitch: 1 },
+      '客服': { gender: 'female', rate: 0.97, pitch: 1 }
+    };
+    const MALE_VOICE_NAME = /yunjhe|zhiwei|yunxi|yunyang|yunjian|yunxia|yunfeng|yunhao|yunye|yunze|kangkang|li-?mu|\bmale\b|男/i;
+    const FEMALE_VOICE_NAME = /hsiaochen|hsiaoyu|hanhan|yating|mei-?jia|ting-?ting|sin-?ji|xiaoxiao|xiaoyi|huihui|yaoyao|yu-?shu|female|女|google 國語|google 普通话/i;
+    let voiceList = [];
+    if ('speechSynthesis' in window) {
+      // Chrome 的語音清單是非同步載入，第一次 getVoices() 常是空的。
+      voiceList = window.speechSynthesis.getVoices();
+      window.speechSynthesis.addEventListener?.('voiceschanged', () => { voiceList = window.speechSynthesis.getVoices(); });
+    }
+
+    // 只念台詞：文字若含「旁白：『台詞』」的寫法，只念冒號後（或開頭）那一層引號裡的內容。
+    function voiceSpeechText(text) {
+      const plain = String(text).replace(/<[^>]*>/g, '');
+      const quotes = [];
+      if (plain.includes('：「')) {
+        let depth = 0; let buffer = null;
+        for (let index = 0; index < plain.length; index += 1) {
+          const ch = plain[index];
+          if (ch === '「' && depth === 0 && (index === 0 || /[：:]\s*$/.test(plain.slice(Math.max(0, index - 2), index)))) { depth = 1; buffer = ''; continue; }
+          if (ch === '「') depth += 1;
+          if (ch === '」' && depth > 0) {
+            depth -= 1;
+            if (depth === 0 && buffer !== null) { quotes.push(buffer); buffer = null; continue; }
+          }
+          if (buffer !== null) buffer += ch;
+        }
+      }
+      return (quotes.length ? quotes.map(quote => /[。！？!?]$/.test(quote) ? quote : `${quote}。`).join('') : plain)
+        .replace(/\p{Extended_Pictographic}|️|‍/gu, '')
+        .replace(/[「」『』]/g, '')
+        .replace(/…+|\.{3,}/g, '，')
+        .replace(/[～~]+/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function voiceSentences(text) {
+      return (text.match(/[^。！？!?；;]+[。！？!?；;]*/g) || [])
+        .map(part => part.trim())
+        .filter(part => part.replace(/[。！？!?；;，、\s]/g, ''));
+    }
 
     function voiceMessageHTML(text, speaker) {
       const plain = String(text).replace(/<[^>]*>/g, '');
+      const spoken = voiceSpeechText(plain);
       const bars = Array.from({ length: 18 }, (_, index) => 30 + (plain.charCodeAt(Math.floor(index * plain.length / 18)) % 70));
       const player = 'speechSynthesis' in window
         ? `<div class="voice-msg" data-voice-speaker="${escapeHtml(speaker)}">
             <button type="button" class="voice-play" aria-label="播放語音" onclick="toggleVoicePlayback(this)">▶</button>
             <span class="voice-bars" aria-hidden="true">${bars.map(height => `<i style="height:${height}%"></i>`).join('')}</span>
-            <span class="voice-dur">約 ${Math.max(2, Math.round(plain.length / 4.5))} 秒</span>
+            <span class="voice-dur">約 ${Math.max(2, Math.round(spoken.length / 4.5))} 秒</span>
           </div>`
         : '';
       return `${player}<p class="voice-text">「${text}」</p>`;
     }
 
-    function pickVoice() {
-      const voices = window.speechSynthesis?.getVoices() || [];
-      return voices.find(voice => /^zh[-_]TW/i.test(voice.lang)) || voices.find(voice => /^zh/i.test(voice.lang)) || null;
+    function voiceGender(voice) {
+      if (MALE_VOICE_NAME.test(voice?.name || '')) return 'male';
+      if (FEMALE_VOICE_NAME.test(voice?.name || '')) return 'female';
+      return '';
+    }
+
+    function voiceScore(voice) {
+      const lang = String(voice.lang || '').replace(/_/g, '-');
+      if (/^(zh-HK|yue)/i.test(lang) || /粵|Cantonese|Hong Kong/i.test(voice.name)) return -1;
+      let score = /^(zh-TW|cmn-Hant|cmn-TW|zh-Hant)/i.test(lang) || /臺灣|台灣|Taiwan/i.test(voice.name) ? 40
+        : /^(zh|cmn)/i.test(lang) ? 10 : -1;
+      if (score < 0) return score;
+      if (/natural|neural|online|premium|enhanced|增強|優化/i.test(voice.name)) score += 20;
+      if (voice.localService === false) score += 5;
+      return score;
+    }
+
+    // 先挑最自然的臺灣華語語音；角色有性別設定時，改用分數差距不大的同性別語音。
+    function pickVoice(gender = '') {
+      if (!voiceList.length) voiceList = window.speechSynthesis?.getVoices() || [];
+      const ranked = voiceList.filter(voice => voiceScore(voice) > 0).sort((a, b) => voiceScore(b) - voiceScore(a));
+      const best = ranked[0] || null;
+      const matched = gender && best ? ranked.find(voice => voiceGender(voice) === gender && voiceScore(voice) >= voiceScore(best) - 25) : null;
+      return matched || best;
     }
 
     function stopVoicePlayback() {
@@ -10915,21 +11007,34 @@
       stopVoicePlayback();
       if (same || !('speechSynthesis' in window)) return;
       const bubble = button.closest('.bubble');
-      const text = (bubble?.querySelector('.voice-text')?.textContent || '').replace(/[「」]/g, '');
+      const text = voiceSpeechText((bubble?.querySelector('.voice-text')?.textContent || '').replace(/^「|」$/g, ''));
+      const sentences = voiceSentences(text);
+      if (!sentences.length) return;
       const speaker = button.parentElement?.dataset.voiceSpeaker || '';
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'zh-TW';
-      utterance.voice = pickVoice();
-      utterance.rate = 1.05;
-      utterance.pitch = Object.entries(VOICE_PITCH).find(([name]) => speaker.includes(name))?.[1] || 1;
-      utterance.onend = utterance.onerror = () => { if (activeVoice?.utterance === utterance) stopVoicePlayback(); };
-      activeVoice = { button, utterance };
+      const cast = Object.entries(VOICE_CAST).find(([name]) => speaker.includes(name))?.[1] || { gender: '', rate: 1.02, pitch: 1 };
+      const voice = pickVoice(cast.gender);
+      // 找不到同性別的聲音時只小幅調音高，避免扭曲。
+      const actualGender = voiceGender(voice);
+      const genderShift = cast.gender && actualGender && actualGender !== cast.gender ? (cast.gender === 'male' ? -0.12 : 0.1) : 0;
+      // 一次把每一句排進佇列（iOS 只允許在點擊當下開始播放），句與句之間由引擎自然停頓。
+      const utterances = sentences.map((sentence, index) => {
+        const utterance = new SpeechSynthesisUtterance(sentence);
+        utterance.lang = voice?.lang || 'zh-TW';
+        utterance.voice = voice;
+        const sway = (((sentence.charCodeAt(0) + index) % 5) - 2) * 0.012;
+        utterance.rate = cast.rate + (/[！!]$/.test(sentence) ? 0.04 : 0) + sway;
+        utterance.pitch = cast.pitch + genderShift + (/[？?]$/.test(sentence) ? 0.06 : 0);
+        utterance.onerror = () => { if (activeVoice?.utterances === utterances) stopVoicePlayback(); };
+        return utterance;
+      });
+      utterances[utterances.length - 1].onend = () => { if (activeVoice?.utterances === utterances) stopVoicePlayback(); };
+      activeVoice = { button, utterances };
       button.textContent = '■';
       button.setAttribute('aria-label', '停止播放');
       bubble?.classList.add('is-playing');
       pauseDecisionTimer('voice');
-      recordEvent('voice_play', { speaker, chars: text.length });
-      window.speechSynthesis.speak(utterance);
+      recordEvent('voice_play', { speaker, chars: text.length, voice: voice?.name || '' });
+      utterances.forEach(utterance => window.speechSynthesis.speak(utterance));
     }
 
     function appendBubble(speaker, text, type, isRealWorld = false) {
@@ -10993,7 +11098,7 @@
     const TIP_STYLES = {
       warning:  { cls: 'tip-warning', label: '防詐提示' },
       danger:   { cls: 'tip-danger',  label: '風險警示' },
-      success:  { cls: 'tip-success', label: '安全行動' },
+      success:  { cls: 'tip-success', label: '查證結果' },
       info:     { cls: 'tip-info',    label: '補充說明' },
       evidence: { cls: 'tip-info',    label: '證據保留' }
     };
@@ -11400,25 +11505,12 @@
     }
 
     const DECISION_FEEDBACK_MARKS = { safe: '✓ 做得好', mistake: '✗ 有風險', incomplete: '△ 還可以更好', timeout: '⏱ 時間到' };
-    const DECISION_FEEDBACK_TIPS = { safe: 'tip-success', mistake: 'tip-danger', incomplete: 'tip-warning', timeout: 'tip-warning' };
 
+    // 遊玩中不顯示對錯；每一步的判定與說明只記下來，留到該關結局頁的「這一關你的每個選擇」統一列出。
     function recordDecisionReview(node, option = {}) {
       const row = { nodeId: currentNodeId, ...appendDecisionFeedback(node, option) };
       gameState.decisionReview ||= [];
       gameState.decisionReview.push(row);
-      showInlineDecisionFeedback(row);
-    }
-
-    // 論文第三章：作答後立即呈現正誤與風險說明。回饋直接接在對話裡，不用按鍵，下一則訊息照常出現。
-    function showInlineDecisionFeedback(row) {
-      const note = row.text || (row.classification === 'timeout' ? row.action : row.classification === 'safe' ? '這一步沒有增加風險。' : '');
-      document.getElementById('scroll-anchor')?.insertAdjacentHTML('beforebegin', `
-        <div class="tip ${DECISION_FEEDBACK_TIPS[row.classification] || 'tip-info'} msg-pop decision-inline">
-          <div class="tip-head"><b class="tip-dot"></b><span>${DECISION_FEEDBACK_MARKS[row.classification] || '回饋'}</span></div>
-          ${note ? `<p>${escapeHtml(note)}</p>` : ''}
-          ${row.evidence ? `<p>${escapeHtml(row.evidence)}</p>` : ''}
-        </div>`);
-      scrollToBottom();
     }
 
     function advanceToNode(nextNodeId) {
