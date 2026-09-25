@@ -9,8 +9,8 @@
     * { box-sizing:border-box; }
     body { margin:0; min-height:100vh; padding:24px; }
     main { width:min(760px,100%); margin:auto; background:#fff; border:1px solid #d8e0ea; border-radius:20px; padding:28px 24px; box-shadow:0 18px 48px rgba(35,52,78,.12); }
-    h1 { margin:0 0 6px; font-size:26px; }
-    .sub { color:#53627a; margin:0 0 20px; line-height:1.6; }
+    .hero { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    h1 { margin:0; font-size:clamp(22px,6vw,26px); }
     h2 { font-size:18px; margin:26px 0 10px; }
     p, li { line-height:1.75; }
     ul { padding-left:20px; margin:8px 0; }
@@ -18,17 +18,15 @@
     .card { background:#f4f7fb; border:1px solid #dfe6ef; border-radius:12px; padding:12px 14px; }
     .card b { display:block; font-size:22px; color:#1557b0; }
     .card span { color:#53627a; font-size:14px; }
-    .play { display:block; width:100%; margin:26px 0 12px; padding:16px; border-radius:14px; background:#1557b0; color:#fff; font-weight:800; font-size:18px; text-align:center; text-decoration:none; }
-    .note { padding:14px 16px; border-radius:12px; background:#fff7df; color:#5d4300; line-height:1.7; }
+    .play { flex:0 0 auto; padding:12px clamp(16px,5vw,26px); border-radius:14px; background:#1557b0; color:#fff; font-weight:800; font-size:clamp(16px,4.5vw,18px); white-space:nowrap; text-decoration:none; }
   </style>
 </head>
 <body>
   <main>
-    <h1>《午夜委託》</h1>
-    <p class="sub">專科校園社群情境的防詐互動遊戲。玩家扮演學生，在深夜陸續接到四位朋友的求助，必須從訊息、截圖與來電中判斷風險，決定查證、拒絕或求助。</p>
-
-    <a class="play" href="game.html?qa=1">開始試玩</a>
-    <p class="note">教授展示與自由試玩使用 QA 模式：內容完整可操作，不會傳送資料至正式研究表。正式實測請改由研究施測入口進入。</p>
+    <header class="hero">
+      <h1>《午夜委託》</h1>
+      <a class="play" href="game.html?qa=1">開始試玩</a>
+    </header>
 
     <h2>四條主線</h2>
     <ul>
@@ -56,8 +54,6 @@
       <li>每一關結束統一列出每個選擇的判斷與說明，並可重新挑戰該關</li>
       <li>語音訊息依角色挑選男聲或女聲，只念台詞、不念旁白</li>
     </ul>
-
-    <p class="sub" style="margin-top:22px">臺北市立大學資訊科學系碩士論文研究用教材。</p>
   </main>
 </body>
 </html>

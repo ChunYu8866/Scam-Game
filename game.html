@@ -4855,6 +4855,7 @@
           <div class="guide-actions">
             <button id="start-fixed-sequence" class="btn-primary" type="button">開始第一通電話 ▶</button>
             <button id="mechanics-tutorial" class="btn-secondary" type="button" aria-expanded="false">操作說明（選用，約 30–60 秒）</button>
+            <button id="reset-demo-progress" class="btn-secondary hidden" type="button">重新開始（清除這台裝置的遊玩進度）</button>
           </div>
           <p class="guide-note">對話框或頁面隱藏時，決策倒數會暫停；回到畫面後從原本剩餘時間繼續。</p>
         </div>
@@ -9291,6 +9292,16 @@
       refreshResearcherStatus();
     }
 
+    // 展示／自由模式：一鍵清掉這台裝置的遊玩進度，從第 1 通重新開始。正式施測不顯示也不執行。
+    async function resetDemoProgress() {
+      if (APP_CONFIG.mode === 'study') return;
+      const go = await retroConfirm('清除這台裝置的遊玩進度與圖鑑紀錄，從第 1 通重新開始？', { title: '重新開始', ok: '重新開始', cancel: '取消', icon: '↺' });
+      if (!go) return;
+      const scope = V46_DATA_CORE.storageScope(APP_CONFIG.mode, v46Context());
+      Object.keys(localStorage).filter(key => key.startsWith(`${scope}:`)).forEach(key => localStorage.removeItem(key));
+      location.reload();
+    }
+
     function refreshResearcherStatus() {
       const el = document.getElementById('researcher-status');
       if (!el) return;
@@ -12472,6 +12483,9 @@
       document.getElementById('researcher-export').addEventListener('click', exportResearchData);
       document.getElementById('researcher-retry').addEventListener('click', flushResearchQueue);
       document.getElementById('researcher-clear').addEventListener('click', clearResearchData);
+      const resetDemo = document.getElementById('reset-demo-progress');
+      resetDemo.classList.toggle('hidden', APP_CONFIG.mode === 'study');
+      resetDemo.addEventListener('click', resetDemoProgress);
       setupParticipantFlow();
       void verifyStudyEndpoint();
       updateUploadStatus();
