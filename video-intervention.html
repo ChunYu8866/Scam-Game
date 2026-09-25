@@ -39,7 +39,9 @@
     </div>
     <div class="player-shell"><div id="player"></div><button id="fullscreen" type="button" class="fullscreen-toggle" aria-pressed="false">全螢幕</button></div>
     <button id="start" type="button">開始播放第 1 支影片</button>
+    <button id="retry-player" class="hidden" type="button">重試載入影片</button>
     <p id="status" class="notice" role="status" aria-live="polite">按下開始後，請保持本頁開啟。</p>
+    <p id="storage-warning" class="notice hidden" role="alert"></p>
     <a id="posttest" class="hidden" href="#" target="_blank" rel="noopener">五支影片已完成，前往後測</a>
     <p id="error" class="notice error hidden" role="alert"></p>
   </main>
@@ -65,15 +67,19 @@
       }
       return Object.freeze({ participantCode:code, group:'video' });
     },
-    // 影片獨立連結：網址沒帶代碼時，讀取同一支手機在問卷入口拿到的代碼與組別；要先在入口按過「我已送出前測」。
+    // 網址與獨立連結皆須符合本機分派，並先在問卷入口按過「我已送出前測」。
     resolveAssignment(params, storage) {
       const code = params.get('participantCode');
       const group = params.get('group');
-      if (code || group) return this.validateAssignment(code, group);
       let stored = null;
-      try { stored = JSON.parse(storage.getItem('midnight-study-assignment-v1') || 'null'); } catch (error) { stored = null; }
+      let pretestDone = false;
+      try {
+        stored = JSON.parse(storage.getItem('midnight-study-assignment-v1') || 'null');
+        pretestDone = storage.getItem('midnight-study-pretest-done-v1') === 'yes';
+      } catch (error) { stored = null; }
       if (!stored || !stored.participantCode || !stored.group) throw new Error('missing_assignment');
-      if (storage.getItem('midnight-study-pretest-done-v1') !== 'yes') throw new Error('pretest_pending');
+      if (!pretestDone) throw new Error('pretest_pending');
+      if ((code || group) && (String(code || '').trim().toUpperCase() !== String(stored.participantCode).trim().toUpperCase() || group !== stored.group)) throw new Error('assignment_mismatch');
       return this.validateAssignment(stored.participantCode, stored.group);
     },
     buildPosttestUrl(assignment) {
@@ -91,6 +97,10 @@
   let currentIndex = 0;
   let assignment = null;
   let started = false;
+  let progressSnapshot = null;
+  let apiScript = null;
+  let playerLoadTimer = null;
+  let playerAttempt = 0;
 
   // 全螢幕：只放大畫面，不開放 YouTube 控制列，播放進度仍然只能由影片自己走完。
   // iPhone Safari 沒有元素層級的 Fullscreen API，改用覆蓋整個視窗的備援樣式。
@@ -139,10 +149,21 @@
   }
 
   function progressKey() { return `midnight-video-progress-v1:${assignment.participantCode}`; }
-  function saveProgress(value) { localStorage.setItem(progressKey(), JSON.stringify(value)); }
+  function warnVolatileProgress() {
+    const warning = document.getElementById('storage-warning');
+    warning.textContent = '此瀏覽器目前無法儲存觀看進度；本頁仍可繼續播放並前往後測。請勿重新整理或關閉本頁，否則需重新觀看。';
+    warning.classList.remove('hidden');
+  }
+  function saveProgress(value) {
+    progressSnapshot = { ...value };
+    try { localStorage.setItem(progressKey(), JSON.stringify(value)); }
+    catch (error) { warnVolatileProgress(); }
+  }
   function readProgress() {
-    try { return JSON.parse(localStorage.getItem(progressKey()) || 'null'); }
-    catch (error) { return null; }
+    if (progressSnapshot) return progressSnapshot;
+    try { progressSnapshot = JSON.parse(localStorage.getItem(progressKey()) || 'null'); }
+    catch (error) { warnVolatileProgress(); }
+    return progressSnapshot;
   }
   function renderProgress() {
     document.querySelectorAll('.step').forEach((step, index) => {
@@ -157,6 +178,7 @@
     renderProgress();
     document.querySelector('.player-shell').classList.add('hidden');
     document.getElementById('start').classList.add('hidden');
+    document.getElementById('retry-player').classList.add('hidden');
     document.getElementById('status').textContent = '五支影片均已播放完成。請開啟後測並確認代碼。';
     const link = document.getElementById('posttest');
     link.href = VIDEO_INTERVENTION_CORE.buildPosttestUrl(assignment);
@@ -169,22 +191,69 @@
     document.getElementById('status').textContent = `正在播放第 ${currentIndex + 1} 支，共 5 支。`;
     player.loadVideoById(video.id);
   }
+  function showPlayerLoadError(attempt) {
+    if (attempt !== playerAttempt) return;
+    clearTimeout(playerLoadTimer);
+    playerLoadTimer = null;
+    document.getElementById('start').disabled = true;
+    document.getElementById('error').textContent = '影片載入失敗或連線逾時。請確認網路後按「重試載入影片」；已完成的影片進度會保留。若仍無法播放，請通知研究人員。';
+    document.getElementById('error').classList.remove('hidden');
+    document.getElementById('retry-player').classList.remove('hidden');
+  }
+  function loadYouTubePlayer() {
+    const attempt = ++playerAttempt;
+    clearTimeout(playerLoadTimer);
+    if (apiScript) { apiScript.onerror = null; apiScript.remove(); apiScript = null; }
+    if (player) {
+      try { player.destroy(); } catch (error) { /* 重建播放器仍可繼續 */ }
+      player = null;
+      if (!document.getElementById('player')) {
+        const target = document.createElement('div');
+        target.id = 'player';
+        playerShell().insertBefore(target, document.getElementById('fullscreen'));
+      }
+    }
+    started = false;
+    document.getElementById('start').disabled = true;
+    document.getElementById('retry-player').classList.add('hidden');
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('status').textContent = `正在載入第 ${currentIndex + 1} 支影片，請稍候。`;
+    playerLoadTimer = setTimeout(() => showPlayerLoadError(attempt), 15000);
+    if (window.YT && typeof window.YT.Player === 'function') { onYouTubeIframeAPIReady(); return; }
+    apiScript = document.createElement('script');
+    apiScript.src = 'https://www.youtube.com/iframe_api';
+    apiScript.onerror = () => showPlayerLoadError(attempt);
+    document.head.appendChild(apiScript);
+  }
   function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
+    if (!assignment || player || currentIndex >= VIDEO_INTERVENTION_CORE.videos.length) return;
+    const attempt = playerAttempt;
+    try { player = new YT.Player('player', {
       width:'100%', height:'100%', videoId:VIDEO_INTERVENTION_CORE.videos[currentIndex].id,
       playerVars:{ controls:0, disablekb:1, rel:0, playsinline:1, modestbranding:1 },
       events:{
-        onReady() { document.getElementById('start').disabled = false; },
+        onReady() {
+          if (attempt !== playerAttempt) return;
+          clearTimeout(playerLoadTimer);
+          playerLoadTimer = null;
+          document.getElementById('error').classList.add('hidden');
+          document.getElementById('retry-player').classList.add('hidden');
+          document.getElementById('start').textContent = `開始播放第 ${currentIndex + 1} 支影片`;
+          document.getElementById('start').disabled = false;
+          document.getElementById('start').classList.remove('hidden');
+          document.getElementById('status').textContent = '影片已載入。按下開始後，請保持本頁開啟。';
+        },
         onStateChange(event) {
+          if (attempt !== playerAttempt || !started) return;
           if (event.data === YT.PlayerState.ENDED) {
             currentIndex += 1;
             saveProgress({ completed:false, currentIndex });
             loadCurrentVideo();
           }
         },
-        onError() { document.getElementById('error').textContent = '影片載入失敗，請通知研究人員。'; document.getElementById('error').classList.remove('hidden'); }
+        onError() { showPlayerLoadError(attempt); }
       }
-    });
+    }); } catch (error) { showPlayerLoadError(attempt); }
   }
 
   (function init() {
@@ -198,6 +267,7 @@
       renderProgress();
       document.getElementById('start').disabled = true;
       document.getElementById('fullscreen').addEventListener('click', toggleFullscreen);
+      document.getElementById('retry-player').addEventListener('click', loadYouTubePlayer);
       document.addEventListener('fullscreenchange', onFullscreenChange);
       document.addEventListener('webkitfullscreenchange', onFullscreenChange);
       document.getElementById('start').addEventListener('click', () => {
@@ -206,13 +276,12 @@
         document.getElementById('start').classList.add('hidden');
         player.playVideo();
       });
-      const api = document.createElement('script');
-      api.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(api);
+      loadYouTubePlayer();
     } catch (error) {
       const messages = {
         missing_assignment: '找不到這支手機的受試者代碼，請先掃描問卷 QR Code 並完成前測。',
         pretest_pending: '請先完成前測，並在問卷入口頁按「我已送出前測」後再開啟影片。',
+        assignment_mismatch: '網址代碼或組別與本機分派不一致，請回到問卷入口頁，依畫面上的按鈕進入學習活動。',
         video_group_required: '你的組別不是影片組，請回到問卷入口頁，依畫面上的按鈕進入你的學習活動。'
       };
       document.getElementById('error').textContent = messages[error.message] || '影片組連結無效，請向研究人員索取正確 QR Code。';
