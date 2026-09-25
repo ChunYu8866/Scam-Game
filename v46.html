@@ -4623,6 +4623,9 @@
     html[data-visual="midnight"] .sr-end.end-bad { color: #ffbac1; }
     html[data-visual="midnight"] .c165-line { color: var(--paper); background: var(--panel-raised); border: 1px solid var(--hairline); border-radius: 9px; padding: 14px; }
     html[data-visual="midnight"] .c165-line b { color: var(--mint); }
+    /* 蓋掉 Win95 皮膚的灰底，165 通話摘要原本是淺字壓在淺灰底上。 */
+    html[data-visual="midnight"] .c165-log { color: var(--paper); background: var(--panel); border-color: var(--hairline); }
+    html[data-visual="midnight"] #call165-summary dt { color: var(--mint); }
     html[data-visual="midnight"] .gf-win { background: var(--panel); border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden; }
     html[data-visual="midnight"] .gf-head { background: #233c42; color: var(--paper); padding: 12px; }
     html[data-visual="midnight"] .gf-bubble { background: var(--panel-raised); color: var(--paper); border: 1px solid var(--hairline); border-radius: 8px; }
