@@ -6228,7 +6228,8 @@
             reported: false, contractCancelled: false, credentialsReset: false
           },
           facts: [],
-          endingRuleId: null
+          endingRuleId: null,
+          terminalEndingId: null
         };
       }
 
@@ -6374,14 +6375,19 @@
           loss: ['BAD_ENDING_RENT_ACCOUNT', 'rent.exposure_unresolved']
         },
         sim_card: {
-          safe: ['SAFE_EXIT_BLOCK1', 'sim.no_exposure_prevented'],
+          safe: ['SAFE_EXIT_SIM', 'sim.no_exposure_prevented'],
           partial: ['SAFE_EXIT_SIM_LATE', 'sim.exposure_remediated'],
           loss: ['BAD_ENDING_SIM_CARD', 'sim.exposure_unresolved']
         },
         cash_mule: {
           safe: ['SAFE_EXIT_DROP', 'cash.no_exposure_prevented'],
           partial: ['SAFE_EXIT_LATE2', 'cash.exposure_remediated'],
-          loss: ['BAD_ENDING_CAUGHT', 'cash.exposure_unresolved']
+          loss: ['BAD_ENDING_CAUGHT', 'cash.exposure_unresolved'],
+          // 車手線各階段的結局文字不同：同一類結果下，改顯示玩家實際停手那一步原本設計的結局。
+          variants: {
+            safe: ['SAFE_EXIT_BLOCK1', 'SAFE_EXIT_DROP', 'SAFE_EXIT_BLOCK2', 'SAFE_EXIT_BLOCK3', 'SAFE_EXIT_LATE1'],
+            partial: ['SAFE_EXIT_LATE1', 'SAFE_EXIT_LATE2', 'SAFE_EXIT_LATE3']
+          }
         }
       });
 
@@ -6391,7 +6397,9 @@
         const exposure = scenarioExposure(storyState, scenarioType);
         const prevented = Boolean(storyState.prevention.stoppedBeforeExposure || storyState.prevention.independentVerificationAt);
         const category = exposure ? (scenarioRemediated(storyState, scenarioType) ? 'partial' : 'loss') : prevented ? 'safe' : 'loss';
-        const [endingId, endingRuleId] = rules[category];
+        const [ruleEndingId, endingRuleId] = rules[category];
+        const terminal = storyState.terminalEndingId || '';
+        const endingId = rules.variants?.[category]?.includes(terminal) ? terminal : ruleEndingId;
         return Object.freeze({ endingId, endingRuleId, category, outcomePoints: category === 'safe' ? 5 : category === 'partial' ? 3 : 0 });
       }
 
@@ -7110,7 +7118,7 @@
             isMistake: true,
             hint: '「先去看看」到了現場，常常就變成「都來了就簽」。'
           }),
-          opt('合約掛我的名字就是我的債。這忙我幫不了。', 'SAFE_EXIT_BLOCK1', {
+          opt('合約掛我的名字就是我的債。這忙我幫不了。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, trust: -1 }
           })
         ]
@@ -7129,11 +7137,11 @@
             hint: '「等於沒花錢」的說法建立在對方持續付款的前提上，但你無法保證對方履約。',
             educationalType: '辦門號換現金'
           }),
-          opt('匯款會停，合約不會停。這題我不用算第二次。', 'SAFE_EXIT_BLOCK1', {
+          opt('匯款會停，合約不會停。這題我不用算第二次。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, trust: -1 },
             hint: '你辨識出關鍵風險：眼前取得現金，兩年的合約責任仍由你承擔。'
           }),
-          opt('我直接打電信客服，問這種「學生專案」存不存在。', 'SAFE_EXIT_BLOCK1', {
+          opt('我直接打電信客服，問這種「學生專案」存不存在。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 5 },
             evidence: '向電信官方客服查證方案真偽',
             actionType: 'verifyOfficial',
@@ -7155,7 +7163,7 @@
           icon: 'file-x-2',
           holdMs: 1600,
           completeText: '把筆放下：「不好意思，合約我要帶回家看過再說。」',
-          completeNext: 'SAFE_EXIT_BLOCK1',
+          completeNext: 'SAFE_EXIT_SIM',
           completeEffects: { awareness: 4, fear: -1, risk: -2 },
           hint: '能在最後一刻停下來，比硬著頭皮做完更重要。',
           postTip: '只要以你的名義辦門號或領取手機，後續合約責任都會由你承擔。'
@@ -7168,7 +7176,7 @@
             isMistake: true,
             hint: '「都來了就簽一簽」是很危險的心態，現場的每個細節都在推你一把。'
           }),
-          opt('我只拿方案DM，今天不簽任何東西。', 'SAFE_EXIT_BLOCK1', {
+          opt('我只拿方案DM，今天不簽任何東西。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, trust: -1 }
           }),
           opt('我再問阿凱一次；只要他說會匯月租，我就繼續辦。', 'S_SIM_ID_DOCS', {
@@ -7197,7 +7205,7 @@
             actionType: 'evidence',
             postTip: '具體詢問帳單與付款責任，比接受口頭保證更可靠。'
           }),
-          opt('不用了。用我名字簽的約，我一律不簽。', 'SAFE_EXIT_BLOCK1', {
+          opt('不用了。用我名字簽的約，我一律不簽。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, trust: -1 }
           })
         ]
@@ -7210,7 +7218,7 @@
         instantTip: '警訊：一個關鍵問題就讓對方安靜，代表你問到了不能回答的地方。',
         text: '訊息顯示已讀。一分鐘、三分鐘、十分鐘過去，學長仍未回覆。阿凱趕緊打圓場：「學長在練習啦！帳單那種小事你問那麼細幹嘛，走啦走啦，店家還在等我們。」',
         options: [
-          opt('問到重點就已讀不回……這一攤我不去了。', 'SAFE_EXIT_BLOCK1', {
+          opt('問到重點就已讀不回……這一攤我不去了。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 5, trust: -2 },
             hint: '你透過具體問題，發現「大家都有辦」的說法缺乏可查證資訊。'
           }),
@@ -7236,11 +7244,11 @@
             isMistake: true,
             hint: '走進去之後，現場的節奏就不再由你決定。'
           }),
-          opt('收機的人要跟著進門？那我不進去。', 'SAFE_EXIT_BLOCK1', {
+          opt('收機的人要跟著進門？那我不進去。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 3, risk: -2 },
             hint: '第三人到場等收機，是典型的門號轉賣現場，你看出來了。'
           }),
-          opt('我先拍下這個人和店面招牌，再決定要不要進去。', 'SAFE_EXIT_BLOCK1', {
+          opt('我先拍下這個人和店面招牌，再決定要不要進去。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, risk: -2 },
             evidence: '通訊行門口與收機人照片',
             actionType: 'evidence',
@@ -7261,11 +7269,11 @@
             isMistake: true,
             hint: '證件掃描存檔之後，這份合約的責任人就是你，改不了。'
           }),
-          opt('證件要掃描存檔？那我今天不辦了。', 'SAFE_EXIT_BLOCK1', {
+          opt('證件要掃描存檔？那我今天不辦了。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 3, risk: -2 },
             hint: '在交出證件前收手，是這條線最乾淨的停損點。'
           }),
-          opt('我先打電信公司的官方客服，問這個門市和專案。', 'SAFE_EXIT_BLOCK1', {
+          opt('我先打電信公司的官方客服，問這個門市和專案。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, risk: -3 },
             evidence: '電信官方客服查證紀錄',
             actionType: 'verifyOfficial',
@@ -7289,13 +7297,13 @@
             isMistake: true,
             hint: '五千換一份五萬多的債務，而且債務人只會是你。'
           }),
-          opt('五千換五萬的債，我算得出來。這份合約我不簽。', 'SAFE_EXIT_BLOCK1', {
+          opt('五千換五萬的債，我算得出來。這份合約我不簽。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 5, risk: -3 },
             evidence: '合約條款重點紀錄',
             actionType: 'evidence',
             hint: '你把總成本算完才做決定，這就是對抗現場壓力的方法。'
           }),
-          opt('我拍下這三頁條款，帶回家給家人看過再說。', 'SAFE_EXIT_BLOCK1', {
+          opt('我拍下這三頁條款，帶回家給家人看過再說。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, risk: -3 },
             evidence: '合約條款照片',
             actionType: 'evidence',
@@ -8166,6 +8174,15 @@
         legal: '【刑事風險】提供帳戶供他人使用，可能涉犯洗錢防制法與幫助詐欺；若進一步介紹他人提供帳戶，責任更重。【帳戶影響】警示帳戶會導致所有金融機構帳戶受到管制，影響薪轉、學貸與日常轉帳，解除需要時間與正式程序。【減輕因素】自首、主動提供證據與配合調查，是實務上重要的考量。',
         advice: '【立刻做】聯絡發卡銀行說明卡片去向並辦理掛失；攜帶對話紀錄、寄件單與入帳通知到警局報案。【保留】所有 LINE 對話、超商寄件單、入帳簡訊都不要刪除。【不要做】不要再開新帳戶、不要介紹任何人、不要私下與對方協商「把錢還回去」。【求助】撥打 165 或 110，也可以請家人陪同前往。',
         psychTrap: '沉沒成本與人情壓力：因為已經收了五百元、因為朋友欠了債，你會覺得「都走到這裡了不能停」。但沉沒成本不會因為繼續走而變小，只會因為停下來而停止累積。'
+      },
+
+      SAFE_EXIT_SIM: {
+        title: '結局：拒絕用名字辦門號',
+        content: '面對「辦門號換現金」的邀約，你沒有用自己的名字申辦或簽約，也沒有把證件交出去。',
+        analysis: '【防禦力 A 級】\n你看出關鍵：合約掛在誰的名下，月租、違約金與後續責任就由誰承擔；對方給的現金換不掉這份責任。',
+        legal: '【法律風險低】\n你沒有簽約、沒有交出手機或 SIM 卡，也沒有提供證件照片，門號不會以你的名義被拿去使用。',
+        advice: '【警訊】有人找你用學生身分辦門號、領手機轉賣、當場拿現金，並說月租會幫你繳。\n【自救】不要申辦或簽約；保留對話，向電信業者官方客服（自行查詢號碼）或 165 查證。',
+        psychTrap: '同儕背書：對方用「社團已經有人辦過、也沒事」讓你以為風險很低。'
       },
 
       SAFE_EXIT_SIM_LATE: {
@@ -11470,6 +11487,7 @@
       closeInspect();
       const transitionEvent = recordEvent('system_transition', { transitionId: option.rubric?.transitionId || '', rubric: cloneState(option.rubric || null), next: option.next || '', terminalEndingId: option.terminalEndingId || '' });
       scoreDecision(option, STORY[currentNodeId], transitionEvent);
+      if (option.terminalEndingId && !gameState.storyState.terminalEndingId) gameState.storyState.terminalEndingId = option.terminalEndingId;
       const nextNodeId = resolvePostTerminalRoute(option.terminalEndingId || '', selectedScenarioType, gameState.storyState, option.next || '');
       gameState.pendingNextNodeId = nextNodeId;
       playerPath.push(nextNodeId);
@@ -11502,6 +11520,7 @@
       recordEvent('decision_rt', { ms: decisionRt, rawMs: decisionRtRaw, awayMs: decisionAwayMs });
       const scoring = scoreDecision(option, STORY[currentNodeId], optionEvent);
       if (optionEvent) optionEvent.detail.assistanceEventIds = scoring.assistanceEventIds;
+      if (option.terminalEndingId && !gameState.storyState.terminalEndingId) gameState.storyState.terminalEndingId = option.terminalEndingId;
       const nextNodeId = resolvePostTerminalRoute(option.terminalEndingId || '', selectedScenarioType, gameState.storyState, option.next || '');
       gameState.pendingNextNodeId = nextNodeId;
       playerPath.push(nextNodeId);
