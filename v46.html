@@ -1567,8 +1567,6 @@
       background: var(--solid); color: var(--text); font: inherit;
     }
     .research-form textarea { min-height: 86px; resize: vertical; }
-    .consent-check { display: flex !important; grid-template-columns: auto 1fr; align-items: flex-start; gap: 9px !important; }
-    .consent-check input { width: auto; margin-top: 3px; }
     .form-error { min-height: 20px; color: var(--danger-soft); font-size: 12px; font-weight: 800; }
     .compact-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .compact-actions button { flex: 1; min-width: 120px; }
@@ -2425,7 +2423,6 @@
     [data-ui="retro-software"] #interrupted-view,
     [data-ui="retro-software"] #withdrawn-view,
     [data-ui="retro-software"] #researcher-view,
-    [data-ui="retro-software"] #consent-view,
     [data-ui="retro-software"] #participant-view {
       background-color: var(--term-bg) !important;
     }
@@ -2434,7 +2431,6 @@
     [data-ui="retro-software"] #interrupted-view .guide-hero::before { content: "SESSION:// GAME ENDED / CONSENT RETAINED"; }
     [data-ui="retro-software"] #scenario-view .guide-hero::before { content: "ARCHIVE:// CASE FILE SELECT"; }
     [data-ui="retro-software"] #guide-view .guide-hero::before { content: "BOOT:// MIDNIGHT COMMISSION / READY"; }
-    [data-ui="retro-software"] #consent-view .guide-hero::before { content: "SECURE:// INFORMED CONSENT"; }
     [data-ui="retro-software"] #participant-view .guide-hero::before { content: "AUTH:// PARTICIPANT ACCESS"; }
     [data-ui="retro-software"] #researcher-view .guide-hero::before { content: "ADMIN:// LOCAL RESEARCH CONSOLE"; }
     [data-ui="retro-software"] #withdrawn-view .guide-hero::before { content: "SESSION:// PARTICIPATION ENDED"; }
@@ -2492,7 +2488,6 @@
       box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.04);
     }
     [data-ui="retro-software"] .research-form input::placeholder { color: #3f4650; }
-    [data-ui="retro-software"] .consent-check { border-color: var(--term-green-dim); background: rgba(255, 255, 255, 0.504); }
     [data-ui="retro-software"] .form-error { color: #8a0f14; }
     [data-ui="retro-software"] #researcher-status {
       color: var(--term-green);
@@ -2762,7 +2757,6 @@
     #evi-chip,
     #handbook-open-play,
     #sound-toggle,
-    #withdraw-btn,
     #answer-slider-thumb,
     #answer-fallback {
       min-width: 45px;
@@ -3277,21 +3271,6 @@
     select {
       color-scheme: light;
       max-width: 100%;
-    }
-
-    .consent-check {
-      min-height: 44px;
-      padding: 6px 4px;
-      align-items: flex-start !important;
-      cursor: pointer;
-    }
-
-    #consent-checkbox {
-      width: 22px;
-      height: 22px;
-      min-width: 22px;
-      margin-top: 1px;
-      accent-color: var(--term-green);
     }
 
     .research-form input,
@@ -4047,7 +4026,6 @@
     [data-ui="retro-software"] #interrupted-view,
     [data-ui="retro-software"] #withdrawn-view,
     [data-ui="retro-software"] #researcher-view,
-    [data-ui="retro-software"] #consent-view,
     [data-ui="retro-software"] #participant-view { background-color: transparent !important; }
 
     /* 上傳狀態與展開區塊自帶面板，避免直接落在桌面底圖上 */
@@ -4601,7 +4579,6 @@
     html[data-visual="midnight"] .upload-status { padding: 12px 16px; color: #b7d9e8; background: #1d3444; border: 1px solid #45657b; border-radius: 9px; }
     html[data-visual="midnight"] :is(input,textarea,select) { background: #0f1a23; color: var(--paper); border: 1px solid #5b717a; border-radius: 8px; padding: 12px; }
     html[data-visual="midnight"] input[type="checkbox"] { min-width: 22px; min-height: 22px; accent-color: #b7e4ce; }
-    html[data-visual="midnight"] .consent-check { color: var(--paper); background: var(--panel-raised); border: 1px solid var(--hairline); border-radius: 8px; padding: 14px; line-height: 1.8; }
     html[data-visual="midnight"] .form-error { color: #ffb4b4; }
     html[data-visual="midnight"] .sp-bar { color: var(--paper); background: var(--panel); border: 1px solid var(--hairline); border-radius: 10px; }
     html[data-visual="midnight"] .scenario-card { padding: 24px; }
@@ -4745,6 +4722,7 @@
         <button type="button" data-retro-action="cases">案件檔案</button>
         <button type="button" data-retro-action="sound">音效</button>
         <button type="button" data-retro-action="handbook">手法圖鑑</button>
+        <button id="study-recovery-open" class="hidden" type="button">資料備援</button>
       </nav>
 
       <aside id="retro-desktop-shortcuts" class="retro-desktop-shortcuts" aria-label="桌面快捷功能">
@@ -4773,39 +4751,6 @@
         <time id="retro-clock" class="retro-clock" datetime="00:00">00:00</time>
       </footer>
 
-      <section id="consent-view" class="view hidden">
-        <div class="scroll-area">
-          <div class="theme-slot"></div>
-          <header class="guide-hero fade-in">
-            <div class="hero-badge">知</div>
-            <p class="hero-kicker">研究參與說明</p>
-            <h1 class="hero-title">請先了解本次活動</h1>
-            <p class="hero-sub">閱讀後再決定是否參與</p>
-          </header>
-          <div class="card">
-            <h2>研究目的與流程</h2>
-            <p class="end-body">本活動以互動情境練習辨識詐騙警訊、停止高風險操作，以及使用官方管道查證。實際時間依研究者指定的主線組合為準。</p>
-          </div>
-          <div class="card">
-            <h2>會記錄的資料</h2>
-            <p class="end-body">系統記錄研究者發放的代碼、情境、選擇路徑、反應時間、結局、分向度表現、蒐證與 165 使用情形。系統不要求姓名、電話、學號、班級座號或其他可直接辨識身分的資料。</p>
-          </div>
-          <div class="card">
-            <h2>自願參與與內容預警</h2>
-            <p class="end-body">遊戲包含詐騙話術、金錢損失與言語威脅情節。你可以不參與，也可以在任何時候按「結束並離開」停止，不影響任何權益。退出前已產生的資料會標記為 withdrawn，研究分析時排除。</p>
-          </div>
-          <div class="card">
-            <h2>資料使用與聯絡方式</h2>
-            <p id="consent-contact" class="end-body">研究資料只依本次研究說明使用與保存。研究者聯絡資訊由正式施測網址設定。</p>
-          </div>
-          <form id="consent-form" class="card research-form">
-            <label class="consent-check"><input id="consent-checkbox" type="checkbox" /> <span>我已閱讀上述內容，了解可隨時退出，並同意參與本研究。</span></label>
-            <p id="consent-error" class="form-error" role="alert"></p>
-            <button class="btn-primary" type="submit">我了解並同意，繼續</button>
-          </form>
-        </div>
-      </section>
-
       <section id="participant-view" class="view hidden">
         <div class="scroll-area">
           <div class="theme-slot"></div>
@@ -4825,6 +4770,7 @@
               <p id="participant-confirm-text" class="end-body"></p>
             </div>
             <p id="participant-error" class="form-error" role="alert"></p>
+            <p id="study-config-error" class="form-error" role="alert"></p>
             <button id="participant-submit" class="btn-primary" type="submit">檢查代碼</button>
           </form>
         </div>
@@ -4962,7 +4908,6 @@
           <span id="evi-chip" class="evi-chip hidden">證 0</span>
           <button id="handbook-open-play" class="tool-btn" type="button">圖鑑</button>
           <button id="sound-toggle" class="tool-btn" type="button" aria-pressed="false">音效</button>
-          <button id="withdraw-btn" class="tool-btn exit" type="button">結束本次遊戲</button>
         </div>
 
         <div id="play-flow">
@@ -5191,7 +5136,8 @@
 
           <section id="shared-device-handoff" class="card">
             <h2>共用裝置交接</h2>
-            <p class="end-body">參與者完成後測交接後，由施測者準備下一位。此操作只清除目前畫面與本場 active snapshot，不刪除待送事件。</p>
+            <p class="end-body">參與者完成後測交接後，由施測者準備下一位。確認後會回到前測入口並建立新代碼；上一位的事件仍保留在原資料範圍。</p>
+            <button class="btn-secondary" type="button" data-study-recovery>匯出本場 JSON／重試上傳</button>
             <button id="prepare-next-participant" class="btn-secondary" type="button">準備下一位參與者</button>
           </section>
         </div>
@@ -5284,6 +5230,7 @@
           <header class="guide-hero fade-in"><div class="hero-badge">停</div><p class="hero-kicker">保留研究同意</p><h1 id="interrupted-title" class="hero-title" tabindex="-1">本次遊戲已結束</h1></header>
           <div class="card"><p id="interrupted-copy" class="end-body">你已主動結束本次遊戲，研究同意仍保留。資料交付狀態不影響後測配對。</p><p id="interrupted-code" class="end-body"></p><p id="interrupted-progress" class="end-body"></p></div>
           <div class="card"><h2>後測交接</h2><a id="interrupted-posttest-link" class="btn-primary hidden" href="#" target="_blank" rel="noopener">前往後測</a><button id="interrupted-fallback" class="btn-secondary" type="button">顯示施測者備援</button><p id="interrupted-fallback-copy" class="end-body hidden">請記下受試者代碼並匯出本場 JSON；恢復連線後重試原待送事件，再開啟同一個固定後測網址。</p><p id="interrupted-delivery-status" class="upload-status" role="status" aria-live="polite">檢查資料交付狀態中</p></div>
+          <div class="card"><h2>施測者資料交接</h2><button class="btn-secondary" type="button" data-study-recovery>匯出本場 JSON／重試上傳</button><button class="btn-secondary" type="button" data-study-next>準備下一位參與者</button></div>
         </div>
       </section>
 
@@ -5291,15 +5238,19 @@
         <div class="scroll-area">
           <header class="guide-hero fade-in"><div class="hero-badge">止</div><p class="hero-kicker">已撤回研究同意</p><h1 id="withdrawn-title" class="hero-title" tabindex="-1">你已停止參與本研究</h1></header>
           <div class="card"><p class="end-body">本參與者與場次的既有及之後到達紀錄會標記為不納入分析。若需確認後續處理，請依研究同意說明中的聯絡方式洽詢研究人員。</p><p id="withdrawn-contact" class="end-body"></p></div>
+          <div class="card"><h2>撤回資料交付</h2><p class="end-body">撤回要求也需要送達研究端點，才能更新遠端資料標記。請由施測者確認狀態。</p><button class="btn-secondary" type="button" data-study-recovery>匯出本場 JSON／重試上傳</button><button class="btn-secondary" type="button" data-study-next>準備下一位參與者</button></div>
         </div>
       </section>
 
-      <div id="exit-choice-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="exit-choice-title">
-        <div class="inspect-sheet"><div class="inspect-head"><span id="exit-choice-title">結束本次遊戲</span></div><p class="end-body">請選擇要繼續、結束本次遊戲但保留研究同意，或進一步撤回研究同意。</p><div class="compact-actions"><button id="exit-continue" type="button">繼續遊戲</button><button id="exit-interrupt" type="button">結束本次遊戲，保留研究同意</button><button id="exit-withdraw" type="button">我要撤回研究同意</button></div></div>
-      </div>
-
-      <div id="withdrawal-confirm-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="withdrawal-confirm-title">
-        <div class="inspect-sheet"><div class="inspect-head"><span id="withdrawal-confirm-title">確認撤回研究同意</span></div><p class="end-body">確認後，本參與者與場次的既有及之後到達資料都會標記為不納入分析。此操作不等同於一般離開遊戲。</p><div class="compact-actions"><button id="withdrawal-confirm-cancel" type="button">返回上一層</button><button id="withdrawal-confirm-final" type="button">確認撤回研究同意</button></div></div>
+      <div id="study-recovery-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="study-recovery-title">
+        <div class="inspect-sheet">
+          <div class="inspect-head"><span id="study-recovery-title">本場資料備援</span><button id="study-recovery-close" class="sheet-close" type="button">返回</button></div>
+          <p id="study-recovery-identity" class="end-body"></p>
+          <p id="study-recovery-status" class="end-body" role="status" aria-live="polite"></p>
+          <p class="end-body">匯出只包含目前參與者的本場資料。匯出不等於上傳；只有收到相符的伺服器回覆，才會標示已確認送達。</p>
+          <div class="compact-actions"><button id="study-recovery-export" class="btn-primary" type="button">匯出本場 JSON</button><button id="study-recovery-retry" class="btn-secondary" type="button">重試本場待送事件</button></div>
+          <p id="study-recovery-action-status" class="end-body" role="status" aria-live="polite"></p>
+        </div>
       </div>
 
       <section id="researcher-view" class="view hidden">
@@ -6575,6 +6526,35 @@
         return Boolean(materialVisible && optionsEnabled);
       }
 
+      function captureTimingState(state, capturedAt, savedAt) {
+        return {
+          state: clone(state), capturedAt, savedAt,
+          remainingMs: Math.max(0, state.durationMs - timingMetrics(state, capturedAt).activeDecisionSec * 1000)
+        };
+      }
+
+      function restoreTimingState(snapshot, at, wallNow) {
+        if (!snapshot?.state || !Number.isFinite(snapshot.capturedAt) || !Number.isFinite(snapshot.savedAt)) return null;
+        const state = clone(snapshot.state);
+        if (!['material', 'ready', 'running', 'paused'].includes(state.phase) || state.archived) return null;
+        const awayMs = Math.max(0, wallNow - snapshot.savedAt);
+        // performance.now() restarts on reload. Rebase all timestamps together;
+        // the time outside this document counts as hidden, never as decision time.
+        if (state.phase === 'paused') resumeDecision(state, 'reload', snapshot.capturedAt);
+        if (state.phase === 'running') {
+          pauseDecision(state, 'hidden', snapshot.capturedAt);
+          resumeDecision(state, 'reload', snapshot.capturedAt + awayMs);
+        }
+        const shift = at - snapshot.capturedAt - awayMs;
+        for (const key of ['materialVisibleAt', 'decisionReadyAt', 'timerStartedAt', 'firstSubmitAt', 'timeoutAt', 'pausedAt']) {
+          if (state[key] !== null) state[key] += shift;
+        }
+        state.pauseLog.forEach(row => { row.startedAt += shift; row.endedAt += shift; });
+        state.events.forEach(row => { row.at += shift; });
+        state.events.push({ type: 'timing_restored', at, awayMs });
+        return state;
+      }
+
       function build165ContextSummary({ storyState = {}, history = [], evidence = [], scenarioType = '' } = {}) {
         const exposures = storyState.exposures || {};
         const prevention = storyState.prevention || {};
@@ -6610,7 +6590,7 @@
       return Object.freeze({
         createTimingState, markMaterialVisible, markDecisionReady, startDecision,
         pauseDecision, resumeDecision, submitDecision, timeoutDecision, timingMetrics,
-        canStartDecision, build165ContextSummary, clone
+        canStartDecision, captureTimingState, restoreTimingState, build165ContextSummary, clone
       });
     })();
     /* V46_UX_CORE_END */
@@ -8149,8 +8129,8 @@
 
     const ENDINGS = {
       SAFE_EXIT_ACCOUNT_LATE: {
-        title: '結局：帳戶已借出，但你及時止血',
-        content: '提款卡已經寄出去，帳戶也被列為警示。但你沒有再往下走——你對銀行說了實話、拒絕再介紹同學，並帶著完整的對話紀錄去報案。損害停在這裡，沒有繼續擴大。',
+        title: '結局：資料已外流，你開始補救',
+        content: '你已提供帳戶相關資料，留下了外流風險。發現不對後，你停止配合、保留紀錄，並透過官方管道求助。這些補救行動不能撤回已交出的資料；卡片是否交付及後續處置，應以本次行動紀錄為準。',
         analysis: '人頭帳戶案件中，最關鍵的分水嶺不是「有沒有借出帳戶」，而是「發現不對之後有沒有立刻停止並說明」。主動說明、提供金流與對話紀錄，是證明自己被利用而非共謀的唯一方式；相反地，隱瞞或再去借第二本，會讓你從被害人變成招募者。',
         legal: '【刑事風險】提供帳戶供他人使用，可能涉犯洗錢防制法與幫助詐欺；若進一步介紹他人提供帳戶，責任更重。【帳戶影響】警示帳戶會導致所有金融機構帳戶受到管制，影響薪轉、學貸與日常轉帳，解除需要時間與正式程序。【減輕因素】自首、主動提供證據與配合調查，是實務上重要的考量。',
         advice: '【立刻做】聯絡發卡銀行說明卡片去向並辦理掛失；攜帶對話紀錄、寄件單與入帳通知到警局報案。【保留】所有 LINE 對話、超商寄件單、入帳簡訊都不要刪除。【不要做】不要再開新帳戶、不要介紹任何人、不要私下與對方協商「把錢還回去」。【求助】撥打 165 或 110，也可以請家人陪同前往。',
@@ -8448,7 +8428,11 @@
         if (input.studyId !== protocol.studyId) return { ok: false, code: 'study_id_mismatch', field: 'studyId' };
         if (input.protocolVersion !== protocol.protocolVersion) return { ok: false, code: 'protocol_version_mismatch', field: 'protocolVersion' };
         if (input.schemaVersion !== protocol.schemaVersion) return { ok: false, code: 'schema_version_mismatch', field: 'schemaVersion' };
-        const assigned = protocol.participants?.[input.participantId];
+        // 已儲存的正式身分使用 participantId；還原時沿用同一格式規則與原有命名空間。
+        const generatedCode = /^[GVP]-[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{6}$/.test(input.participantId);
+        if (generatedCode && !['game', 'video'].includes(input.assignedGroup)) return { ok: false, code: 'missing_assigned_group', field: 'assignedGroup' };
+        if (generatedCode && !input.participantId.startsWith('P-') && !input.participantId.startsWith(input.assignedGroup === 'game' ? 'G-' : 'V-')) return { ok: false, code: 'participant_group_mismatch', field: 'participantId' };
+        const assigned = generatedCode ? { assignedGroup: input.assignedGroup } : protocol.participants?.[input.participantId];
         if (!assigned) return { ok: false, code: 'unknown_participant', field: 'participantId' };
         if (assigned.assignedGroup !== input.assignedGroup) return { ok: false, code: 'assigned_group_mismatch', field: 'assignedGroup' };
         if (input.assignedGroup === 'video') return { ok: false, code: 'video_group_ineligible', field: 'assignedGroup' };
@@ -8668,25 +8652,30 @@
         }, { ...options, eventId, runId: state.parentFinalStageRunId || uuid(), uuid });
         return { ...recorded, saved: recorded.ok };
       }
-      function prepareSharedDeviceHandoffCore({ safeStorage, scope, repository }) {
-        const pendingBefore = repository?.list().length || 0;
-        const active = safeStorage?.remove(`${scope}:active-run`);
-        const view = safeStorage?.remove(`${scope}:current-view`);
-        const pendingAfter = repository?.list().length || 0;
-        return { ok: pendingBefore === pendingAfter, active, view, pendingBefore, pendingAfter };
+      function prepareSharedDeviceHandoffCore({ safeStorage, scope, repository, entryIndexKey, confirmed = false }) {
+        if (!confirmed) return { ok: false, code: 'handoff_confirmation_required' };
+        const records = repository?.list() || [];
+        const pending = records.filter(item => item.delivery.state !== 'confirmed').length;
+        if (safeStorage?.persistent === false && pending) return { ok: false, code: 'volatile_events_require_ack', pending };
+        const keys = [`${scope}:active-run`, `${scope}:current-view`, 'midnight-study-assignment-v1', 'midnight-study-pretest-opened-v1', 'midnight-study-pretest-done-v1', entryIndexKey].filter(Boolean);
+        const cleared = keys.map(key => ({ key, result: safeStorage?.remove(key) }));
+        if (cleared.some(item => !item.result?.ok)) return { ok: false, code: 'handoff_storage_cleanup_failed', cleared, pending };
+        const eventsPreserved = JSON.stringify(records) === JSON.stringify(repository?.list() || []);
+        return { ok: eventsPreserved, pending, eventsPreserved, cleared };
       }
-      // 遊戲獨立連結：網址沒帶代碼時，讀取同一支手機在問卷入口拿到的代碼與組別；要先在入口按過「我已送出前測」才放行。
+      // 網址與獨立連結皆須由本機已完成前測的分派進入；網址不能覆蓋本機代碼或組別。
       function resolveEntryIdentity(params, storage) {
         const urlCode = String(params?.get?.('participantCode') || '').trim().toUpperCase();
         const urlGroup = String(params?.get?.('group') || '').trim();
-        if (urlCode || urlGroup) return { participantCode: urlCode, group: urlGroup, source: 'url' };
         let stored = null;
         let pretestDone = false;
         try { stored = JSON.parse(storage?.getItem('midnight-study-assignment-v1') || 'null'); } catch (error) { stored = null; }
         try { pretestDone = storage?.getItem('midnight-study-pretest-done-v1') === 'yes'; } catch (error) { pretestDone = false; }
         if (!stored || typeof stored.participantCode !== 'string' || !['game', 'video'].includes(stored.group)) return { participantCode: '', group: '', source: 'none' };
         if (!pretestDone) return { participantCode: '', group: '', source: 'pretest_pending' };
-        return { participantCode: stored.participantCode.trim().toUpperCase(), group: stored.group, source: 'launcher' };
+        const participantCode = stored.participantCode.trim().toUpperCase();
+        if ((urlCode || urlGroup) && (urlCode !== participantCode || urlGroup !== stored.group)) return { participantCode: '', group: '', source: 'assignment_mismatch' };
+        return { participantCode, group: stored.group, source: urlCode ? 'url' : 'launcher' };
       }
       return Object.freeze({ resolveEntryIdentity, resolveMode, storageScope, contextFingerprint, createSafeStorage, validateStudyIdentity, validatePosttestConfig, validateStudyEntry, validateFormalStart, buildPosttestHandoffUrl, resolveStoredContext, validateEndpointReadiness, makeEventEnvelope, validateAck, createResearchRepository, createDeliveryController, recordLifecycleEvent, completeStudyIfEligible: completeStudyIfEligibleCore, interruptStudy: interruptStudyCore, confirmWithdrawal: confirmWithdrawalCore, saveOptionalReflection: saveOptionalReflectionCore, prepareSharedDeviceHandoff: prepareSharedDeviceHandoffCore });
     })();
@@ -8768,8 +8757,6 @@
       mode: V46_DATA_CORE.resolveMode(window.location.search),
       qa: V46_DATA_CORE.resolveMode(window.location.search) === 'qa',
       researcher: V46_DATA_CORE.resolveMode(window.location.search) === 'researcher',
-      researchContact: '請洽現場研究人員',
-      dataRetention: '依研究計畫與研究倫理規範辦理',
       studyId: 'anti-fraud-2026',
       assignedGroup: ENTRY_IDENTITY.group,
       sessionId: 'S1',
@@ -8817,6 +8804,7 @@
     let timerPauseReasons = new Set();
     let activeVoice = null;
     let qteTimeoutReporter = null;
+    let qtePauseReporter = null;
     let currentHotlineNodeId = '';
     let soundEnabled = APP_CONFIG.mode !== 'study';
     let skipWaitResolve = null;
@@ -8941,8 +8929,9 @@
       const errors = [];
       if (ENTRY_IDENTITY.source === 'none') errors.push('找不到這支手機的受試者代碼，請先掃描問卷 QR Code 並完成前測。');
       else if (ENTRY_IDENTITY.source === 'pretest_pending') errors.push('請先完成前測，並在問卷入口頁按「我已送出前測」後再開啟遊戲。');
+      else if (ENTRY_IDENTITY.source === 'assignment_mismatch') errors.push('網址代碼或組別與這支手機的分派不一致，請回到問卷入口頁，使用分派後的按鈕進入。');
       else if (APP_CONFIG.assignedGroup !== 'game') errors.push('你的組別不是遊戲組，請回到問卷入口頁，依畫面上的按鈕進入你的學習活動。');
-      if (ENTRY_IDENTITY.source !== 'none' && ENTRY_IDENTITY.source !== 'pretest_pending' && !APP_CONFIG.participantId) errors.push('正式施測網址缺少受試者代碼。');
+      if (!['none', 'pretest_pending', 'assignment_mismatch'].includes(ENTRY_IDENTITY.source) && !APP_CONFIG.participantId) errors.push('正式施測網址缺少受試者代碼。');
       if (!APP_CONFIG.posttestUrl) errors.push('正式施測網址缺少固定後測網址。');
       if (!SCENARIO_ORDER.length) errors.push('正式施測網址未指定有效主線。');
       if (APP_CONFIG.participantId && APP_CONFIG.posttestUrl) {
@@ -8957,10 +8946,10 @@
 
     function renderStudyConfigState() {
       const errors = studyConfigErrors();
-      const error = document.getElementById('consent-error');
+      const error = document.getElementById('study-config-error');
       const onlyChecking = errors.length === 1 && errors[0] === ENDPOINT_CHECKING_MESSAGE;
       if (error) error.textContent = !errors.length ? '' : onlyChecking ? ENDPOINT_CHECKING_MESSAGE : `施測設定錯誤：${errors.join(' ')}`;
-      const submit = document.querySelector('#consent-form button[type="submit"]');
+      const submit = document.getElementById('participant-submit');
       if (submit) submit.disabled = errors.length > 0;
     }
 
@@ -8971,7 +8960,7 @@
         renderStudyConfigState();
         return v46EndpointStatus;
       }
-      // 每次帶不同參數，避免瀏覽器對同一網址的請求排隊；逾時或連線失敗會自動重試，不讓同意鈕一直鎖住。
+      // 每次帶不同參數，避免瀏覽器對同一網址的請求排隊；逾時或連線失敗會自動重試，不讓代碼確認鈕一直鎖住。
       const controller = typeof AbortController === 'function' ? new AbortController() : null;
       const abortTimer = controller ? setTimeout(() => controller.abort(), 12000) : null;
       try {
@@ -9161,6 +9150,7 @@
 
     function updateUploadStatus() {
       refreshLifecycleDeliveryTexts();
+      refreshOperatorRecoveryControls();
       const status = document.getElementById('upload-status');
       if (!status) return;
       if (APP_CONFIG.qa) { status.textContent = 'QA 模式：已擷取資料，未傳送正式工作表'; return; }
@@ -9174,19 +9164,71 @@
 
     function exportResearchData() {
       const repository = ensureV46Repository();
+      const records = repository.list();
+      const participantId = records[0]?.context?.participantId || repository.scope.split(':').at(-1);
       const data = {
         exportedAt: new Date().toISOString(),
-        records: repository.list(),
-        pending: repository.list().filter(item => item.delivery.state !== 'confirmed'),
+        scope: repository.scope,
+        participantId,
+        records,
+        pending: records.filter(item => item.delivery.state !== 'confirmed'),
         stageScoreV46: gameState.frozenStageScore,
         storage: { persistent: v46SafeStorage.persistent }
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `午夜委託_研究資料_v46_${Date.now()}.json`;
+      link.download = `午夜委託_研究資料_v46_${participantId.replace(/[^A-Za-z0-9_-]/g, '_')}_${Date.now()}.json`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      const status = document.getElementById('study-recovery-action-status');
+      if (status) status.textContent = `已要求下載 JSON，請確認檔案確實儲存。匯出不等於上傳；本場仍有 ${data.pending.length} 筆尚未確認送達。`;
+      refreshOperatorRecoveryControls();
+    }
+
+    function refreshOperatorRecoveryControls() {
+      const formal = APP_CONFIG.mode === 'study';
+      const menu = document.getElementById('study-recovery-open');
+      menu?.classList.toggle('hidden', !formal);
+      document.querySelectorAll('[data-study-recovery], [data-study-next]').forEach(button => button.classList.toggle('hidden', !formal));
+      if (!formal) return;
+      const repository = ensureV46Repository();
+      const records = repository.list();
+      const pending = records.filter(item => item.delivery.state !== 'confirmed').length;
+      if (menu) menu.textContent = v46SafeStorage.persistent ? '資料備援' : '儲存故障';
+      const identity = document.getElementById('study-recovery-identity');
+      if (identity) identity.textContent = `目前參與者：${records[0]?.context?.participantId || repository.scope.split(':').at(-1)}。本場共有 ${records.length} 筆事件。`;
+      const status = document.getElementById('study-recovery-status');
+      if (status) status.textContent = !v46SafeStorage.persistent
+        ? `本機儲存失敗，資料目前只在此頁記憶體；${pending} 筆尚未確認送達。請先匯出並確認保存，再重試；未確認事件送達前，請勿關閉、重整或換人。`
+        : pending ? `本場 ${pending} 筆尚未確認送達，已保留在此瀏覽器。可先匯出備份，再重試上傳。`
+        : records.length ? '本場全部事件已收到相符的伺服器回覆，確認送達。' : '本場尚未建立研究事件。';
+    }
+
+    function openStudyRecovery() {
+      refreshOperatorRecoveryControls();
+      document.getElementById('study-recovery-dialog').classList.remove('hidden');
+      onDialogOpened('study-recovery-dialog');
+      document.getElementById('study-recovery-export').focus();
+    }
+
+    function closeStudyRecovery() {
+      document.getElementById('study-recovery-dialog').classList.add('hidden');
+      onDialogClosed('study-recovery-dialog');
+      document.getElementById('study-recovery-open').focus();
+    }
+
+    async function retryStudyRecovery() {
+      const status = document.getElementById('study-recovery-action-status');
+      if (status) status.textContent = '正在重試本場原有事件，請保留此頁。';
+      const repository = ensureV46Repository();
+      repository.list().filter(item => item.delivery.state === 'retry').forEach(item => repository.patchById(item.eventId, { delivery: { nextRetryAt: 0 } }));
+      if (APP_CONFIG.mode === 'study' && !v46EndpointStatus.ok) await verifyStudyEndpoint();
+      await flushResearchQueue();
+      refreshOperatorRecoveryControls();
+      if (status) status.textContent = repository.list().some(item => item.delivery.state !== 'confirmed')
+        ? '尚有事件未確認送達，請保留此頁並確認 JSON 備份已保存；恢復連線後可再次重試。'
+        : '本場事件已全部確認送達。';
     }
 
     async function clearResearchData() {
@@ -9437,7 +9479,10 @@
         contextFingerprint: V46_DATA_CORE.contextFingerprint(v46Context()),
         currentRunId, currentAttemptNo, runStartedAt, gameStartTime, passiveWaitMs,
         selectedScenarioType, currentNodeId: persistedNodeId, currentMinutesOffset, playerPath,
-        selectedOptionHistory, gameState, studyIdentity
+        selectedOptionHistory, gameState, studyIdentity, timingHistory,
+        timingSnapshot: timingState.nodeId === persistedNodeId && !timingState.archived
+          && ['material', 'ready', 'running', 'paused'].includes(timingState.phase)
+          ? V46_UX_CORE.captureTimingState(timingState, performance.now(), Date.now()) : null
       };
       v46SafeStorage.setJSON(v46StateKey('active-run'), snapshot);
     }
@@ -9470,6 +9515,7 @@
       runStartedAt = saved.runStartedAt || new Date(saved.gameStartTime || Date.now()).toISOString();
       gameStartTime = saved.gameStartTime || Date.now();
       passiveWaitMs = saved.passiveWaitMs || 0;
+      timingHistory = Array.isArray(saved.timingHistory) ? saved.timingHistory : [];
       selectedScenarioType = saved.selectedScenarioType;
       selectedScenario = SCENARIOS[selectedScenarioType];
       currentNodeId = saved.currentNodeId;
@@ -9496,7 +9542,7 @@
       setView('playing-view');
       prepareChatView();
       replayConversation();
-      renderNode(currentNodeId);
+      await renderNode(currentNodeId, saved.timingSnapshot);
       return true;
     }
 
@@ -9935,7 +9981,7 @@
       return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    const ALL_VIEWS = ['consent-view', 'participant-view', 'guide-view', 'scenario-view', 'call-view', 'playing-view', 'ending-view', 'summary-view', 'interrupted-view', 'withdrawn-view', 'researcher-view'];
+    const ALL_VIEWS = ['participant-view', 'guide-view', 'scenario-view', 'call-view', 'playing-view', 'ending-view', 'summary-view', 'interrupted-view', 'withdrawn-view', 'researcher-view'];
 
     function syncRetroShell(viewId) {
       const active = viewId === 'scenario-view' ? 'retro-cases'
@@ -9947,7 +9993,7 @@
         button.setAttribute('aria-current', selected ? 'page' : 'false');
       });
       const task = document.querySelector('.retro-task-current');
-      const labels = { 'guide-view':'午夜委託', 'scenario-view':'案件檔案', 'call-view':'收到來電', 'playing-view':'即時通訊', 'ending-view':'任務完成', 'summary-view':'調查總結', 'interrupted-view':'遊戲已結束', 'withdrawn-view':'研究已撤回', 'consent-view':'研究參與', 'participant-view':'資料配對', 'researcher-view':'研究資料' };
+      const labels = { 'guide-view':'午夜委託', 'scenario-view':'案件檔案', 'call-view':'收到來電', 'playing-view':'即時通訊', 'ending-view':'任務完成', 'summary-view':'調查總結', 'interrupted-view':'遊戲已結束', 'withdrawn-view':'研究已撤回', 'participant-view':'資料配對', 'researcher-view':'研究資料' };
       if (task) task.lastChild.textContent = ` ${labels[viewId] || '午夜委託'}`;
     }
 
@@ -9974,6 +10020,7 @@
       document.documentElement.dataset.retroScreen = viewId;
       syncRetroShell(viewId);
       recordEvent('view_enter', { viewId });
+      refreshOperatorRecoveryControls();
       const themeToggle = document.getElementById('theme-toggle-float');
       const themeSlot = view.querySelector('.theme-slot');
       if (themeToggle && themeSlot) {
@@ -10558,45 +10605,6 @@
       return result;
     }
 
-    function closeExitChoice() {
-      document.getElementById('exit-choice-dialog').classList.add('hidden');
-      resumeDecisionTimer('dialog');
-      document.getElementById('withdraw-btn').focus();
-    }
-
-    function beginExitChoice() {
-      const dialog = document.getElementById('exit-choice-dialog');
-      dialog.dataset.returnFocus = 'withdraw-btn';
-      dialog.querySelector('#exit-interrupt').textContent = '結束本次遊戲，保留研究同意';
-      pauseDecisionTimer('dialog');
-      dialog.classList.remove('hidden');
-      dialog.querySelector('#exit-continue').focus();
-    }
-
-    function openWithdrawalConfirmation() {
-      document.getElementById('exit-choice-dialog').classList.add('hidden');
-      const dialog = document.getElementById('withdrawal-confirm-dialog');
-      dialog.classList.remove('hidden');
-      document.getElementById('withdrawal-confirm-cancel').focus();
-    }
-
-    function confirmWithdrawal() {
-      const eventId = makeRunId();
-      const result = V46_DATA_CORE.confirmWithdrawal({
-        withdrawalEventId: eventId, priorLifecycleState: lifecycleState,
-        stageRunIds: ensureV46Repository().list().filter(item => item.eventType === 'completion').map(item => item.runId)
-      }, lifecycleOptions({ eventId }));
-      lifecycleState = 'withdrawn';
-      document.getElementById('withdrawal-confirm-dialog').classList.add('hidden');
-      clearActiveRun();
-      stopRingtone();
-      stopTimer();
-      document.getElementById('withdrawn-contact').textContent = APP_CONFIG.researchContact ? `研究聯絡方式：${APP_CONFIG.researchContact}` : '正式研究聯絡方式尚未設定。';
-      setView('withdrawn-view');
-      document.getElementById('withdrawn-title').focus();
-      return result;
-    }
-
     function saveOptionalReflection(answer) {
       const records = ensureV46Repository().list();
       const existing = records.find(item => item.eventType === 'reflection');
@@ -10612,13 +10620,32 @@
       }, { eventId: reflectionEventId, runId: parentFinalStageRunId || makeRunId() });
     }
 
-    function prepareSharedDeviceHandoff() {
+    async function prepareSharedDeviceHandoff() {
       const repository = ensureV46Repository();
-      const result = V46_DATA_CORE.prepareSharedDeviceHandoff({ safeStorage: v46SafeStorage, scope: repository.scope, repository });
+      const pending = repository.list().filter(item => item.delivery.state !== 'confirmed').length;
+      if (!v46SafeStorage.persistent && pending) {
+        openStudyRecovery();
+        document.getElementById('study-recovery-action-status').textContent = '目前有僅存在記憶體的未確認事件，已停止換位。請先匯出備份並重試，待確認送達後再準備下一位。';
+        return { ok: false, code: 'volatile_events_require_ack', pending };
+      }
+      const confirmed = await retroConfirm(`確定上一位已完成後測交接，並由施測者準備下一位？目前尚有 ${pending} 筆事件未確認送達。確認後會保留上一位事件、解除入口代碼，回到前測入口建立新代碼。`, { title: '共用裝置換位確認', ok: '確認並回入口', cancel: '留在本場', icon: '！' });
+      if (!confirmed) return { ok: false, code: 'handoff_cancelled' };
+      const result = V46_DATA_CORE.prepareSharedDeviceHandoff({ safeStorage: v46SafeStorage, scope: repository.scope, repository, entryIndexKey: v46EntryIndexKey(), confirmed });
+      if (!result.ok) {
+        openStudyRecovery();
+        document.getElementById('study-recovery-action-status').textContent = `換位未完成（${result.code}）；請保留此頁、匯出備份並由施測者處理。`;
+        return result;
+      }
       currentRunId = '';
       selectedScenarioType = '';
       currentNodeId = '';
-      setView('consent-view');
+      studyIdentity = { participantId: '', assignedGroup: '', group: '', sessionId: APP_CONFIG.sessionId, consentAt: '' };
+      APP_CONFIG.participantId = '';
+      APP_CONFIG.assignedGroup = '';
+      validatedFormalContext = null;
+      pendingStoredContext = null;
+      storedContextChoice = '';
+      window.location.assign(new URL('study-launcher.html', window.location.href).href);
       return result;
     }
 
@@ -11021,9 +11048,9 @@
     }
 
     function startDecisionTimer(durationMs, timeoutNext) {
-      if (timingState.phase !== 'running' || decisionTimerRemainingMs > 0) return;
+      if (timingState.phase !== 'running' || decisionTimerDurationMs > 0) return;
       decisionTimerDurationMs = Math.max(0, Number(durationMs) || 0);
-      decisionTimerRemainingMs = decisionTimerDurationMs;
+      decisionTimerRemainingMs = Math.max(0, decisionTimerDurationMs - V46_UX_CORE.timingMetrics(timingState, performance.now()).activeDecisionSec * 1000);
       decisionTimerTimeoutNext = timeoutNext || '';
       decisionTimerLastTick = performance.now();
       const container = document.getElementById('timer-container');
@@ -11032,9 +11059,7 @@
       alertBox.classList.remove('hidden');
 
       function tick(now) {
-        if (timingState.phase === 'running') {
-          decisionTimerRemainingMs = Math.max(0, decisionTimerRemainingMs - Math.max(0, now - decisionTimerLastTick));
-        }
+        decisionTimerRemainingMs = Math.max(0, decisionTimerDurationMs - V46_UX_CORE.timingMetrics(timingState, now).activeDecisionSec * 1000);
         decisionTimerLastTick = now;
         const percentage = decisionTimerDurationMs ? (decisionTimerRemainingMs / decisionTimerDurationMs) * 100 : 0;
         document.getElementById('timer-bar-fill').style.width = `${percentage}%`;
@@ -11052,6 +11077,7 @@
 
     function pauseDecisionTimer(reason) {
       timerPauseReasons.add(reason);
+      qtePauseReporter?.(reason);
       if (timingState.phase !== 'running') return;
       timingState = V46_UX_CORE.pauseDecision(timingState, reason, performance.now());
       document.getElementById('decision-status').textContent = reason === 'voice' ? '播放語音時倒數暫停，播完或按停止後繼續。' : '倒數已暫停；關閉對話框或回到頁面後繼續。';
@@ -11059,7 +11085,9 @@
 
     function resumeDecisionTimer(reason) {
       timerPauseReasons.delete(reason);
-      if (timerPauseReasons.size || timingState.phase !== 'paused') return;
+      if (timerPauseReasons.size || document.hidden) return;
+      if (timingState.phase === 'ready') { activateDecisionReady(); return; }
+      if (timingState.phase !== 'paused') return;
       timingState = V46_UX_CORE.resumeDecision(timingState, reason, performance.now());
       decisionTimerLastTick = performance.now();
       document.getElementById('decision-status').textContent = '倒數已繼續。';
@@ -11071,10 +11099,16 @@
       const optionsEnabled = Boolean(node.challenge || document.querySelector('#options-container .opt-btn'));
       if (!V46_UX_CORE.canStartDecision({ materialVisible: timingState.materialVisibleAt !== null, optionsEnabled })) return;
       if (timingState.phase === 'material') timingState = V46_UX_CORE.markDecisionReady(timingState, performance.now());
+      if (document.hidden) timerPauseReasons.add('hidden');
+      if (timerPauseReasons.size) {
+        if (timingState.phase === 'running') pauseDecisionTimer([...timerPauseReasons][0]);
+        return;
+      }
       timingState = V46_UX_CORE.startDecision(timingState, performance.now());
       if (timingState.phase !== 'running') return;
-      nodeReadyAt = Date.now();
-      nodeReadyAwayMark = totalHiddenMs + (hiddenSince ? Date.now() - hiddenSince : 0);
+      const metrics = V46_UX_CORE.timingMetrics(timingState, performance.now());
+      nodeReadyAt = Date.now() - Math.max(0, performance.now() - timingState.timerStartedAt);
+      nodeReadyAwayMark = totalHiddenMs + (hiddenSince ? Date.now() - hiddenSince : 0) - metrics.hiddenSec * 1000;
       document.getElementById('decision-status').textContent = node.timeLimit ? `請在 ${node.timeLimit} 秒內選擇回覆。` : '';
       if (node.timeLimit) startDecisionTimer(node.timeLimit * 1000, node.timeoutNext);
       const target = node.challenge ? document.getElementById('qte-action-btn') : document.querySelector('#options-container .opt-btn');
@@ -11094,7 +11128,6 @@
       decisionTimerDurationMs = 0;
       decisionTimerRemainingMs = 0;
       decisionTimerLastTick = 0;
-      timerPauseReasons.clear();
       document.getElementById('timer-container').classList.add('hidden');
       document.getElementById('qte-alert').classList.add('hidden');
       document.getElementById('timer-bar-fill').style.width = '100%';
@@ -11105,6 +11138,7 @@
     function resetActionChallenge() {
       cancelAnimationFrame(qteActionAnimationId);
       qteTimeoutReporter = null;
+      qtePauseReporter = null;
       const panel = document.getElementById('qte-challenge');
       const fill = document.getElementById('qte-progress-fill');
       const btn = document.getElementById('qte-action-btn');
@@ -11145,15 +11179,15 @@
       status.textContent = '尚未開始長按。';
       panel.classList.remove('hidden');
 
-      let startedAt = 0;
+      let startedAt = null;
       let completed = false;
       let activeInput = '';
 
       function completeHold(input) {
-        if (completed) return;
+        if (completed || timingState.phase !== 'running' || timerPauseReasons.size || document.hidden) return;
         completed = true;
         gameState.qteCompleted += 1;
-        const heldMs = Date.now() - startedAt;
+        const heldMs = performance.now() - startedAt;
         recordEvent('qte_complete', { input, heldMs });
         status.textContent = '長按完成。';
         handleSystemTransition({
@@ -11171,8 +11205,9 @@
       }
 
       function tick() {
-        if (!startedAt || completed) return;
-        const progress = Math.min(1, (Date.now() - startedAt) / challenge.holdMs);
+        if (startedAt === null || completed) return;
+        if (timingState.phase !== 'running' || timerPauseReasons.size || document.hidden) { abortHold('paused'); return; }
+        const progress = Math.min(1, (performance.now() - startedAt) / challenge.holdMs);
         fill.style.width = `${Math.round(progress * 100)}%`;
         status.textContent = `長按進度 ${Math.round(progress * 100)}%`;
         if (progress >= 1) { completeHold(activeInput); return; }
@@ -11180,9 +11215,9 @@
       }
 
       function beginHold(input) {
-        if (isTransitioning || timingState.phase !== 'running' || startedAt) return;
+        if (isTransitioning || timingState.phase !== 'running' || timerPauseReasons.size || document.hidden || startedAt !== null) return;
         activeInput = input;
-        startedAt = Date.now();
+        startedAt = performance.now();
         gameState.qteAttempts += 1;
         recordEvent('qte_start', { input, holdMs: challenge.holdMs });
         document.getElementById('qte-abort-tip')?.classList.add('hidden');
@@ -11190,13 +11225,13 @@
       }
 
       function abortHold(input) {
-        if (completed || !startedAt) return;
-        const heldMs = Date.now() - startedAt;
+        if (completed || startedAt === null) return;
+        const heldMs = performance.now() - startedAt;
         gameState.qteAborted += 1;
         recordEvent('qte_hold_abort', { input, heldMs });
         status.textContent = '已中止長按，尚未提交回覆。';
         document.getElementById('qte-abort-tip')?.classList.remove('hidden');
-        startedAt = 0;
+        startedAt = null;
         activeInput = '';
         cancelAnimationFrame(qteActionAnimationId);
         fill.style.width = '0%';
@@ -11206,6 +11241,7 @@
         recordEvent('qte_timeout', { timeoutNoResponse: true });
         status.textContent = '時間到，這一步沒有回覆。';
       };
+      qtePauseReporter = reason => abortHold(reason);
       btn.onpointerdown = event => { try { btn.setPointerCapture(event.pointerId); } catch (error) {} beginHold('pointer'); };
       btn.onpointerup = () => abortHold('pointer');
       btn.onpointercancel = () => abortHold('pointer');
@@ -11225,7 +11261,7 @@
       btn.onblur = () => abortHold('blur');
     }
 
-    async function renderNode(nodeId) {
+    async function renderNode(nodeId, restoredTiming = null) {
       stopVoicePlayback();
       stopTimer();
       resetActionChallenge();
@@ -11290,9 +11326,11 @@
       if (node.inspect) {
         document.getElementById('scroll-anchor').insertAdjacentHTML('beforebegin', `<div class="msg-row in msg-pop">${avatarHTML(node.speaker, true)}<div class="bubble in attach-bubble"><span class="attach-label">${node.inspect.label || '收到一張圖片'}</span><button type="button" class="attach-btn" onclick="openInspect('${nodeId}')">${node.inspect.button || '檢視圖片'}（找破綻）</button></div></div>`);
       }
-      timingState = V46_UX_CORE.createTimingState({ nodeId, durationMs: (node.timeLimit || 0) * 1000 });
+      const recoveredTiming = restoredTiming?.state?.nodeId === nodeId
+        ? V46_UX_CORE.restoreTimingState(restoredTiming, performance.now(), Date.now()) : null;
+      timingState = recoveredTiming || V46_UX_CORE.createTimingState({ nodeId, durationMs: (node.timeLimit || 0) * 1000 });
       timingState = V46_UX_CORE.markMaterialVisible(timingState, performance.now());
-      recordEvent('material_visible', { nodeId, durationMs: timingState.durationMs });
+      recordEvent(recoveredTiming ? 'material_restored' : 'material_visible', { nodeId, durationMs: timingState.durationMs });
       const optionsArea = document.getElementById('options-area');
       optionsArea.classList.remove('peek');
       renderCurrentNodeOptions(node);
@@ -12100,12 +12138,7 @@
       recordEvent('sound_toggle', { enabled: soundEnabled });
     }
 
-    function setupConsentFlow() {
-      const contact = document.getElementById('consent-contact');
-      if (contact) contact.textContent = APP_CONFIG.researchContact
-        ? `資料保存方式與期間：${APP_CONFIG.dataRetention || '未設定'}。研究相關問題或資料撤回需求，請聯絡：${APP_CONFIG.researchContact}`
-        : '正式施測尚未設定研究者聯絡資訊。';
-      const error = document.getElementById('consent-error');
+    function setupParticipantFlow() {
       const participantInput = document.getElementById('participant-id');
       if (APP_CONFIG.mode === 'study' && APP_CONFIG.participantId) {
         participantInput.value = APP_CONFIG.participantId;
@@ -12114,22 +12147,10 @@
       }
       renderStudyConfigState();
 
-      document.getElementById('consent-form').addEventListener('submit', event => {
-        event.preventDefault();
-        if (studyConfigErrors().length) return;
-        if (!document.getElementById('consent-checkbox').checked) {
-          error.textContent = '請先勾選確認已了解並同意參與。';
-          return;
-        }
-        studyIdentity.consentAt = new Date().toISOString();
-        studyIdentity.sessionId = APP_CONFIG.sessionId;
-        saveStudyIdentity();
-        setView('participant-view');
-      });
-
       let confirmedId = '';
       document.getElementById('participant-form').addEventListener('submit', event => {
         event.preventDefault();
+        if (studyConfigErrors().length) return;
         const input = document.getElementById('participant-id');
         const participantId = (APP_CONFIG.mode === 'study' ? APP_CONFIG.participantId : input.value).trim().toUpperCase();
         const errorEl = document.getElementById('participant-error');
@@ -12153,7 +12174,9 @@
         const assignedGroup = APP_CONFIG.assignedGroup;
         const persistedContext = storedContextChoice === 'start_new_session' ? null : pendingStoredContext;
         const entry = validateFormalStart(participantId, persistedContext);
-        if (!entry.ok) { error.textContent = `受試身分驗證失敗：${entry.code}`; return; }
+        if (!entry.ok) { errorEl.textContent = `受試身分驗證失敗：${entry.code}`; return; }
+        // 不設同意頁：consentAt 改記確認代碼、開始遊戲的時間（payload 欄位名稱不變）。
+        studyIdentity.consentAt = new Date().toISOString();
         studyIdentity.participantId = participantId;
         studyIdentity.assignedGroup = assignedGroup;
         studyIdentity.group = assignedGroup;
@@ -12174,12 +12197,12 @@
       }
       if (APP_CONFIG.mode === 'study') {
         if (pendingStoredContext) {
-          setView('consent-view');
+          setView('participant-view');
           const requested = { ...v46Context(), participantId: '', sessionId: APP_CONFIG.sessionId };
           const pending = V46_DATA_CORE.resolveStoredContext(pendingStoredContext, requested);
           if (pending.state === 'choice_required') {
             const continueOld = await retroConfirm(
-              `這台裝置保留前一場研究進度（場次 ${pendingStoredContext.sessionId}、代碼 ${pendingStoredContext.participantId}）。請明確選擇繼續舊場次，或由新參與者重新同意並輸入代碼；開始新場次不會刪除舊場次的待送資料。`,
+              `這台裝置保留前一場研究進度（場次 ${pendingStoredContext.sessionId}、代碼 ${pendingStoredContext.participantId}）。請明確選擇繼續舊場次，或由新參與者重新輸入代碼；開始新場次不會刪除舊場次的待送資料。`,
               { title: '偵測到既有研究場次', ok: '繼續舊場次', cancel: '開始新參與者', icon: '！' }
             );
             applyStoredContextChoice(continueOld ? 'continue_old_session' : 'start_new_session');
@@ -12188,8 +12211,7 @@
           applyStoredContextChoice('start_new_session');
         }
         loadSessionState();
-        if (!studyIdentity.consentAt) { setView('consent-view'); return; }
-        if (!studyIdentity.participantId) { setView('participant-view'); return; }
+        if (!studyIdentity.participantId || !studyIdentity.consentAt) { setView('participant-view'); return; }
         if (restoreLifecycleView()) return;
         if (hasActiveRun() && await resumeActiveRun()) return;
       } else {
@@ -12200,8 +12222,7 @@
 
     function canUseRetroNavigation() {
       if (APP_CONFIG.mode !== 'study') return true;
-      if (!studyIdentity.consentAt) { setView('consent-view'); return false; }
-      if (!studyIdentity.participantId) { setView('participant-view'); return false; }
+      if (!studyIdentity.participantId || !studyIdentity.consentAt) { setView('participant-view'); return false; }
       return true;
     }
 
@@ -12257,23 +12278,15 @@
       document.getElementById('skip-wait').addEventListener('click', () => skipWaitResolve?.());
       document.getElementById('sound-toggle').addEventListener('click', toggleSound);
       document.getElementById('sound-toggle').textContent = soundEnabled ? '音效開' : '靜音';
-      document.getElementById('withdraw-btn').addEventListener('click', beginExitChoice);
-      document.getElementById('exit-continue').addEventListener('click', closeExitChoice);
-      document.getElementById('exit-interrupt').addEventListener('click', () => {
-        document.getElementById('exit-choice-dialog').classList.add('hidden');
-        resumeDecisionTimer('dialog');
-        void interruptStudy('participant_exit');
-      });
-      document.getElementById('exit-withdraw').addEventListener('click', openWithdrawalConfirmation);
-      document.getElementById('withdrawal-confirm-cancel').addEventListener('click', () => {
-        document.getElementById('withdrawal-confirm-dialog').classList.add('hidden');
-        resumeDecisionTimer('dialog');
-        document.getElementById('withdraw-btn').focus();
-      });
-      document.getElementById('withdrawal-confirm-final').addEventListener('click', confirmWithdrawal);
       document.getElementById('posttest-fallback').addEventListener('click', () => document.getElementById('posttest-fallback-copy').classList.toggle('hidden'));
       document.getElementById('interrupted-fallback').addEventListener('click', () => document.getElementById('interrupted-fallback-copy').classList.toggle('hidden'));
       document.getElementById('prepare-next-participant').addEventListener('click', prepareSharedDeviceHandoff);
+      document.querySelectorAll('[data-study-next]').forEach(button => button.addEventListener('click', prepareSharedDeviceHandoff));
+      document.querySelectorAll('[data-study-recovery]').forEach(button => button.addEventListener('click', openStudyRecovery));
+      document.getElementById('study-recovery-open').addEventListener('click', openStudyRecovery);
+      document.getElementById('study-recovery-close').addEventListener('click', closeStudyRecovery);
+      document.getElementById('study-recovery-export').addEventListener('click', exportResearchData);
+      document.getElementById('study-recovery-retry').addEventListener('click', retryStudyRecovery);
       document.getElementById('handbook-open-play').addEventListener('click', openHandbook);
       document.getElementById('scenario-guide-btn').addEventListener('click', openGameGuideDialog);
       document.getElementById('game-guide-close').addEventListener('click', closeGameGuideDialog);
@@ -12313,7 +12326,7 @@
       document.getElementById('researcher-export').addEventListener('click', exportResearchData);
       document.getElementById('researcher-retry').addEventListener('click', flushResearchQueue);
       document.getElementById('researcher-clear').addEventListener('click', clearResearchData);
-      setupConsentFlow();
+      setupParticipantFlow();
       void verifyStudyEndpoint();
       updateUploadStatus();
       flushResearchQueue();
