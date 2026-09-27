@@ -4705,7 +4705,7 @@
     @media (max-height: 500px) and (orientation: landscape) {
       html[data-visual="midnight"] #app { padding: 0 !important; }
       html[data-visual="midnight"] #app #phone-frame { height: 100dvh !important; border-radius: 0; }
-      html[data-visual="midnight"] .retro-program-bar { height: 55px !important; padding: 0 18px; }
+      html[data-visual="midnight"] .retro-program-bar { height: 55px !important; padding: 0 18px; justify-content: flex-start; text-align: left; }
       html[data-visual="midnight"] .retro-menu-bar { top: 5px; left: auto; right: 12px; width: auto; border: 0; padding: 0; }
       html[data-visual="midnight"] .retro-menu-bar button { padding-inline: 8px; }
       html[data-visual="midnight"] .retro-desktop-shortcuts { display: none !important; }
@@ -4717,9 +4717,6 @@
       html[data-visual="midnight"] .hdr-progress { flex-basis: auto; }
       html[data-visual="midnight"] #options-container { max-height: none !important; }
       html[data-visual="midnight"] #sheet-toggle { display: none !important; }
-    }
-    @media (max-width: 639px) and (max-height: 500px) and (orientation: landscape) {
-      html[data-visual="midnight"] .retro-program-bar { justify-content: flex-start; text-align: left; }
     }
     @media (prefers-reduced-motion: reduce) {
       html[data-visual="midnight"] *, html[data-visual="midnight"] *::before, html[data-visual="midnight"] *::after {
