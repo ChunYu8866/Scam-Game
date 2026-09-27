@@ -4718,6 +4718,9 @@
       html[data-visual="midnight"] #options-container { max-height: none !important; }
       html[data-visual="midnight"] #sheet-toggle { display: none !important; }
     }
+    @media (max-width: 639px) and (max-height: 500px) and (orientation: landscape) {
+      html[data-visual="midnight"] .retro-program-bar { justify-content: flex-start; text-align: left; }
+    }
     @media (prefers-reduced-motion: reduce) {
       html[data-visual="midnight"] *, html[data-visual="midnight"] *::before, html[data-visual="midnight"] *::after {
         animation: none !important; transition: none !important; scroll-behavior: auto !important;
@@ -8172,10 +8175,10 @@
       SAFE_EXIT_ACCOUNT_LATE: {
         title: '結局：資料已外流，你開始補救',
         content: '你已提供帳戶相關資料，留下了外流風險。發現不對後，你停止配合、保留紀錄，並透過官方管道求助。這些補救行動不能撤回已交出的資料；卡片是否交付及後續處置，應以本次行動紀錄為準。',
-        analysis: '人頭帳戶案件中，最關鍵的分水嶺不是「有沒有借出帳戶」，而是「發現不對之後有沒有立刻停止並說明」。主動說明、提供金流與對話紀錄，是證明自己被利用而非共謀的唯一方式；相反地，隱瞞或再去借第二本，會讓你從被害人變成招募者。',
-        legal: '【刑事風險】提供帳戶供他人使用，可能涉犯洗錢防制法與幫助詐欺；若進一步介紹他人提供帳戶，責任更重。【帳戶影響】警示帳戶會導致所有金融機構帳戶受到管制，影響薪轉、學貸與日常轉帳，解除需要時間與正式程序。【減輕因素】自首、主動提供證據與配合調查，是實務上重要的考量。',
-        advice: '【立刻做】聯絡發卡銀行說明卡片去向並辦理掛失；攜帶對話紀錄、寄件單與入帳通知到警局報案。【保留】所有 LINE 對話、超商寄件單、入帳簡訊都不要刪除。【不要做】不要再開新帳戶、不要介紹任何人、不要私下與對方協商「把錢還回去」。【求助】撥打 165 或 110，也可以請家人陪同前往。',
-        psychTrap: '沉沒成本與人情壓力：因為已經收了五百元、因為朋友欠了債，你會覺得「都走到這裡了不能停」。但沉沒成本不會因為繼續走而變小，只會因為停下來而停止累積。'
+        analysis: '發現帳戶資料可能遭利用後，應停止配合，保留對話、資料傳送與金流紀錄，並向銀行及警方說明實際經過。是否交付卡片、是否收到款項，應依本次行動與紀錄判斷；繼續交出資料或介紹他人，會增加風險。',
+        legal: '【刑事風險】提供帳戶供他人使用，可能涉及詐欺或洗錢相關責任；實際責任須依行為與證據判斷。【帳戶影響】若帳戶遭通報為警示帳戶，帳戶功能與相關金融服務可能受限；應向銀行及警方確認處理方式。【紀錄】保存與對方往來及向銀行、警方通報的紀錄，供後續釐清。',
+        advice: '【立刻做】停止提供資料，聯絡往來銀行說明已交付的資訊並詢問如何保護帳戶；若已交付提款卡，立即依銀行指示辦理掛失。帶著現有對話與傳送紀錄向警方報案。【保留】LINE 對話、已傳照片、寄件紀錄及入帳通知（如有）都不要刪除。【不要做】不要再開新帳戶、不要介紹任何人、不要私下與對方協商「把錢還回去」。【求助】撥打 165 或 110，也可以請家人陪同前往。',
+        psychTrap: '沉沒成本與人情壓力：對方可能用報酬或關係讓你覺得「都走到這裡了不能停」；已交出部分資料，也不代表必須繼續配合。'
       },
 
       SAFE_EXIT_SIM: {
