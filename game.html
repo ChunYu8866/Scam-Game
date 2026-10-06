@@ -516,7 +516,7 @@
     .ins-spot.found-flaw { background: #ffe3e6; }
     .ins-spot.found-flaw .ins-text { font-weight: 800; }
     .ins-spot.found-flaw .ins-text::before {
-      content: '破';
+      content: '疑';
       border: 1.5px solid #be123c; border-radius: 4px;
       color: #be123c;
       transform: rotate(-6deg);
@@ -686,7 +686,7 @@
     }
     .ms-spot.hit-flaw { outline: 2px solid #be123c; background: rgba(255, 205, 214, 0.4); }
     .ms-spot.hit-flaw::after {
-      content: '破';
+      content: '疑';
       border: 1.5px solid #be123c; border-radius: 4px;
       color: #be123c; background: #ffe3e6;
       transform: rotate(-8deg);
@@ -4318,7 +4318,7 @@
       margin-left: auto; color: var(--muted); font: 10px/1.4 Consolas, monospace; letter-spacing: .13em;
     }
     html[data-visual="midnight"] .retro-menu-bar {
-      position: absolute; display: flex !important; top: 14px; right: 27px; left: auto;
+      position: absolute; z-index: 121; display: flex !important; top: 14px; right: 27px; left: auto;
       width: auto; height: 44px; padding: 0; gap: 5px; border: 0; background: transparent; box-shadow: none;
     }
     html[data-visual="midnight"] .retro-menu-bar button {
@@ -4793,7 +4793,7 @@
           </header>
           <form id="participant-form" class="card research-form">
             <label>受試者代碼
-              <input id="participant-id" type="text" inputmode="text" autocomplete="off" maxlength="8" placeholder="例如 G-ABC234" aria-describedby="participant-help participant-error" />
+              <input id="participant-id" type="text" inputmode="text" autocomplete="off" maxlength="8" placeholder="例如 P-7KQ2MX" aria-describedby="participant-help participant-error" />
             </label>
             <p id="participant-help" class="end-body">格式為 P- 加 6 碼（例如 P-7KQ2MX），與前測使用的代碼相同。請勿輸入姓名、學號或座號。</p>
             <div id="participant-confirm" class="card hidden">
@@ -5059,7 +5059,7 @@
           </div>
 
           <div class="card">
-            <h2>心理防禦評估</h2>
+            <h2>選擇與風險說明</h2>
             <p id="ending-analysis" class="end-body"></p>
           </div>
 
@@ -5132,7 +5132,7 @@
             <p id="completion-code" class="hero-sub">受試者代碼：尚未配對</p>
           </header>
 
-          <section id="posttest-handoff-card" class="card" aria-labelledby="posttest-handoff-title">
+          <section id="posttest-handoff-card" class="card hidden" aria-labelledby="posttest-handoff-title">
             <h2 id="posttest-handoff-title">下一步：完成後測</h2>
             <p class="end-body">後測資格由完成狀態決定，與資料是否已收到 ACK 分開處理。</p>
             <a id="posttest-link" class="btn-primary hidden" href="#" target="_blank" rel="noopener">前往後測</a>
@@ -5151,7 +5151,7 @@
               <button class="opt-btn" type="button" data-reflection="online">都只發生在網路上</button>
             </div>
             <p id="reflection-feedback" class="form-error"></p>
-            <p id="reflection-status" role="status" aria-live="polite">此題選填，不影響後測連結。</p>
+            <p id="reflection-status" role="status" aria-live="polite">此題選填，不影響本次遊戲完成狀態。</p>
           </section>
 
           <details id="summary-details">
@@ -5166,7 +5166,7 @@
             <div id="summary-upload-status" class="upload-status" role="status" aria-live="polite">檢查資料送出狀態中</div>
           </details>
 
-          <section id="shared-device-handoff" class="card">
+          <section id="shared-device-handoff" class="card hidden">
             <h2>共用裝置交接</h2>
             <p class="end-body">參與者完成後測交接後，由施測者準備下一位。確認後會回到前測入口並建立新代碼；上一位的事件仍保留在原資料範圍。</p>
             <button class="btn-secondary" type="button" data-study-recovery>匯出本場 JSON／重試上傳</button>
@@ -5181,10 +5181,10 @@
             <span id="inspect-title">截圖檢視</span>
             <button id="inspect-close" type="button" class="sheet-close">稍後再看</button>
           </div>
-          <p class="inspect-hint">截圖上有「？」記號的地方都可以點。點一下判斷：這裡是破綻，還是沒問題？檢視期間，限時倒數會暫停。</p>
+          <p class="inspect-hint">點選你覺得可疑的「？」記號，查看這裡是否有疑點及原因。截圖只能提供線索，仍需用官方管道查證；檢視期間，限時倒數會暫停。</p>
           <div id="inspect-doc" class="inspect-doc"></div>
           <div id="inspect-notes"></div>
-          <p id="inspect-status" class="inspect-status">已找到破綻 0/3</p>
+          <p id="inspect-status" class="inspect-status">已檢視查證疑點 0/3</p>
           <button id="inspect-finish" type="button" class="btn-primary">我找完了</button>
         </div>
       </div>
@@ -5490,9 +5490,7 @@
         },
         "S_RENT_ACCOUNT_PRESSURE:2": {},
         "S_RENT_ACCOUNT_PRESSURE:3": {},
-        "S_ACCOUNT_TEST_PAY:1": {
-          "bankCardHandedOver": true
-        },
+        "S_ACCOUNT_TEST_PAY:1": {},
         "S_ACCOUNT_TEST_PAY:2": {},
         "S_ACCOUNT_TEST_PAY:3": {},
         "S_ACCOUNT_MOM:1": {},
@@ -5524,9 +5522,7 @@
         "S_SIM_CARD_QUESTION:1": {},
         "S_SIM_CARD_QUESTION:2": {},
         "S_SIM_CARD_QUESTION:3": {},
-        "S_SIM_CARD_STORE:1": {
-          "simContractSigned": true
-        },
+        "S_SIM_CARD_STORE:1": {},
         "S_SIM_CARD_STORE:2": {},
         "S_SIM_CARD_STORE:3": {},
         "S_SIM_FRIEND_PROOF:1": {},
@@ -5976,7 +5972,7 @@
         S_PHISHING_OTP: { phishingCredentials: true },
         S_ACCOUNT_FROZEN: { bankCardHandedOver: true },
         S_SIM_FIRST_BILL: { simContractSigned: true, simPhoneHandedOver: true },
-        S_SIM_POLICE: { simContractSigned: true, simPhoneHandedOver: true, simCardHandedOver: true }
+        S_SIM_POLICE: { simContractSigned: true, simPhoneHandedOver: true }
       });
 
       const TRANSITION_TOKENS = Object.freeze({
@@ -6524,6 +6520,16 @@
         return state;
       }
 
+      function updatePauseReason(state, reason, at) {
+        if (state.phase !== 'paused' || state.pauseReason === reason) return state;
+        const durationMs = Math.max(0, at - state.pausedAt);
+        state.pauseLog.push({ reason: state.pauseReason, startedAt: state.pausedAt, endedAt: at, durationMs });
+        state.pausedAt = at;
+        state.pauseReason = reason;
+        state.events.push({ type: 'pause_reason_changed', reason, at });
+        return state;
+      }
+
       function submitDecision(state, at) {
         if (state.phase !== 'running') return state;
         state.firstSubmitAt = state.firstSubmitAt ?? at;
@@ -6630,7 +6636,7 @@
 
       return Object.freeze({
         createTimingState, markMaterialVisible, markDecisionReady, startDecision,
-        pauseDecision, resumeDecision, submitDecision, timeoutDecision, timingMetrics,
+        pauseDecision, resumeDecision, updatePauseReason, submitDecision, timeoutDecision, timingMetrics,
         canStartDecision, captureTimingState, restoreTimingState, build165ContextSummary, clone
       });
     })();
@@ -6733,8 +6739,8 @@
             </div>`,
           rows: [
             { kind: 'header', text: '電競交易中心｜出金紀錄' },
-            { kind: 'spot', flaw: true, text: '平台標誌：模糊不清', reveal: '官方介面的標誌通常清楚可辨；這種畫質可能是修圖或翻拍留下的痕跡。' },
-            { kind: 'spot', flaw: true, text: '03:12 出金成功 NT$18,000', reveal: '凌晨三點「客服撥款」？正常平台的出金不會挑這種時間。' },
+            { kind: 'spot', flaw: true, text: '平台標誌：模糊不清', reveal: '畫質模糊使標誌無法核對，但不能單憑畫質認定真偽。請自行進入官方平台，核對完整交易紀錄。' },
+            { kind: 'spot', flaw: true, text: '03:12 出金成功 NT$18,000', reveal: '出金時間不能證明交易真偽；這張截圖無法讓你核對完整交易與來源。請自行進入官方平台查證，不要因出金畫面就登入對方連結。' },
             { kind: 'spot', flaw: true, text: '收款人：user_8891', reveal: '收款帳號與學長的暱稱不符，無法確認這張截圖屬於誰。' },
             { kind: 'spot', flaw: false, text: '手續費：NT$30', reveal: '這一項沒有明顯異常，部分平台確實會收取出金手續費。' },
             { kind: 'spot', flaw: false, text: '出金方式：銀行轉帳', reveal: '這裡看起來正常。' }
@@ -6743,7 +6749,7 @@
         instantTip: '警訊：截圖、限時動態與學長保證都只是他人說法，不能取代查證。',
         text: '阿杰把社團小群的畫面直接轉傳過來，補了一句：「你自己看，學長都出金了，整個群都在+1。大家都在用，你不要害我錯過這一筆。」',
         options: [
-          opt('學長都出金了，應該是真的吧，我看一下流程。', 'S_PHISHING_OTP', {
+          opt('學長都出金了，應該是真的吧。我照頁面的要求登入自己的遊戲帳號驗證。', 'S_PHISHING_OTP', {
             effects: { trust: 2, awareness: -2, greed: 1 },
             isMistake: true,
             hint: '你把群組中的熱烈回應當成安全證明，落入了社會認同陷阱。'
@@ -6781,7 +6787,7 @@
           postTip: '任何人或頁面要求提供簡訊驗證碼時，都應視為高風險要求並停止操作。'
         },
         instantTip: '最高等級警訊：簡訊驗證碼是帳號的重要安全防線，官方客服不會要求你提供。',
-        text: '連結打開，是一個「電競帳號交易中心」：官方風的藍色介面、跑馬燈客服，還有一面短影音實測牆。頁面要你綁定遊戲帳密「完成保證金驗證」。你才填完帳密，一個用官方標誌當頭像的帳號立刻私訊：「您好，這裡是平台安全中心 😊 系統偵測到您的帳號有異常登入，請提供簡訊驗證碼以協助保全。」同一秒，手機跳出簡訊：【驗證碼 481253，切勿提供他人】，頁面也彈出紅色視窗：「60 秒內未完成驗證，帳號將被凍結。」',
+        text: '連結打開，是一個「電競帳號交易中心」：官方風的藍色介面、跑馬燈客服，還有一面短影音實測牆。頁面宣稱協助者也要用自己的遊戲帳密「完成保證金驗證」。你照著輸入後，一個用官方標誌當頭像的帳號立刻私訊：「您好，這裡是平台安全中心 😊 系統偵測到您的帳號有異常登入，請提供簡訊驗證碼以協助保全。」同一秒，手機跳出簡訊：【驗證碼 481253，切勿提供他人】，頁面也彈出紅色視窗：「60 秒內未完成驗證，帳號將被凍結。」',
         options: [
           opt('帳號要被凍結了！快，輸入481253。', 'S_PHISHING_AFTER', {
             effects: { fear: 2, awareness: -3, risk: 5 },
@@ -6955,10 +6961,10 @@
         instantTip: '警訊：對方先匯一筆小額款項，是為了取得你的信任，接著才會提出真正的要求。',
         text: '你把封面和末四碼傳過去。不到十分鐘，手機跳出通知：【存入 NT$500】。「財務-Ken」馬上接話：「誠意金到帳囉 😊 確認合作愉快！接下來把提款卡用超商店到店寄給我們，下週一開始，每個月兩萬準時入帳。」',
         options: [
-          opt('連500都先給了，看來是玩真的。卡寄過去。', 'S_ACCOUNT_CARD_SEND', {
+          opt('連500都先給了，看來是玩真的。先看一下提款卡怎麼寄。', 'S_ACCOUNT_CARD_SEND', {
             effects: { trust: 3, greed: 2, awareness: -3, risk: 6 },
             isMistake: true,
-            hint: '那 500 元是用來降低戒心的誘餌；收下後，你的帳戶便開始替他人處理不明款項。',
+            hint: '小額入帳不能證明對方可信；繼續準備寄卡，仍會讓帳戶落入他人控制。',
             educationalType: '人頭帳戶'
           }),
           opt('這筆錢我不動。直接聯絡銀行說明，把錢退回去。', 'SAFE_EXIT_BLOCK2', {
@@ -7141,7 +7147,7 @@
           }),
           opt('匯款會停，合約不會停。這題我不用算第二次。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 4, trust: -1 },
-            hint: '你辨識出關鍵風險：眼前取得現金，兩年的合約責任仍由你承擔。'
+            hint: '你辨識出關鍵風險：眼前取得現金，三年的合約責任仍由你承擔。'
           }),
           opt('我直接打電信客服，問這種「學生專案」存不存在。', 'SAFE_EXIT_SIM', {
             effects: { awareness: 5 },
@@ -7173,7 +7179,7 @@
         instantTip: '警訊：資料已填妥、筆也遞到面前，門口還有人等候。現場安排正迫使你立即簽名。',
         text: '通訊行冷氣很強。櫃檯上早就擺好「學生優惠專案」、一支未拆封的手機和簽名板，店員笑著把筆遞過來：「同學，資料都幫你打好了，簽名就好。」門口一個黑外套男子靠著機車滑手機。阿凱傳訊：「簽完出來，五千馬上到手 💰」',
         options: [
-          opt('都走進來了……簽吧，五千先落袋。', 'S_SIM_ID_DOCS', {
+          opt('都走進來了……繼續辦吧，五千先落袋。', 'S_SIM_ID_DOCS', {
             effects: { trust: 2, greed: 2, awareness: -2, risk: 6 },
             isMistake: true,
             hint: '「都來了就簽一簽」是很危險的心態，現場的每個細節都在推你一把。'
@@ -7361,10 +7367,10 @@
             terminalEndingId: 'SAFE_EXIT_SIM_LATE',
             hint: '停止擴大，並立刻處理已經辦下去的那一門。'
           }),
-          opt('我先觀望一個月，看帳單再說。', 'S_SIM_SECOND_ROUND', {
+          opt('我先聽聽加辦條件，再決定要不要繼續。', 'S_SIM_SECOND_ROUND', {
             effects: { awareness: -2, risk: 3 },
             isMistake: true,
-            hint: '拖一個月，違約金與帳單只會繼續累積。'
+            hint: '再去聽加辦條件，會讓你重新進入現場壓力；應先處理已申辦的門號。'
           })
         ]
       },
@@ -7404,7 +7410,7 @@
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: '系統',
         instantTip: '「月租我們會匯給你」的承諾，通常在第一期帳單之前就消失。',
-        text: '一個月後，掛號信寄到家裡。三個門號的第一期帳單，合計 4,197 元，收件人是你。你翻手機找那個「每個月會匯月租」的承諾——阿凱的訊息停在三週前，之後就沒再回過。黑外套男子則從頭到尾沒留下任何聯絡方式。',
+        text: '一個月後，掛號信寄到家裡。三個門號的第一期帳單，合計 4,597 元，收件人是你。你翻手機找那個「每個月會匯月租」的承諾——阿凱的訊息停在三週前，之後就沒再回過。黑外套男子則從頭到尾沒留下任何聯絡方式。',
         options: [
           opt('先自己墊著繳，等阿凱有錢再跟他要。', 'S_SIM_POLICE', {
             effects: { fear: 2, awareness: -2, risk: 3 },
@@ -7433,7 +7439,7 @@
         timeLimit: 20,
         timeoutNext: 'BAD_ENDING_SIM_CARD',
         instantTip: '被通知門號涉案時，完整說明並提供證據，才是對自己最有利的做法。',
-        text: '又過了兩個月。派出所的電話打到家裡：你名下的三個門號，全部被用來申辦社群帳號、發送詐騙簡訊，已經有多名被害人報案。警員在電話那頭問：「這幾個門號是你本人申辦的嗎？當時有沒有其他人跟你一起去？」',
+        text: '又過了兩個月，你收到警方的聯繫通知：業者與警方正在查核門號或申辦資料是否遭冒用。SIM 卡雖然還在你手中，先前交付的資料與簽署的合約仍需釐清。你先透過自行查到的派出所官方電話核對通知，再說明：「這幾個門號是我申辦的；當時還有其他人一起去。」',
         options: [
           opt('不是我……我什麼都不知道。', 'BAD_ENDING_SIM_CARD', {
             effects: { fear: 4, awareness: -4, risk: 5 },
@@ -7802,7 +7808,7 @@
             { kind: 'header', text: '兼職人員建檔表' },
             { kind: 'spot', flaw: true, text: '需檢附：提款卡正面照', reveal: '一般工作申請不會要求提款卡照片，這項要求本身就是重大警訊。' },
             { kind: 'spot', flaw: true, text: '公司名稱：宏達電商工作室（沒有統編）', reveal: '該工作室沒有提供統一編號，無法查證公司登記資料。' },
-            { kind: 'spot', flaw: true, text: '表頭標誌：放大後出現像素格', reveal: '表頭標誌可能取自網路圖片，放大後可看出拼貼痕跡。' },
+            { kind: 'spot', flaw: true, text: '表頭標誌：放大後出現像素格', reveal: '像素格也可能來自壓縮或解析度，不能據此認定偽造；請自行核對公司與完整表格來源。' },
             { kind: 'spot', flaw: false, text: '姓名：＿＿＿＿＿', reveal: '一般表格可能要求填寫姓名，問題不在這個欄位。' },
             { kind: 'spot', flaw: false, text: '聯絡電話：＿＿＿＿＿', reveal: '這裡看起來正常。' }
           ]
@@ -7831,10 +7837,10 @@
             hint: '證件一旦外流，對方手上就多了可以控制你的籌碼。',
             educationalType: '證件蒐集'
           }),
-          opt('證件有點不方便……先傳學生證可以嗎？', 'S8', {
+          opt('其他證件先不給……我先把學生證傳過去。', 'S8', {
             effects: { awareness: -1, fear: 1, risk: 2 },
             isMistake: true,
-            hint: '你在猶豫，但還是在對方開出的條件裡討價還價。'
+            hint: '只傳學生證仍是交出個人資料，不能消除這項招募的風險。'
           }),
           opt('跟錢無關的兼職要提款卡照？停手＋封鎖。', 'SAFE_EXIT_BLOCK3', {
             effects: { awareness: 4, trust: -2 }
@@ -7880,7 +7886,7 @@
       },
 
       S9: {
-        feedbackPolicy: { preDecision: 'none', afterSafe: '你把監視威脅視為求助理由，停止提款並立即求助。', afterIncomplete: '你感到被監視時更需要離開現場並聯絡正式管道。', afterMistake: '你在威脅下繼續提款。請停止、移往安全處並立即求助。' },
+        feedbackPolicy: { preDecision: 'none', afterSafe: '你保留交款與說謊指示，帶著款項和紀錄向警方求助。', afterIncomplete: '你已看到對方安排的交款與說詞，仍需明確停止配合並求助。', afterMistake: '你準備照對方指示交款或統一說詞。不要再移動款項，應保留訊息並向警方說明。' },
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (LINE)',
         timeLimit: 18,
@@ -7888,7 +7894,7 @@
         challenge: {
           title: '謊言腳本中斷',
           subtitle: '防詐 3C：冷靜、保留、求助',
-          label: '長按刪除腳本',
+          label: '長按停止配合',
           icon: 'ban',
           holdMs: 1800,
           completeText: '不背說詞。帶著現金和對話紀錄，直接前往警局或撥打 165。',
@@ -7918,7 +7924,7 @@
       },
 
       S10_THREAT: {
-        feedbackPolicy: { preDecision: 'none', afterSafe: '你拒絕背誦說詞，帶著款項與紀錄轉向警方。', afterIncomplete: '你察覺對方安排說詞，但仍需停止交付並求助。', afterMistake: '你準備照稿說謊，表示對方正控制你的行動。請停止並說明實情。' },
+        feedbackPolicy: { preDecision: 'none', afterSafe: '你保留恐嚇內容，停止配合並向警方或 165 求助。', afterIncomplete: '你想向朋友求助，但仍應保留恐嚇內容並聯絡警方或可信任大人。', afterMistake: '你因恐嚇繼續配合或躲避處理。請保留威脅訊息，移往安全處並向警方求助。' },
         bg: SCENE_IMAGES.PHONE_SCREEN,
         speaker: 'K哥 (語音)',
         effect: 'shake',
@@ -7963,7 +7969,7 @@
       },
 
       S11_SPIRAL: {
-        feedbackPolicy: { preDecision: 'none', afterSafe: '你和朋友一起向正式管道求助，中斷彼此的恐懼。', afterIncomplete: '你想消失或坦白是起點，但仍需保留證據並主動聯絡警方。', afterMistake: '你因雙方都受威脅而繼續交付。共同受控更需要外部介入。' },
+        feedbackPolicy: { preDecision: 'none', afterSafe: '你向警方說明提款與受指示的經過。請繼續保存紀錄，停止後續提款與交款。', afterIncomplete: '已發生的提款仍需保留紀錄，並向警方完整說明。', afterMistake: '逃避、招募新人或繼續提款，都會增加後續風險。現在仍應停止擴大並向警方求助。' },
         bg: SCENE_IMAGES.ATM,
         speaker: '系統',
         isRealWorld: true,
@@ -8188,8 +8194,8 @@
       },
 
       SAFE_EXIT_SIM_LATE: {
-        title: '結局：門號已辦，但你及時止損',
-        content: '合約上有你的名字，手機也已經交了出去。但你沒有繼續加辦，而是帶著合約、帳單與對話紀錄回到電信門市與警局說明整件事。責任歸屬進入了正式程序，你也保住了自己的說法。',
+        title: '結局：門號風險發生後開始止損',
+        content: '門號申辦過程已發生資料交付、簽約或交機等風險，你開始停止後續操作並處理問題。確實發生的行動列在本次紀錄中；已簽約者仍需向電信業者確認取消或解約結果，若裝置也已交付，請一併說明交付經過。',
         analysis: '門號詐騙的結構是「合約掛在你名下、裝置與使用權給別人」。真正決定後果輕重的，是發現之後的處置：如果只是默默墊繳或放著不管，帳單、違約金與後續的涉案調查都會落在你身上；如果保留完整證據並主動說明，才有機會證明自己是被利用的申辦人。',
         legal: '【民事責任】綁約期間的月租、分期與違約金，依合約仍記在申辦人名下，需要正式程序才可能爭取減免。【刑事風險】若門號被用於詐騙或發送簡訊，申辦人可能被列為關係人接受調查。【減輕因素】完整的合約影本、現場照片、對話紀錄與主動說明，是釐清責任最有效的材料。',
         advice: '【立刻做】攜帶身分證與合約到電信業者門市說明並申請爭議處理；到警局報案並取得報案三聯單。【保留】合約全部頁面、帳單、當天的現場照片與所有對話紀錄。【不要做】不要再申辦任何門號、不要相信「再辦幾門就幫你付清」的說法。【求助】撥打 165，或向電信業者的官方客服（自行查詢號碼，不要用對方提供的）反映。',
@@ -8216,16 +8222,16 @@
 
       SAFE_EXIT_PHISHING: {
         title: '結局：避開釣魚連結',
-        content: '你沒有點開阿杰傳來的交易連結，而是自行搜尋官方平台並透過 165 查證。倒數壓力消失後，你發現那個「電競交易站」只是仿冒頁面，社團小群截圖也是轉傳的虛假背書。',
-        analysis: '【防禦力 A 級】\n你沒有因為介面看似官方而受騙，並完成防詐 3C：冷靜、查證、求助。',
+        content: '面對交易邀約與群組背書，你停止了高風險操作，沒有把帳密或驗證碼交給對方。截圖和朋友保證都不能代替查證；請透過自行查到的官方入口核對交易。',
+        analysis: '你在資料外流前中止流程。接下來仍應確認交易來源，並提醒朋友保留紀錄、透過官方管道查證。',
         legal: '【法律風險低】\n你沒有輸入帳密、驗證碼或個資，因此避免帳號與資料外流。',
         advice: '【警訊】短網址、仿冒交易平台，以及要求輸入遊戲帳號密碼、社群小帳或簡訊驗證碼。\n【自救】不要點開對方提供的連結；自行輸入官方網址、使用官方 App，或撥打 165、查詢 165 全民防騙網。',
         psychTrap: '仿冒介面與時間壓迫：相似網址和倒數時間會降低你查證的意願。'
       },
 
       SAFE_EXIT_PHISHING_LATE: {
-        title: '結局：帳號遭盜後立即處理',
-        content: '帳號雖然遭到盜用，但你在半小時內更改所有共用密碼、通知平台與好友，並撥打 165 留下紀錄。你沒有再提供其他資料，勒索訊息也成為報案證據。',
+        title: '結局：登入資料外流後開始補救',
+        content: '登入資料已有外流，你開始停止操作或採取補救。已完成的處置以本次行動紀錄為準；仍應確認密碼已重設、聯絡平台官方客服、保留對話，並提醒好友留意帳號冒用。',
         analysis: '【防禦力 C 級】\n你在第一關失守，但補救動作快、順序對。被騙之後的處理速度，決定損失會不會繼續擴大。',
         legal: '【個資與帳號風險】\n帳號與部分個資可能已外流，仍需留意後續遭冒用；你沒有幫對方傳送訊息，未涉入加害行為。',
         advice: '【警訊】輸入帳號密碼與驗證碼後，帳號遭更改密碼並受到勒索。\n【自救】立即修改其他平台的相同密碼、通知平台客服與好友、保留對話證據，並撥打 165 或報警。',
@@ -8288,7 +8294,7 @@
 
       BAD_ENDING_PHISHING: {
         title: '結局：帳號與個資外流',
-        content: '你在仿冒交易頁面輸入遊戲帳號、社群小帳、密碼與簡訊驗證碼。幾分鐘後，帳號被改密碼，限動和私訊紀錄也被對方拿來威脅你配合後續任務。',
+        content: '你已在仿冒交易流程中交出登入資料，尚未完成必要的補救。若也提供驗證碼，帳號控制權可能進一步受影響；請依本次行動紀錄確認外流範圍，停止操作並聯絡平台官方客服。',
         analysis: '【危險警告】\n釣魚網站會把你引到對方控制的入口，使你主動交出登入權限；介面是否逼真，不能作為安全判斷依據。',
         legal: '【個資與帳號風險】\n你可能成為個資外洩、帳號盜用或後續詐騙流程的受害者；若再配合收款、提款或轉交資料，法律風險會升高。',
         advice: '【警訊】交易頁面要求遊戲帳號密碼、社群小帳、簡訊驗證碼、身分證或金融資料。\n【自救】立即停止輸入，改由官方 App 或自行輸入網址登入；已輸入者應立即更改密碼、通知平台、保留畫面並撥打 165。',
@@ -8332,8 +8338,8 @@
       },
 
       BAD_ENDING_RENT_ACCOUNT: {
-        title: '結局：交付帳戶與證件',
-        content: '你把提款卡和身分證寄了過去。一個月後，你沒有收到承諾的租金，反而收到了警局的傳票，你的所有銀行帳戶都被凍結了。',
+        title: '結局：帳戶資料外流風險未解除',
+        content: '帳戶或身分資料已交給對方，風險尚未妥善處理。實際交付項目以本次行動紀錄為準；若提款卡或密碼也已交付，應立即聯絡銀行停用並說明經過，保留紀錄向警方或 165 求助。',
         analysis: '【高度危險】\n出借、販賣帳戶會讓自己的帳戶變成不明款項入口。你原本只想幫朋友或賺零用錢，卻把金融身分交了出去。',
         legal: '【帳戶交付風險】\n交付帳戶可能涉及幫助詐欺或洗錢相關風險，並可能承擔被害損失的民事求償。',
         advice: '【警訊】有人提議租借或購買你的銀行帳戶、提款卡或學生帳戶。\n【自救】不要提供；保留對話後，向家長、老師、銀行、警方或 165 求助。',
@@ -8341,8 +8347,8 @@
       },
 
       BAD_ENDING_SIM_CARD: {
-        title: '結局：門號合約與債務',
-        content: '你拿到幾千元現金，把新手機交給對方，自己留下 SIM 卡。幾個月後，你開始收到電信公司的催繳通知，畢旅前還被家人發現帳單異常。對方已經失聯，也沒有匯款支付月租費。',
+        title: '結局：門號申辦風險未解除',
+        content: '門號申辦的風險仍未妥善處理；若已交出資料、簽約或交機，應立即停止後續操作並聯絡電信業者。確實發生的交付與合約事項以本次行動紀錄為準，不能只依對方承諾認定月租已有人負責。',
         analysis: '【危險警告】\n這接近「辦機換現」詐騙模式。你為了幾千塊的眼前小利，背負了長達兩三年、動輒數萬元的合約月租費與違約金，信用紀錄也可能受影響。',
         legal: '【民事與信用風險】\n門號、分期、月租與違約金登記在你的名下，後續催繳、停話、違約紀錄與債務責任會回到你身上。',
         advice: '【警訊】對方要求你以自己的名義辦門號、領手機，再把手機交給第三人。\n【自救】不要簽約或交付手機；若已簽約，立即聯絡電信業者、家長或 165，確認後續處理方式。',
@@ -8435,7 +8441,7 @@
           .map(key => `${key}=${encodeURIComponent(String(context[key] || ''))}`).join('&');
       }
       function createSafeStorage(nativeStorage, memory = new Map()) {
-        let persistent = true;
+        let persistent = Boolean(nativeStorage);
         const read = key => {
           let raw;
           try { raw = nativeStorage?.getItem(key); } catch (error) { persistent = false; return { ok: false, persistent: false, reason: reasonFor(error) }; }
@@ -8865,7 +8871,7 @@
     let hiddenSince = 0;
     let totalHiddenMs = 0;      // 整場累計的離開時間，用來校正反應時間
     let pendingTimerExtendMs = 0;  // 尚未補進倒數的離開時間
-    let v46SafeStorage = V46_DATA_CORE.createSafeStorage(localStorage);
+    let v46SafeStorage = V46_DATA_CORE.createSafeStorage((() => { try { return window.localStorage; } catch (error) { return null; } })());
     let v46Repository = null;
     let v46Delivery = null;
     let lifecycleState = 'active';
@@ -8921,6 +8927,7 @@
       if (document.hidden) {
         hiddenSince = Date.now();
         pauseDecisionTimer('hidden');
+        if (['call-view', 'playing-view'].includes(document.documentElement.dataset.retroScreen)) saveActiveRun(gameState.pendingNextNodeId || currentNodeId || selectedScenario?.startNode);
         return;
       }
       resumeDecisionTimer('hidden');
@@ -9188,7 +9195,15 @@
     function refreshLifecycleDeliveryTexts() {
       [['posttest-status', 'posttest-link', 'posttest-fallback'], ['interrupted-delivery-status', 'interrupted-posttest-link', 'interrupted-fallback']].forEach(([statusId, linkId, fallbackId]) => {
         const link = document.getElementById(linkId);
-        if (!link || link.classList.contains('hidden') || link.getAttribute('href') === '#') return;
+        if (!usesPosttestHandoff()) {
+          link?.classList.add('hidden');
+          link?.removeAttribute('href');
+          document.getElementById(fallbackId)?.classList.add('hidden');
+          const status = document.getElementById(statusId);
+          if (status) status.textContent = lifecycleDeliveryText();
+          return;
+        }
+        if (!link || link.classList.contains('hidden') || !link.getAttribute('href') || link.getAttribute('href') === '#') return;
         const status = document.getElementById(statusId);
         if (status) status.textContent = lifecycleDeliveryText();
         const needsFallback = !navigator.onLine || !v46SafeStorage.persistent || ensureV46Repository().list().some(item => item.delivery.state !== 'confirmed');
@@ -9265,7 +9280,6 @@
     function closeStudyRecovery() {
       document.getElementById('study-recovery-dialog').classList.add('hidden');
       onDialogClosed('study-recovery-dialog');
-      document.getElementById('study-recovery-open').focus();
     }
 
     async function retryStudyRecovery() {
@@ -9369,6 +9383,7 @@
     let currentSpeaker = '';
     let currentNodeId = '';
     let isTransitioning = false;
+    let nodeRenderGeneration = 0;
     let qteAnimationId;
     let qteTimeoutNext;
     let qteActionAnimationId;
@@ -9534,6 +9549,7 @@
 
     function saveActiveRun(nextNodeId = currentNodeId) {
       const persistedNodeId = nextNodeId || currentNodeId;
+      if (gameState.frozenStageScore) return;
       if (!currentRunId || !selectedScenarioType || !persistedNodeId) return;
       const snapshot = {
         contextFingerprint: V46_DATA_CORE.contextFingerprint(v46Context()),
@@ -9557,13 +9573,13 @@
 
     function hasActiveRun() {
       const saved = v46SafeStorage.getJSON(v46StateKey('active-run')).value;
-      return Boolean(saved?.contextFingerprint === V46_DATA_CORE.contextFingerprint(v46Context()) && saved?.currentRunId && saved?.selectedScenarioType && isRestorableNodeId(saved.currentNodeId));
+      return Boolean(saved?.contextFingerprint === V46_DATA_CORE.contextFingerprint(v46Context()) && saved?.currentRunId && saved?.selectedScenarioType && !saved.gameState?.frozenStageScore && isRestorableNodeId(saved.currentNodeId));
     }
 
     async function resumeActiveRun() {
       const saved = v46SafeStorage.getJSON(v46StateKey('active-run')).value;
       if (saved?.contextFingerprint !== V46_DATA_CORE.contextFingerprint(v46Context())) return false;
-      if (!saved?.currentRunId || !saved?.selectedScenarioType || !isRestorableNodeId(saved.currentNodeId)) return false;
+      if (!saved?.currentRunId || !saved?.selectedScenarioType || saved.gameState?.frozenStageScore || !isRestorableNodeId(saved.currentNodeId)) return false;
       const go = await retroConfirm('偵測到未完成的遊戲。要從上次中斷的位置繼續嗎？',
         { title: '接續上次進度', ok: '繼續上次的', cancel: '重新開始', icon: '？' });
       if (!go) {
@@ -9622,9 +9638,14 @@
         '<div class="sys-row"><div class="sys-msg">— 從這裡繼續 —</div></div>');
     }
 
+    window.addEventListener('pagehide', () => {
+      if (!currentRunId || !selectedScenarioType || !['call-view', 'playing-view'].includes(document.documentElement.dataset.retroScreen)) return;
+      saveActiveRun(gameState.pendingNextNodeId || currentNodeId || selectedScenario?.startNode);
+    });
+
     window.addEventListener('beforeunload', event => {
-      if (!currentRunId || !selectedScenarioType || document.getElementById('ending-view')?.classList.contains('hidden') === false) return;
-      saveActiveRun(gameState.pendingNextNodeId || currentNodeId);
+      if (!currentRunId || !selectedScenarioType || gameState.frozenStageScore || !['call-view', 'playing-view'].includes(document.documentElement.dataset.retroScreen)) return;
+      saveActiveRun(gameState.pendingNextNodeId || currentNodeId || selectedScenario?.startNode);
       event.preventDefault();
       event.returnValue = '';
     });
@@ -9745,7 +9766,7 @@
         : classification === 'safe'
           ? policy.afterSafe
           : policy.afterIncomplete;
-      const text = policyText || option.hint || '';
+      const text = option.hint || policyText || '';
       const evidence = option.evidence ? `你保留了：${option.evidence}` : '';
       return { classification, evidence, text, action: option.text || '這一步沒有回覆。' };
     }
@@ -10044,6 +10065,11 @@
     const ALL_VIEWS = ['participant-view', 'guide-view', 'scenario-view', 'call-view', 'playing-view', 'ending-view', 'summary-view', 'interrupted-view', 'withdrawn-view', 'researcher-view'];
 
     function syncRetroShell(viewId) {
+      const formalRunActive = APP_CONFIG.mode === 'study' && ['call-view', 'playing-view'].includes(viewId);
+      document.querySelectorAll('#retro-home, #retro-cases, #retro-chat, #retro-progress, #retro-start, [data-retro-action="home"], [data-retro-action="cases"]').forEach(button => {
+        button.disabled = formalRunActive || (APP_CONFIG.mode === 'study' && button.id === 'retro-cases');
+        button.title = formalRunActive ? '完成本通電話後即可使用導覽' : '';
+      });
       const active = viewId === 'scenario-view' ? 'retro-cases'
         : (viewId === 'playing-view' || viewId === 'call-view' ? 'retro-chat'
         : (viewId === 'summary-view' || viewId === 'ending-view' || viewId === 'interrupted-view' ? 'retro-progress' : 'retro-home'));
@@ -10072,6 +10098,10 @@
 
     function setView(viewId) {
       stopVoicePlayback();
+      if (viewId !== 'playing-view' && document.documentElement.dataset.retroScreen === 'playing-view') {
+        nodeRenderGeneration += 1;
+        skipWaitResolve?.();
+      }
       ALL_VIEWS.forEach(id => document.getElementById(id)?.classList.add('hidden'));
       close165Modal(false);
       const view = document.getElementById(viewId);
@@ -10226,7 +10256,8 @@
 
     function startScenario(scenarioType) { return startGame(scenarioType); }
 
-    function startFixedSequence() {
+    async function startFixedSequence() {
+      if (hasActiveRun() && await resumeActiveRun()) return;
       if (completedCount() >= SCENARIO_ORDER.length) { showSummary(); return; }
       const scenarioType = nextScenarioType() || SCENARIO_ORDER[0];
       startScenario(scenarioType);
@@ -10314,7 +10345,7 @@
       el.classList.add(row.flaw ? 'hit-flaw' : 'hit-ok');
       const note = document.createElement('div');
       note.className = 'ins-note' + (row.flaw ? '' : ' ok');
-      note.innerHTML = `<b>${row.flaw ? '破綻' : '沒問題'}｜${row.text}</b>${row.reveal}`;
+      note.innerHTML = `<b>${row.flaw ? '待查證' : '未見明顯異常'}｜${row.text}</b>${row.reveal}`;
       document.getElementById('inspect-notes').appendChild(note);
     }
 
@@ -10364,6 +10395,7 @@
         });
         updateInspectStatus();
         document.getElementById('inspect-overlay').classList.remove('hidden');
+        onDialogOpened('inspect-overlay');
         return;
       }
 
@@ -10420,7 +10452,7 @@
 
     function updateInspectStatus() {
       const st = inspectFlawStats();
-      document.getElementById('inspect-status').textContent = `已找到破綻 ${st.found}/${st.total}`;
+      document.getElementById('inspect-status').textContent = `已檢視查證疑點 ${st.found}/${st.total}`;
     }
 
     function closeInspect() {
@@ -10434,7 +10466,7 @@
         gameState.educationFlags.push(rewardKey);
         applyEffects({ awareness: 2 });
         collectEvidence(`找出「${currentInspect.cfg.title || '假截圖'}」的破綻 ${st.found} 處`);
-        appendTipCard(`你找出了 ${st.found} 處破綻。這些細節可用來判斷圖片是否經過加工。`, 'success');
+        appendTipCard(`你檢視了 ${st.found} 處疑點。這些線索仍需透過官方管道核對，不能單憑截圖認定真偽。`, 'success');
       }
       currentInspect = null;
     }
@@ -10442,7 +10474,7 @@
     async function finishInspect() {
       const st = inspectFlawStats();
       if (st.found < st.total) {
-        const go = await retroConfirm(`還有 ${st.total - st.found} 處破綻沒找到。確定要結束檢視嗎？`,
+        const go = await retroConfirm(`還有 ${st.total - st.found} 處查證疑點未檢視。確定要結束檢視嗎？`,
           { title: '截圖檢視', ok: '結束檢視', cancel: '再看一下', icon: '！' });
         if (!go) return;
       }
@@ -10456,19 +10488,28 @@
       'handbook-overlay': { focus: 'handbook-close', close: () => closeHandbook() },
       'confirm-165': { focus: 'modal-cancel-btn', close: () => close165Modal() },
       'call-165': { focus: 'call165-done', close: null },
+      'study-recovery-dialog': { focus: 'study-recovery-export', close: () => closeStudyRecovery() },
+      'game-guide-dialog': { focus: 'game-guide-close', close: () => closeGameGuideDialog() },
       'retro-confirm': { focus: 'retro-confirm-cancel', close: () => retroConfirmResolve?.(false) }
     };
     const dialogReturnFocus = {};
+    const dialogReturnScroll = {};
+    const dialogOpenOrder = [];
 
     function focusableIn(root) {
-      return [...root.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
-        .filter(el => !el.disabled && el.getClientRects().length);
+      return [...root.querySelectorAll('button, a[href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])')]
+        .filter(el => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length);
     }
 
     function onDialogOpened(id) {
       const el = document.getElementById(id);
       if (!el || el.classList.contains('hidden')) return;
-      dialogReturnFocus[id] = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      if (!dialogOpenOrder.includes(id)) {
+        dialogReturnFocus[id] = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const flow = document.getElementById('play-flow');
+        dialogReturnScroll[id] = flow ? flow.scrollTop : null;
+        dialogOpenOrder.push(id);
+      }
       pauseDecisionTimer('dialog');
       const preferred = document.getElementById(DIALOGS[id]?.focus || '');
       const target = (preferred && preferred.getClientRects().length) ? preferred : focusableIn(el)[0];
@@ -10476,11 +10517,19 @@
     }
 
     function onDialogClosed(id) {
-      resumeDecisionTimer('dialog');
-      const target = dialogReturnFocus[id];
-      target?.focus();
-      target?.scrollIntoView({ block: 'center' });
+      const index = dialogOpenOrder.indexOf(id);
+      if (index < 0) return;
+      dialogOpenOrder.splice(index, 1);
+      const open = dialogOpenOrder.filter(openId => !document.getElementById(openId)?.classList.contains('hidden'));
+      if (!open.length) resumeDecisionTimer('dialog');
+      const top = open.length ? document.getElementById(open[open.length - 1]) : null;
+      let target = dialogReturnFocus[id];
+      if (top && (!target || !top.contains(target))) target = focusableIn(top)[0];
+      if (target?.getClientRects().length) target.focus({ preventScroll: true });
+      const flow = document.getElementById('play-flow');
+      if (flow && dialogReturnScroll[id] !== null && dialogReturnScroll[id] !== undefined) flow.scrollTop = dialogReturnScroll[id];
       dialogReturnFocus[id] = null;
+      delete dialogReturnScroll[id];
     }
 
 
@@ -10490,6 +10539,7 @@
       const list = focusableIn(dialog);
       if (!list.length) return false;
       const first = list[0], last = list[list.length - 1];
+      if (!dialog.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); return true; }
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); return true; }
       if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); return true; }
       return false;
@@ -10497,7 +10547,7 @@
 
     function handleDialogKeydown(event) {
       if (event.key !== 'Escape' && event.key !== 'Tab') return;
-      const open = Object.keys(DIALOGS)
+      const open = dialogOpenOrder
         .map(id => document.getElementById(id))
         .filter(el => el && !el.classList.contains('hidden'));
       if (!open.length) return;
@@ -10536,38 +10586,18 @@
 
     function openGameGuideDialog() {
       const dialog = document.getElementById('game-guide-dialog');
-      gameGuideReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       dialog.classList.remove('hidden');
-      document.getElementById('game-guide-close').focus();
+      onDialogOpened('game-guide-dialog');
     }
 
     function closeGameGuideDialog() {
       document.getElementById('game-guide-dialog').classList.add('hidden');
-      gameGuideReturnFocus?.focus();
-      gameGuideReturnFocus = null;
+      onDialogClosed('game-guide-dialog');
     }
 
     function handleGameGuideKeydown(event) {
-      const dialog = document.getElementById('game-guide-dialog');
-      if (dialog.classList.contains('hidden')) return;
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeGameGuideDialog();
-        return;
-      }
-      if (event.key !== 'Tab') return;
-      const focusable = [...dialog.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])')]
-        .filter(element => !element.disabled && element.getClientRects().length);
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      handleDialogKeydown(event);
+      if (event.defaultPrevented) event.stopPropagation();
     }
 
     function openHandbook() {
@@ -10621,7 +10651,18 @@
       return result;
     }
 
+    function usesPosttestHandoff() {
+      // qaLifecycle 是施測交接的明確測試入口；一般 QA／自由試玩不啟用正式交接。
+      return !APP_CONFIG.researcher && (APP_CONFIG.mode === 'study'
+        || (APP_CONFIG.qa && ['completed', 'interrupted'].includes(URL_PARAMS.get('qaLifecycle'))));
+    }
+
     function lifecycleDeliveryText() {
+      if (APP_CONFIG.researcher) return '研究者模式：唯讀檢視本機紀錄，不自動傳送、不需填寫後測。';
+      if (APP_CONFIG.qa && usesPosttestHandoff()) return 'QA 交接情境模擬：資料僅保存在本機，不傳送正式研究端點。後測連結僅供檢查交接。';
+      if (APP_CONFIG.qa || APP_CONFIG.mode === 'free') return v46SafeStorage.persistent
+        ? '試玩資料僅保存在此瀏覽器，不傳送正式研究端點；不需填寫後測。'
+        : '試玩資料目前僅保留在此頁記憶體，重新整理後可能遺失；不傳送正式研究端點、不需填寫後測。';
       const pending = ensureV46Repository().list().filter(item => item.delivery.state !== 'confirmed');
       if (!v46SafeStorage.persistent) return '本機儲存不可持久化；後測配對仍可使用，請匯出本場 JSON 交由施測者保存。';
       if (!SHEET_URL || !v46EndpointStatus.ok) return '紀錄先保存在這支手機；資料端點確認後會自動補送。';
@@ -10630,11 +10671,18 @@
     }
 
     function renderHandoff(state) {
-      const handoff = buildPosttestHandoffUrl(state);
       const interrupted = state === 'interrupted';
       const link = document.getElementById(interrupted ? 'interrupted-posttest-link' : 'posttest-link');
       const status = document.getElementById(interrupted ? 'interrupted-delivery-status' : 'posttest-status');
       const fallback = document.getElementById(interrupted ? 'interrupted-fallback' : 'posttest-fallback');
+      if (!usesPosttestHandoff()) {
+        link?.classList.add('hidden');
+        link?.removeAttribute('href');
+        fallback?.classList.add('hidden');
+        if (status) status.textContent = lifecycleDeliveryText();
+        return { ok: false, code: 'nonstudy_handoff_disabled' };
+      }
+      const handoff = buildPosttestHandoffUrl(state);
       if (!handoff.ok || lifecycleState === 'withdrawn') {
         link?.classList.add('hidden');
         if (status) status.textContent = `固定後測設定無效（${handoff.code || 'withdrawn'}）；請聯絡現場施測者。`;
@@ -10765,6 +10813,10 @@
     }
 
     function showSummary() {
+      if (completedCount() < SCENARIO_ORDER.length) {
+        showFixedSequenceHome();
+        return false;
+      }
       const root = document.getElementById('summary-lines');
       root.innerHTML = '';
       const scoreSummary = calculateFourStageTotal(progressState.completed);
@@ -10786,8 +10838,23 @@
       document.getElementById('summary-rank').textContent = scoreSummary.rank;
       const hbLine = document.getElementById('summary-handbook-line');
       if (hbLine) hbLine.textContent = `本次遇到的詐騙手法：${handbookState.unlocked.length}/15 種（圖鑑可查看全部 15 種）。`;
-      document.querySelector('#summary-view .hero-kicker').textContent = `${SCENARIO_ORDER.length} 通指定情境全部完成`;
-      document.getElementById('completion-code').textContent = `受試者代碼：${studyIdentity.participantId || APP_CONFIG.participantId}`;
+      const handoffEnabled = usesPosttestHandoff();
+      const readOnly = APP_CONFIG.researcher;
+      document.querySelector('#summary-view .hero-kicker').textContent = readOnly
+        ? '研究者唯讀檢視'
+        : `${SCENARIO_ORDER.length} 通指定情境全部完成`;
+      document.querySelector('#completion-hero h1').textContent = readOnly
+        ? '本機紀錄總結'
+        : handoffEnabled ? '已完成本次遊戲' : '試玩已完成';
+      document.getElementById('completion-code').textContent = handoffEnabled
+        ? `受試者代碼：${studyIdentity.participantId || APP_CONFIG.participantId}`
+        : readOnly ? '唯讀檢視本機紀錄；不需填寫後測。' : '資料僅保存在本機，不傳送正式研究端點；不需填寫後測。';
+      document.getElementById('posttest-handoff-card').classList.toggle('hidden', !handoffEnabled);
+      document.getElementById('shared-device-handoff').classList.toggle('hidden', !handoffEnabled);
+      document.getElementById('prepare-next-participant').disabled = !handoffEnabled;
+      document.getElementById('reflection-card').classList.toggle('hidden', readOnly);
+      document.getElementById('reflection-status').textContent = '此題選填，不影響本次遊戲完成狀態。';
+      document.getElementById('summary-details').open = !handoffEnabled;
       const summaryStatus = document.getElementById('summary-upload-status');
       summaryStatus.textContent = lifecycleDeliveryText();
       renderHandoff('completed');
@@ -10840,6 +10907,7 @@
       stopRingtone();
       resetActionChallenge();
       configureOpeningScene();
+      saveActiveRun(scenario.startNode);
       showIncomingCall();
     }
 
@@ -11224,19 +11292,27 @@
     function pauseDecisionTimer(reason) {
       timerPauseReasons.add(reason);
       qtePauseReporter?.(reason);
+      if (timingState.phase === 'paused' && reason === 'hidden') timingState = V46_UX_CORE.updatePauseReason(timingState, 'hidden', performance.now());
       if (timingState.phase !== 'running') return;
       timingState = V46_UX_CORE.pauseDecision(timingState, reason, performance.now());
-      document.getElementById('decision-status').textContent = reason === 'voice' ? '播放語音時倒數暫停，播完或按停止後繼續。' : '倒數已暫停；關閉對話框或回到頁面後繼續。';
+      document.getElementById('decision-status').textContent = STORY[currentNodeId]?.timeLimit
+        ? (reason === 'voice' ? '播放語音時倒數暫停，播完或按停止後繼續。' : '倒數已暫停；關閉對話框或回到頁面後繼續。')
+        : (reason === 'voice' ? '播放語音中；播完或按停止後可繼續回覆。' : '作答暫停；關閉視窗或回到頁面後可繼續回覆。');
     }
 
     function resumeDecisionTimer(reason) {
       timerPauseReasons.delete(reason);
-      if (timerPauseReasons.size || document.hidden) return;
+      if (timerPauseReasons.size || document.hidden) {
+        if (timingState.phase === 'paused' && timingState.pauseReason === 'hidden' && !timerPauseReasons.has('hidden') && !document.hidden) {
+          timingState = V46_UX_CORE.updatePauseReason(timingState, [...timerPauseReasons][0], performance.now());
+        }
+        return;
+      }
       if (timingState.phase === 'ready') { activateDecisionReady(); return; }
       if (timingState.phase !== 'paused') return;
       timingState = V46_UX_CORE.resumeDecision(timingState, reason, performance.now());
       decisionTimerLastTick = performance.now();
-      document.getElementById('decision-status').textContent = '倒數已繼續。';
+      document.getElementById('decision-status').textContent = STORY[currentNodeId]?.timeLimit ? '倒數已繼續。' : '可以繼續選擇回覆。';
     }
 
     function activateDecisionReady() {
@@ -11392,9 +11468,9 @@
       btn.onpointerup = () => abortHold('pointer');
       btn.onpointercancel = () => abortHold('pointer');
       btn.onkeydown = event => {
-        if (event.repeat) return;
         if (event.key === 'Enter' || event.code === 'Space' || event.key === ' ') {
           event.preventDefault();
+          if (event.repeat) return;
           beginHold(event.key === 'Enter' ? 'Enter' : 'Space');
         }
       };
@@ -11408,9 +11484,13 @@
     }
 
     async function renderNode(nodeId, restoredTiming = null) {
+      const generation = ++nodeRenderGeneration;
       stopVoicePlayback();
       stopTimer();
       resetActionChallenge();
+      document.getElementById('options-area').classList.add('sheet-hidden');
+      document.getElementById('options-area').setAttribute('aria-busy', 'true');
+      document.getElementById('options-container').replaceChildren();
       nodeReadyAt = 0;
       currentNodeId = nodeId;
       if (gameState) delete gameState.pendingNextNodeId;
@@ -11461,6 +11541,7 @@
         document.getElementById('header-sub').innerText = getCurrentTime();
       }
       if (!node.isRealWorld && !reducedMotion) await showTypingIndicator(node.speaker);
+      if (generation !== nodeRenderGeneration || currentNodeId !== nodeId || document.getElementById('playing-view').classList.contains('hidden')) return;
       appendBubble(node.speaker, node.text, 'incoming', node.isRealWorld);
       appendStatePresentation(node);
       if (node.practiceKind === 'hypothetical') appendTipCard('以下是情境練習，不會改寫剛才故事中已經發生的交付、簽約或資料外流事實。', 'info');
@@ -11483,6 +11564,7 @@
       renderActionChallenge(node);
       applyPressureUI();
       optionsArea.classList.remove('sheet-hidden');
+      optionsArea.setAttribute('aria-busy', 'false');
       recordEvent('decision_ready', { nodeId });
       recordEvent('node_enter', { optionCount: getOptionsForNode(node).length });
       activateDecisionReady();
@@ -11539,7 +11621,7 @@
       if (option.effects) applyEffects(option.effects);
       if (option.evidence) collectEvidence(option.evidence);
       if (option.tags?.length) gameState.educationFlags.push(...option.tags);
-      if (option.isMistake) gameState.mistakes.push({ nodeId: currentNodeId, text: option.text || '逾時未回應', hint: option.hint || '', educationalType: option.educationalType || '' });
+      if (option.rubric?.decision?.result === 'unsafe') gameState.mistakes.push({ nodeId: currentNodeId, text: option.text || '逾時未回應', hint: option.hint || '', educationalType: option.educationalType || '' });
       selectedOptionHistory.push({ from: currentNodeId, to: nextNodeId, text: option.text, effects: option.effects || {}, hint: option.hint || '', isMistake: Boolean(option.isMistake), educationalType: option.educationalType || '', actionType: option.actionType || 'normal', evidence: option.evidence || '', optionEventId: optionEvent?.eventId || '', assistanceEventIds: scoring.assistanceEventIds, rubric: cloneState(option.rubric) });
       if (option.text) appendBubble('我', option.text, 'outgoing');
       saveActiveRun(nextNodeId);
@@ -11773,11 +11855,10 @@
     function saferAlternative(item) {
       const node = STORY[item.from];
       if (!node) return null;
+      if (classifyDecisionFeedback(item) === 'safe') return null;
       const rank = option => {
-        if (option.isMistake) return -1;
-        if (option.actionType === 'verifyOfficial') return 3;
-        if (option.evidence) return 2;
-        return 1;
+        const result = option.rubric?.decision?.result;
+        return result === 'safe' ? 3 : result === 'partial' ? 1 : result === 'unsafe' ? -1 : 0;
       };
       const mine = rank(item);
       const candidates = getVisibleOptions(node)
@@ -11785,8 +11866,8 @@
         .sort((a, b) => rank(b) - rank(a));
       const best = candidates[0];
       if (!best) return null;
-      const why = best.actionType === 'verifyOfficial' ? '（用官方管道查證）'
-        : best.evidence ? '（先留下證據）' : '';
+      const why = best.rubric?.verification?.result === 'pass' ? '（用獨立管道查證）'
+        : best.rubric?.eventTags?.includes('pause_stop') ? '（先停止高風險操作）' : '';
       return { text: best.text, why };
     }
 
@@ -11818,15 +11899,16 @@
         }
 
         stepNo += 1;
-        const isSafe = !item.isMistake &&
-          (item.actionType === 'verifyOfficial' || item.actionType === 'qte' || !!item.evidence);
+        const classification = classifyDecisionFeedback(item);
+        const isSafe = classification === 'safe';
+        const isMistake = classification === 'mistake';
 
         const row = document.createElement('div');
-        row.className = 'path-step' + (item.isMistake ? ' is-mistake' : isSafe ? ' is-safe' : '');
+        row.className = 'path-step' + (isMistake ? ' is-mistake' : isSafe ? ' is-safe' : '');
         row.innerHTML = `
           <span class="step-no">${stepNo}</span>
           <p>${item.text}</p>
-          ${item.isMistake ? '<span class="path-flag">失誤</span>' : isSafe ? '<span class="path-flag">安全</span>' : ''}
+          ${isMistake ? '<span class="path-flag">失誤</span>' : isSafe ? '<span class="path-flag">安全</span>' : ''}
         `;
         root.appendChild(row);
 
@@ -11848,8 +11930,7 @@
       root.innerHTML = '';
 
       const moves = selectedOptionHistory.filter(item =>
-        item.text && !item.isMistake &&
-        (item.actionType === 'verifyOfficial' || item.actionType === 'qte' || !!item.evidence));
+        item.text && classifyDecisionFeedback(item) === 'safe');
 
       if (!moves.length) {
         container.classList.add('hidden');
@@ -11874,18 +11955,38 @@
       const grid = document.getElementById('c3-grid');
       grid.innerHTML = '';
       const verifyBits = [];
-      if (gameState.inspectFound > 0) verifyBits.push(`找出截圖破綻 ${gameState.inspectFound} 處`);
-      if (gameState.evidenceCount > 0) verifyBits.push(`保存證據 ${gameState.evidenceCount} 項`);
-      const helped = (gameState.assistanceEvents || []).some(event => event.eventType === 'assistance_completed') || selectedOptionHistory.some(history => history.actionType === 'verifyOfficial') || playerPath.includes('S_ACCOUNT_MOM');
+      const verified = (gameState.rubricResults?.verification || []).filter(row => row.result === 'pass').length;
+      if (verified) verifyBits.push(`完成獨立查證 ${verified} 次`);
+      const stopped = selectedOptionHistory.some(history => history.rubric?.eventTags?.includes('pause_stop'));
+      // 只補足顯示：依已核對的選項識別碼辨識求助文字，不修改 rubric、計分或故事事實。
+      const practiceHelpOptionIds = new Set([
+        'AFTERCARE_PHISHING_1.option.1',
+        'AFTERCARE_ACCOUNT_1.option.1', 'AFTERCARE_ACCOUNT_2.option.1', 'AFTERCARE_ACCOUNT_3.option.1',
+        'AFTERCARE_SIM_2.option.1', 'AFTERCARE_SIM_3.option.1',
+        'AFTERCARE_CASH_1.option.1', 'AFTERCARE_CASH_2.option.1', 'AFTERCARE_CASH_3.option.1'
+      ]);
+      const explicitHelpOptionIds = new Set([
+        'S_PHISHING_OTP.option.2', 'S_ACCOUNT_ID_PHOTO.option.3',
+        'S_SIM_CARD_QUESTION.option.3', 'S_SIM_ID_DOCS.option.3', 'S_ACCOUNT_TEST_PAY.option.3'
+      ]);
+      const helpRecorded = (gameState.assistanceEvents || []).some(event => event.eventType === 'assistance_completed')
+        || selectedOptionHistory.some(history => history.rubric?.eventTags?.includes('seek_help') || history.rubric?.remediation?.actions?.some(action => ['official_contact', 'report'].includes(action)));
+      const helpChosen = selectedOptionHistory.some(history => history.rubric?.detachedPractice !== true && explicitHelpOptionIds.has(history.rubric?.optionId));
+      const helpPracticed = selectedOptionHistory.some(history => history.rubric?.detachedPractice === true && practiceHelpOptionIds.has(history.rubric?.optionId));
+      const helped = helpRecorded || helpChosen || helpPracticed;
+      const helpBits = [];
+      if (helpRecorded) helpBits.push('本次有向 165、官方或可信任對象求助的選擇或模擬諮詢紀錄。');
+      if (helpChosen) helpBits.push('本次有向官方或可信任家人求助的選擇，不代表真實世界的求助已完成。');
+      if (helpPracticed) helpBits.push('情境練習有求助選擇，未改寫主線已完成的事實，也不代表真實世界的求助已完成。');
       const items = [
-        { word: '冷', title: '冷靜', ok: gameState.qteTimeoutCount === 0, okText: '本次未記錄逾時。', noText: `本次記錄 ${gameState.qteTimeoutCount} 個未在時間內提交回覆的節點。` },
-        { word: '查', title: '查證', ok: verifyBits.length > 0, okText: `${verifyBits.join('、')}。`, noText: '本次未記錄查證動作。' },
-        { word: '助', title: '求助', ok: helped, okText: '本次已記錄向 165、官方管道或可信任對象求助。', noText: '本次未記錄求助行動。' }
+        { word: '冷', title: '冷靜', ok: stopped, okText: '本次有停止或拒絕高風險操作的紀錄。', noText: '本次未記錄停止高風險操作；是否逾時不能代表心理上的冷靜程度。' },
+        { word: '查', title: '查證', ok: verified > 0, okText: `${verifyBits.join('、')}。`, noText: '本次未記錄完成獨立查證。保存截圖或證據有助求助，但不能代替查證。' },
+        { word: '助', title: '求助', ok: helped, statusText: helpRecorded ? '有記錄' : helpChosen ? '有求助選擇' : helpPracticed ? '有練習' : '未記錄', okText: helpBits.join(''), noText: '本次未記錄求助行動。' }
       ];
       items.forEach(item => {
         const row = document.createElement('div');
         row.className = 'c3-row ' + (item.ok ? 'ok' : 'miss');
-        row.innerHTML = `<span class="c3-stamp">${item.word}</span><div><p class="c3-t">${item.title}<em>${item.ok ? '有記錄' : '未記錄'}</em></p><p class="c3-d">${item.ok ? item.okText : item.noText}</p></div>`;
+        row.innerHTML = `<span class="c3-stamp">${item.word}</span><div><p class="c3-t">${item.title}<em>${item.statusText || (item.ok ? '有記錄' : '未記錄')}</em></p><p class="c3-d">${item.ok ? item.okText : item.noText}</p></div>`;
         grid.appendChild(row);
       });
     }
@@ -12158,8 +12259,8 @@
       const result = calculateFinalScore(endingId);
       const { score, rank, breakdown, subscores } = result;
       const wasFourStageComplete = calculateFourStageTotal(progressState.completed).complete;
-      // 研究模式可重新挑戰，但四關總分固定採每關第一次完成的成績；重玩紀錄仍以 attemptNo 上傳。
-      const firstResultKept = APP_CONFIG.mode === 'study' && Boolean(progressState.completed[selectedScenarioType]);
+      // 所有模式均保留每關第一次完成的成績；重玩結果在本次結局頁顯示。
+      const firstResultKept = Boolean(progressState.completed[selectedScenarioType]);
 
       if (selectedScenarioType && !firstResultKept) {
         progressState.completed[selectedScenarioType] = {
@@ -12373,6 +12474,7 @@
         if (hasActiveRun() && await resumeActiveRun()) return;
       } else {
         loadSessionState();
+        if (hasActiveRun() && await resumeActiveRun()) return;
       }
       showGameGuide();
     }
@@ -12380,10 +12482,16 @@
     function canUseRetroNavigation() {
       if (APP_CONFIG.mode !== 'study') return true;
       if (!studyIdentity.participantId || !studyIdentity.consentAt) { setView('participant-view'); return false; }
+      if (['call-view', 'playing-view'].includes(document.documentElement.dataset.retroScreen)) return false;
       return true;
     }
 
     function leaveActiveRetroRun(destination) {
+      if (document.documentElement.dataset.retroScreen === 'playing-view') {
+        pauseDecisionTimer('navigation');
+        saveActiveRun(gameState.pendingNextNodeId || currentNodeId);
+        timerPauseReasons.delete('navigation');
+      }
       stopTimer();
       resetActionChallenge();
       stopRingtone();
@@ -12475,8 +12583,8 @@
             ? '正確：四種情境都利用急迫感壓縮你的查證時間。'
             : '再想想：金錢或網路不是每次都相同，但「催你立刻決定」反覆出現。';
           document.getElementById('reflection-status').textContent = stored.persistent === false
-            ? '反思答案目前只保留在記憶體，請由施測者匯出本場 JSON。'
-            : '反思答案已加入本場事件；後測連結仍可直接使用。';
+            ? usesPosttestHandoff() ? '反思答案目前只保留在記憶體，請由施測者匯出本場 JSON。' : '反思答案目前只保留在此頁記憶體；重新整理後可能遺失。'
+            : usesPosttestHandoff() ? '反思答案已加入本場事件；後測連結仍可直接使用。' : '反思答案已保存在此瀏覽器，不傳送正式研究端點。';
         });
       });
 

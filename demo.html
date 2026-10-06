@@ -9,7 +9,9 @@
     * { box-sizing:border-box; }
     body { margin:0; min-height:100vh; padding:24px; }
     main { width:min(760px,100%); margin:auto; background:#fff; border:1px solid #d8e0ea; border-radius:20px; padding:28px 24px; box-shadow:0 18px 48px rgba(35,52,78,.12); }
-    .hero { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .hero { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; }
+    .hero-copy { flex:1 1 230px; }
+    .qa-note { margin:10px 0 0; color:#53627a; font-size:14px; }
     h1 { margin:0; font-size:clamp(22px,6vw,26px); }
     h2 { font-size:18px; margin:26px 0 10px; }
     p, li { line-height:1.75; }
@@ -18,13 +20,18 @@
     .card { background:#f4f7fb; border:1px solid #dfe6ef; border-radius:12px; padding:12px 14px; }
     .card b { display:block; font-size:22px; color:#1557b0; }
     .card span { color:#53627a; font-size:14px; }
-    .play { flex:0 0 auto; padding:12px clamp(16px,5vw,26px); border-radius:14px; background:#1557b0; color:#fff; font-weight:800; font-size:clamp(16px,4.5vw,18px); white-space:nowrap; text-decoration:none; }
+    .play { display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; min-width:44px; min-height:44px; padding:12px clamp(16px,5vw,26px); border-radius:14px; background:#1557b0; color:#fff; font-weight:800; font-size:clamp(16px,4.5vw,18px); white-space:nowrap; text-decoration:none; }
+    .play:focus-visible { outline:3px solid #b46700; outline-offset:4px; }
   </style>
 </head>
 <body>
   <main>
     <header class="hero">
-      <a class="play" href="game.html?qa=1">《午夜委託》開始試玩</a>
+      <div class="hero-copy">
+        <h1>午夜委託</h1>
+        <p class="qa-note">展示試玩（QA 模式）不需受試者代碼，遊玩紀錄不會送到正式研究表。</p>
+      </div>
+      <a id="demo-play" class="play" href="game.html?qa=1">開始試玩</a>
     </header>
 
     <h2>四條主線</h2>
@@ -54,5 +61,14 @@
       <li>語音訊息依角色挑選男聲或女聲，只念台詞、不念旁白</li>
     </ul>
   </main>
+  <script>
+    (() => {
+      const isLocalPreview = window.location.protocol === 'file:'
+        || ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname);
+      if (isLocalPreview) {
+        document.getElementById('demo-play').href = 'v46_研究施測定稿候選版.html?qa=1';
+      }
+    })();
+  </script>
 </body>
 </html>
